@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../data/datasources/auth_local_datasource.dart';
@@ -15,10 +16,12 @@ class _LoginPageState extends State<LoginPage> {
   final _remote = AuthRemoteDataSource();
   final _local = AuthLocalDataSource();
 
-  final _phoneController = TextEditingController();
-
   bool _loading = false;
   String? _error;
+
+  final Color bgColor = const Color(0xFFF5F9F3);
+  final Color titleColor = const Color(0xFF6B9B6E); 
+  final Color sageGreen = const Color(0xFF6B9B6E);
 
   Future<void> _signInWithGoogle() async {
     setState(() {
@@ -31,7 +34,6 @@ class _LoginPageState extends State<LoginPage> {
       await googleSignIn.initialize();
 
       final account = await googleSignIn.authenticate();
-
       final authentication = account.authentication;
       final idToken = authentication.idToken;
 
@@ -59,6 +61,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: bgColor,
       body: Stack(
         children: [
           _buildContent(),
@@ -70,110 +73,93 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildContent() {
     return SafeArea(
-      child: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 40),
-
-              _buildPhoneInput(),
-              const SizedBox(height: 16),
-
-              _buildPhoneButton(),
-              const SizedBox(height: 24),
-
-              _buildDivider(),
-              const SizedBox(height: 24),
-
-              _buildGoogleButton(),
-
-              if (_error != null) ...[
-                const SizedBox(height: 24),
-                _buildErrorBox(),
-              ],
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Column(
-      children: const [
-        Icon(Icons.favorite, size: 72, color: Colors.pink),
-        SizedBox(height: 16),
-        Text(
-          'Lepa reč',
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(height: 8),
-        Text(
-          'Širi lepe reči svaki dan 💌',
-          style: TextStyle(fontSize: 16, color: Colors.grey),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPhoneInput() {
-    return TextField(
-      controller: _phoneController,
-      keyboardType: TextInputType.phone,
-      decoration: InputDecoration(
-        labelText: 'Broj mobilnog',
-        hintText: '+381 6X XXX XXXX',
-        prefixIcon: const Icon(Icons.phone),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPhoneButton() {
-    return SizedBox(
-      height: 52,
-      child: ElevatedButton(
-        onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('SMS login uskoro dostupan 📱'),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: 85),
+            Text(
+              'Lepa reč',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.quicksand(
+                fontSize: 52,
+                fontWeight: FontWeight.w700,
+                color: titleColor,
+                letterSpacing: -1.0,
+              ),
             ),
-          );
-        },
-        child: const Text('Nastavi putem broja telefona'),
+            const SizedBox(height: 40),
+            SizedBox(
+              height: 360,
+              width: double.infinity,
+              child: Image.asset(
+                'assets/images/loginlogo.png',
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(height: 25),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: _buildGoogleButton(),
+            ),
+            if (_error != null) ...[
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: _buildErrorBox(),
+              ),
+            ],
+            const SizedBox(height: 40),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildGoogleButton() {
     return SizedBox(
-      height: 52,
-      child: OutlinedButton.icon(
+      height: 72,
+      child: ElevatedButton(
         onPressed: _loading ? null : _signInWithGoogle,
-        icon: const Icon(Icons.login),
-        label: const Text('Nastavi sa Google nalogom'),
-      ),
-    );
-  }
-
-  Widget _buildDivider() {
-    return Row(
-      children: const [
-        Expanded(child: Divider()),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12),
-          child: Text('ili'),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: sageGreen,
+          foregroundColor: Colors.white,
+          elevation: 2,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          shadowColor: Colors.black12,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
         ),
-        Expanded(child: Divider()),
-      ],
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: Image.network(
+                'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png',
+                height: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Flexible(
+              child: Text(
+                'Prijavi se preko Google-a',
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.quicksand(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -184,19 +170,21 @@ class _LoginPageState extends State<LoginPage> {
         color: Colors.red.shade50,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: const Text(
-        'Došlo je do greške prilikom prijave.',
-        style: TextStyle(color: Colors.red),
+      child: Text(
+        _error ?? 'Došlo je do greške.',
+        style: const TextStyle(color: Colors.red),
+        textAlign: TextAlign.center,
       ),
     );
   }
-
 
   Widget _buildLoadingOverlay() {
     return Container(
       color: Colors.black.withOpacity(0.3),
       child: const Center(
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(
+          color: Colors.white,
+        ),
       ),
     );
   }
