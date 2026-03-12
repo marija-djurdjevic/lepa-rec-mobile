@@ -13,28 +13,24 @@ class AuthRemoteDataSource {
     final request = GoogleLoginRequest(idToken: idToken);
     const endpoint = '/auth/google-login';
     final fullUrl = '${ApiClient.dio.options.baseUrl}$endpoint';
-    debugPrint('🔐 LOGIN REQUEST - POST $fullUrl');
 
     final response = await _dio.post(
       endpoint,
       data: request.toJson(),
     );
 
-    debugPrint('🔐 LOGIN RESPONSE - status: ${response.statusCode}');
     return AuthResponse.fromJson(response.data as Map<String, dynamic>);
   }
 
   Future<AuthResponse> refresh(String refreshToken) async {
   const endpoint = '/auth/refresh';
   final fullUrl = '${ApiClient.dio.options.baseUrl}$endpoint';
-  debugPrint('🔄 REFRESH TOKEN REQUEST - POST $fullUrl');
 
   final response = await _dio.post(
     endpoint,
     data: {'refreshToken': refreshToken},
   );
 
-  debugPrint('🔄 REFRESH TOKEN RESPONSE - status: ${response.statusCode}');
   return AuthResponse.fromJson(response.data as Map<String, dynamic>);
   }
 

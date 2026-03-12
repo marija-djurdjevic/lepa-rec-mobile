@@ -25,42 +25,32 @@ class _LoginPageState extends State<LoginPage> {
   final Color sageGreen = const Color(0xFF6B9B6E);
 
   Future<void> _signInWithGoogle() async {
-    debugPrint('🔐 LOGIN_PAGE - Google login button tapped');
     setState(() {
       _loading = true;
       _error = null;
     });
 
     try {
-      debugPrint('🔐 LOGIN_PAGE - Initialize GoogleSignIn...');
       final googleSignIn = GoogleSignIn.instance;
       await googleSignIn.initialize();
-      debugPrint('🔐 LOGIN_PAGE - GoogleSignIn initialized');
 
-      debugPrint('🔐 LOGIN_PAGE - Requesting Google authentication...');
       final account = await googleSignIn.authenticate();
-      debugPrint('🔐 LOGIN_PAGE - Google authentication completed');
 
       final authentication = account.authentication;
       final idToken = authentication.idToken;
-      debugPrint('🔐 LOGIN_PAGE - Google idToken obtained, calling backend...');
 
       if (idToken == null || idToken.isEmpty) {
         throw Exception('Google idToken is missing.');
       }
 
-      debugPrint('🔐 LOGIN_PAGE - Calling /auth/google-login with idToken...');
       final auth = await _remote.googleLogin(idToken);
-      debugPrint('🔐 LOGIN_PAGE - Backend login response received, saving session...');
 
       await _local.saveSession(auth);
-      debugPrint('🔐 LOGIN_PAGE - Session saved, navigating to /home');
 
       if (!mounted) return;
 
       Navigator.of(context).pushNamedAndRemoveUntil('/home', (_) => false);
     } catch (e) {
-      debugPrint('🔐 LOGIN_PAGE - Google login error: $e');
       setState(() {
         _error = 'Login failed. Please try again.';
       });

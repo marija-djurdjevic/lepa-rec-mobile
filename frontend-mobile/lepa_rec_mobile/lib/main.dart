@@ -10,9 +10,7 @@ import 'features/auth/presentation/pages/login_page.dart';
 import 'features/sessions/presentation/pages/session_flow_page.dart';
 
 void main() {
-  debugPrint('🚀 APP START - main() called');
   ApiClient.configure();
-  debugPrint('🚀 ApiClient configured');
   runApp(const LepaRecApp());
 }
 
