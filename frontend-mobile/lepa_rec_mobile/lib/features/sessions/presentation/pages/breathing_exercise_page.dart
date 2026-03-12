@@ -1,0 +1,315 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../../../../core/localization/localization_extension.dart';
+import '../widgets/breathing_circle.dart';
+
+class BreathingExercisePage extends StatefulWidget {
+  final VoidCallback onComplete;
+
+  const BreathingExercisePage({
+    super.key,
+    required this.onComplete,
+  });
+
+  @override
+  State<BreathingExercisePage> createState() => _BreathingExercisePageState();
+}
+
+class _BreathingExercisePageState extends State<BreathingExercisePage>
+    with TickerProviderStateMixin {
+  late final AnimationController _breathingController;
+  late final AnimationController _timerController;
+  Timer? _countdownTimer;
+
+  static const int _totalRounds = 3;
+  static const int _breathInDuration = 4;
+  static const int _holdDuration = 4;
+  static const int _breathOutDuration = 4;
+
+  int _currentRound = 0;
+  BreathingPhase _currentPhase = BreathingPhase.breathIn;
+  int _secondsLeft = _breathInDuration;
+  bool _isCompleted = false;
+  bool _exerciseCompleted = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _breathingController = AnimationController(vsync: this);
+    _timerController = AnimationController(vsync: this)
+      ..addStatusListener(_onAnimationStatusChanged);
+
+    _startPhase();
+  }
+
+  int _getPhaseDuration(BreathingPhase phase) {
+    return switch (phase) {
+      BreathingPhase.breathIn => _breathInDuration,
+      BreathingPhase.hold => _holdDuration,
+      BreathingPhase.breathOut => _breathOutDuration,
+    };
+  }
+
+  void _startPhase() {
+    if (!mounted || _isCompleted) return;
+
+    final duration = _getPhaseDuration(_currentPhase);
+
+    _countdownTimer?.cancel();
+
+    _breathingController
+      ..stop()
+      ..reset()
+      ..duration = Duration(seconds: duration);
+
+    _timerController
+      ..stop()
+      ..reset()
+      ..duration = Duration(seconds: duration);
+
+    setState(() {
+      _secondsLeft = duration;
+    });
+
+    _breathingController.forward();
+    _timerController.forward();
+
+    _startTimer();
+  }
+
+  void _startTimer() {
+    _countdownTimer?.cancel();
+
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted || _isCompleted) {
+        timer.cancel();
+        return;
+      }
+
+      if (_secondsLeft > 1) {
+        setState(() {
+          _secondsLeft--;
+        });
+      } else {
+        timer.cancel();
+        setState(() {
+          _secondsLeft = 0;
+        });
+      }
+    });
+  }
+
+  void _onAnimationStatusChanged(AnimationStatus status) {
+    if (status == AnimationStatus.completed && !_isCompleted) {
+      _moveToNextPhase();
+    }
+  }
+
+  void _moveToNextPhase() {
+    if (!mounted || _isCompleted) return;
+
+    if (_currentPhase == BreathingPhase.breathOut) {
+      _currentRound++;
+    }
+
+    if (_currentPhase == BreathingPhase.breathOut &&
+        _currentRound >= _totalRounds) {
+      _completeExercise();
+      return;
+    }
+
+    setState(() {
+      _currentPhase = switch (_currentPhase) {
+        BreathingPhase.breathIn => BreathingPhase.hold,
+        BreathingPhase.hold => BreathingPhase.breathOut,
+        BreathingPhase.breathOut => BreathingPhase.breathIn,
+      };
+    });
+
+    _startPhase();
+  }
+
+  void _completeExercise() {
+    if (_exerciseCompleted) {
+      return;
+    }
+
+    _exerciseCompleted = true;
+    _isCompleted = true;
+
+    _countdownTimer?.cancel();
+    _breathingController.stop();
+    _timerController.stop();
+
+    if (!mounted) return;
+    _showCompletionDialog();
+  }
+
+  void _showCompletionDialog() {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFFF5F9F3),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Text(
+            dialogContext.l10n.sessionComplete,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.quicksand(
+              fontSize: 28,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFF6B9B6E),
+            ),
+          ),
+          content: Text(
+            dialogContext.l10n.sessionCompleteMessage,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.quicksand(
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFF666666),
+              height: 1.5,
+            ),
+          ),
+          actions: [
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(dialogContext).pop();
+                  widget.onComplete();
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  backgroundColor: const Color(0xFF6B9B6E),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text(
+                  dialogContext.l10n.continueToNext,
+                  style: GoogleFonts.quicksand(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _countdownTimer?.cancel();
+    _timerController.removeStatusListener(_onAnimationStatusChanged);
+    _breathingController.dispose();
+    _timerController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F9F3),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFF5F9F3),
+        elevation: 0,
+        leading: null,
+      ),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              context.l10n.breathingExercise,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.quicksand(
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF6B9B6E),
+              ),
+            ),
+            const SizedBox(height: 32),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  BreathingCircle(
+                    animation: _breathingController,
+                    phase: _currentPhase,
+                  ),
+                  const SizedBox(height: 48),
+                  Text(
+                    '${_secondsLeft}s',
+                    style: GoogleFonts.quicksand(
+                      fontSize: 48,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF6B9B6E),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    _getPhaseText(context, _currentPhase),
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.quicksand(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF666666),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 32),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  _totalRounds,
+                  (index) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: CircleAvatar(
+                      radius: 12,
+                      backgroundColor: index < _currentRound
+                          ? const Color(0xFF6B9B6E)
+                          : index == _currentRound
+                              ? const Color(0x996B9B6E)
+                              : const Color(0xFFD0D0D0),
+                      child: index < _currentRound
+                          ? const Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              size: 16,
+                            )
+                          : null,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _getPhaseText(BuildContext context, BreathingPhase phase) {
+    return switch (phase) {
+      BreathingPhase.breathIn => context.l10n.breathIn,
+      BreathingPhase.hold => context.l10n.holdYourBreath,
+      BreathingPhase.breathOut => context.l10n.breathOut,
+    };
+  }
+}
+
+enum BreathingPhase { breathIn, hold, breathOut }

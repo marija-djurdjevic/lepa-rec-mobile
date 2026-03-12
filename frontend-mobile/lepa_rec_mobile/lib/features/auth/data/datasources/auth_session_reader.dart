@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'auth_local_datasource.dart';
 
 class AuthSessionReader {
@@ -7,7 +8,10 @@ class AuthSessionReader {
       : _local = local ?? AuthLocalDataSource();
 
   Future<bool> hasSession() async {
+    debugPrint('🔐 AuthSessionReader.hasSession() - reading stored refresh token...');
     final refresh = await _local.readRefreshToken();
-    return refresh != null && refresh.isNotEmpty;
+    final hasToken = refresh != null && refresh.isNotEmpty;
+    debugPrint('🔐 AuthSessionReader - stored refresh token exists: $hasToken');
+    return hasToken;
   }
 }

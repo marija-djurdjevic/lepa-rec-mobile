@@ -1,0 +1,139 @@
+{
+  "@@locale": "en",
+  "appTitle": "Lepa reč",
+  "@appTitle": {
+    "description": "Application title"
+  },
+  "login": "Login",
+  "@login": {
+    "description": "Login button label"
+  },
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout button label"
+  },
+  "welcome": "Welcome",
+  "@welcome": {
+    "description": "Welcome message"
+  },
+  "primerWelcomeTitle": "Welcome to Your Breathing Journey",
+  "@primerWelcomeTitle": {
+    "description": "Title for the primer welcome screen"
+  },
+  "primerWelcomeDescription": "Find a quiet place where you can be present with yourself. This is your time.",
+  "@primerWelcomeDescription": {
+    "description": "Description text for the primer welcome screen"
+  },
+  "proceed": "Proceed",
+  "@proceed": {
+    "description": "Proceed button label"
+  },
+  "breathingExercise": "Breathing Exercise",
+  "@breathingExercise": {
+    "description": "Title for the breathing exercise screen"
+  },
+  "breathIn": "Breathe In",
+  "@breathIn": {
+    "description": "Instruction to breathe in"
+  },
+  "breathOut": "Breathe Out",
+  "@breathOut": {
+    "description": "Instruction to breathe out"
+  },
+  "breatheInForSeconds": "Breathe in for {seconds} seconds",
+  "@breatheInForSeconds": {
+    "description": "Instruction to breathe in for a specific number of seconds",
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "breatheOutForSeconds": "Breathe out for {seconds} seconds",
+  "@breatheOutForSeconds": {
+    "description": "Instruction to breathe out for a specific number of seconds",
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "holdYourBreath": "Hold your breath",
+  "@holdYourBreath": {
+    "description": "Instruction to hold breath"
+  },
+  "rounds": "Rounds",
+  "@rounds": {
+    "description": "Label for breathing rounds"
+  },
+  "complete": "Complete",
+  "@complete": {
+    "description": "Complete button label"
+  },
+  "sessionComplete": "Great job!",
+  "@sessionComplete": {
+    "description": "Congratulatory message after session completion"
+  },
+  "sessionCompleteMessage": "You have completed your breathing exercise. You are doing amazing!",
+  "@sessionCompleteMessage": {
+    "description": "Detailed message after successfully completing a breathing session"
+  },
+  "continueToNext": "Continue",
+  "@continueToNext": {
+    "description": "Continue button label to proceed to the next step"
+  },
+  "home": "Home",
+  "@home": {
+    "description": "Home page label"
+  },
+  "dashboard": "Dashboard",
+  "@dashboard": {
+    "description": "Dashboard page label"
+  },
+  "loadingSession": "Loading...",
+  "@loadingSession": {
+    "description": "Loading indicator text for session data"
+  },
+  "valueStatementTitle": "What matters most to you?",
+  "@valueStatementTitle": {
+    "description": "Title for the value statement selection screen"
+  },
+  "growthMessageTitle": "Your Growth Message",
+  "@growthMessageTitle": {
+    "description": "Title for the growth message screen"
+  },
+  "completePrimer": "Complete Primer",
+  "@completePrimer": {
+    "description": "Button label to complete the primer"
+  },
+  "errorLoadingStatements": "Error Loading Statements",
+  "@errorLoadingStatements": {
+    "description": "Error title when statements fail to load"
+  },
+  "failedLoadValueStatements": "Failed to load value statements",
+  "@failedLoadValueStatements": {
+    "description": "Error message when value statements fail to load"
+  },
+  "errorLoadingMessage": "Error Loading Message",
+  "@errorLoadingMessage": {
+    "description": "Error title when growth message fails to load"
+  },
+  "failedLoadGrowthMessage": "Failed to load growth message",
+  "@failedLoadGrowthMessage": {
+    "description": "Error message when growth message fails to load"
+  },
+  "retry": "Retry",
+  "@retry": {
+    "description": "Retry button label to retry a failed operation"
+  },
+  "errorRenderingGrowthMessage": "Error rendering Growth Message page",
+  "@errorRenderingGrowthMessage": {
+    "description": "Error message when growth message page rendering fails"
+  },
+  "errorInSessionFlowPage": "Error in SessionFlowPage",
+  "@errorInSessionFlowPage": {
+    "description": "Error message in the session flow orchestrator page"
+  }
+}
