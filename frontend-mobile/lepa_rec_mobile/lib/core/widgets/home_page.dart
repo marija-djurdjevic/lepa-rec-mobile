@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../features/auth/data/datasources/auth_local_datasource.dart';
+import '../localization/localization_extension.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -9,7 +10,7 @@ class HomePage extends StatelessWidget {
     final local = AuthLocalDataSource();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
+      appBar: AppBar(title: Text(context.l10n.dashboard)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -24,7 +25,7 @@ class HomePage extends StatelessWidget {
                   Navigator.of(context).pushNamedAndRemoveUntil('/login', (_) => false);
                 }
               },
-              child: const Text('Logout'),
+              child: Text(context.l10n.logout),
             ),
           ],
         ),

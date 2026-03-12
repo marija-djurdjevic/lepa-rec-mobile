@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import '../../../../core/network/api_client.dart';
 import '../models/auth_response.dart';
@@ -10,9 +11,11 @@ class AuthRemoteDataSource {
 
   Future<AuthResponse> googleLogin(String idToken) async {
     final request = GoogleLoginRequest(idToken: idToken);
+    const endpoint = '/auth/google-login';
+    final fullUrl = '${ApiClient.dio.options.baseUrl}$endpoint';
 
     final response = await _dio.post(
-      '/auth/google-login',
+      endpoint,
       data: request.toJson(),
     );
 
@@ -20,8 +23,11 @@ class AuthRemoteDataSource {
   }
 
   Future<AuthResponse> refresh(String refreshToken) async {
+  const endpoint = '/auth/refresh';
+  final fullUrl = '${ApiClient.dio.options.baseUrl}$endpoint';
+
   final response = await _dio.post(
-    '/auth/refresh',
+    endpoint,
     data: {'refreshToken': refreshToken},
   );
 

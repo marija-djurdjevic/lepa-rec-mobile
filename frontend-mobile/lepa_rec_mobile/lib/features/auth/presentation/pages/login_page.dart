@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -34,6 +35,7 @@ class _LoginPageState extends State<LoginPage> {
       await googleSignIn.initialize();
 
       final account = await googleSignIn.authenticate();
+
       final authentication = account.authentication;
       final idToken = authentication.idToken;
 
@@ -42,6 +44,7 @@ class _LoginPageState extends State<LoginPage> {
       }
 
       final auth = await _remote.googleLogin(idToken);
+
       await _local.saveSession(auth);
 
       if (!mounted) return;

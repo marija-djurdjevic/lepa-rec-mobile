@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/auth_response.dart';
 
@@ -21,8 +22,15 @@ class AuthLocalDataSource {
     await _storage.write(key: _roleKey, value: auth.role);
   }
 
-  Future<String?> readAccessToken() => _storage.read(key: _accessTokenKey);
-  Future<String?> readRefreshToken() => _storage.read(key: _refreshTokenKey);
+  Future<String?> readAccessToken() async {
+    final token = await _storage.read(key: _accessTokenKey);
+    return token;
+  }
+
+  Future<String?> readRefreshToken() async {
+    final token = await _storage.read(key: _refreshTokenKey);
+    return token;
+  }
 
   Future<void> clearSession() async {
     await _storage.delete(key: _accessTokenKey);

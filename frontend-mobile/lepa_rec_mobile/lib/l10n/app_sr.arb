@@ -1,0 +1,139 @@
+{
+  "@@locale": "sr",
+  "appTitle": "Lepa reč",
+  "@appTitle": {
+    "description": "Naslov aplikacije"
+  },
+  "login": "Prijava",
+  "@login": {
+    "description": "Labela dugmeta za prijavu"
+  },
+  "logout": "Odjava",
+  "@logout": {
+    "description": "Labela dugmeta za odjavu"
+  },
+  "welcome": "Dobro došli",
+  "@welcome": {
+    "description": "Poruka dobrodoslice"
+  },
+  "primerWelcomeTitle": "Dobro došli na putanju disanja",
+  "@primerWelcomeTitle": {
+    "description": "Naslov za primerski ekran dobrodoslice"
+  },
+  "primerWelcomeDescription": "Pronađi tiho mesto gde možeš biti prisutan/na sa sobom. Ovo je tvoje vreme.",
+  "@primerWelcomeDescription": {
+    "description": "Opis teksta za primerski ekran dobrodoslice"
+  },
+  "proceed": "Nastavi",
+  "@proceed": {
+    "description": "Labela dugmeta za nastavak"
+  },
+  "breathingExercise": "Vežba disanja",
+  "@breathingExercise": {
+    "description": "Naslov za ekran sa vezbom disanja"
+  },
+  "breathIn": "Udahni",
+  "@breathIn": {
+    "description": "Uputstvo za udisanje"
+  },
+  "breathOut": "Izdahni",
+  "@breathOut": {
+    "description": "Uputstvo za izdisanje"
+  },
+  "breatheInForSeconds": "Udahni u toku {seconds} sekundi",
+  "@breatheInForSeconds": {
+    "description": "Uputstvo da udahnes u toku odredjenog broja sekundi",
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "breatheOutForSeconds": "Izdahni u toku {seconds} sekundi",
+  "@breatheOutForSeconds": {
+    "description": "Uputstvo da izdahnes u toku odredjenog broja sekundi",
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "holdYourBreath": "Zadrži dah",
+  "@holdYourBreath": {
+    "description": "Uputstvo da zadrzis dah"
+  },
+  "rounds": "Krugovi",
+  "@rounds": {
+    "description": "Labela za krugove disanja"
+  },
+  "complete": "Završi",
+  "@complete": {
+    "description": "Labela dugmeta za zavrsavanje"
+  },
+  "sessionComplete": "Odličan posao!",
+  "@sessionComplete": {
+    "description": "Pohvalna poruka nakon zavrsavanja sesije"
+  },
+  "sessionCompleteMessage": "Zavrsio/la si vežbu disanja. Radiš neverovatno!",
+  "@sessionCompleteMessage": {
+    "description": "Detaljni tekst pohvale nakon uspesnog zavrsavanja sesije disanja"
+  },
+  "continueToNext": "Nastavi",
+  "@continueToNext": {
+    "description": "Labela dugmeta za nastavak na sledeci korak"
+  },
+  "home": "Početna",
+  "@home": {
+    "description": "Labela za pocetnu stranicu"
+  },
+  "dashboard": "Kontrolna tabla",
+  "@dashboard": {
+    "description": "Labela za kontrolnu tablu"
+  },
+  "loadingSession": "Učitavanje...",
+  "@loadingSession": {
+    "description": "Tekst indikatora ucitavanja podataka sesije"
+  },
+  "valueStatementTitle": "Šta je za tebe najvažnije?",
+  "@valueStatementTitle": {
+    "description": "Naslov za ekran izbora vrednosnih iskaza"
+  },
+  "growthMessageTitle": "Tvoja Poruka Rasta",
+  "@growthMessageTitle": {
+    "description": "Naslov za ekran poruke rasta"
+  },
+  "completePrimer": "Završi Pripremu",
+  "@completePrimer": {
+    "description": "Labela dugmeta za završavanje primerske faze"
+  },
+  "errorLoadingStatements": "Greška pri Učitavanju Iskaza",
+  "@errorLoadingStatements": {
+    "description": "Naslov greške kada iskazi ne mogu biti učitani"
+  },
+  "failedLoadValueStatements": "Neuspešno učitavanje vrednosnih iskaza",
+  "@failedLoadValueStatements": {
+    "description": "Poruka greške kada vrednosni iskazi ne mogu biti učitani"
+  },
+  "errorLoadingMessage": "Greška pri Učitavanju Poruke",
+  "@errorLoadingMessage": {
+    "description": "Naslov greške kada poruka rasta ne može biti učitana"
+  },
+  "failedLoadGrowthMessage": "Neuspešno učitavanje poruke rasta",
+  "@failedLoadGrowthMessage": {
+    "description": "Poruka greške kada poruka rasta ne može biti učitana"
+  },
+  "retry": "Pokušaj Ponovo",
+  "@retry": {
+    "description": "Labela dugmeta za ponovljeni pokušaj neuspešne operacije"
+  },
+  "errorRenderingGrowthMessage": "Greška pri Crtanju Ekrana Poruke Rasta",
+  "@errorRenderingGrowthMessage": {
+    "description": "Poruka greške kada crtanje ekrana poruke rasta ne uspije"
+  },
+  "errorInSessionFlowPage": "Greška u Ekranu Toka Sesije",
+  "@errorInSessionFlowPage": {
+    "description": "Poruka greške u orcestratoru ekrana toka sesije"
+  }
+}
