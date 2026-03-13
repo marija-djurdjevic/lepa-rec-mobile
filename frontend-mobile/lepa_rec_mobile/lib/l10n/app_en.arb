@@ -135,5 +135,136 @@
   "errorInSessionFlowPage": "Error in SessionFlowPage",
   "@errorInSessionFlowPage": {
     "description": "Error message in the session flow orchestrator page"
+  },
+  "distancedJournal": "Distanced Journal",
+  "@distancedJournal": {
+    "description": "Title for the distanced journal exercise screen"
+  },
+  "yourAnswer": "Your Answer",
+  "@yourAnswer": {
+    "description": "Label for the main answer text field in distanced journal"
+  },
+  "followUpAnswer": "Follow-up Answer",
+  "@followUpAnswer": {
+    "description": "Label for the follow-up answer text field in distanced journal"
+  },
+  "answerRequired": "This field is required",
+  "@answerRequired": {
+    "description": "Validation error message when an answer field is empty"
+  },
+  "submit": "Submit",
+  "@submit": {
+    "description": "Submit button label for distanced journal"
+  },
+  "errorLoadingPlan": "Error Loading Today's Plan",
+  "@errorLoadingPlan": {
+    "description": "Error title when today's practice plan fails to load"
+  },
+  "unknownError": "Unknown error",
+  "@unknownError": {
+    "description": "Generic error message"
+  },
+  "noTasksToday": "No Tasks Today",
+  "@noTasksToday": {
+    "description": "Message when there are no tasks to complete today"
+  },
+  "completedAllTasks": "Great job! You've completed all available tasks.",
+  "@completedAllTasks": {
+    "description": "Congratulatory message when all tasks are completed"
+  },
+  "todaysPractice": "Today's Practice",
+  "@todaysPractice": {
+    "description": "Header for today's practice tasks"
+  },
+  "tasksToComplete": "{count, plural, one{task} other{tasks}} to complete",
+  "@tasksToComplete": {
+    "description": "Label showing number of tasks to complete",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "yourTasks": "Your Tasks",
+  "@yourTasks": {
+    "description": "Section header for task list"
+  },
+  "reflection": "Reflection",
+  "@reflection": {
+    "description": "Label for reflection exercise"
+  },
+  "perspectiveScenario": "Perspective Scenario",
+  "@perspectiveScenario": {
+    "description": "Label for perspective scenario exercise"
+  },
+  "comingSoon": "Coming soon",
+  "@comingSoon": {
+    "description": "Text indicating a feature is not yet available"
+  },
+  "chooseJournalChallenge": "Choose one journal challenge for today",
+  "@chooseJournalChallenge": {
+    "description": "Instruction to select a journal challenge"
+  },
+  "selectAvailablePrompts": "Select one of the available prompts that resonates with you. The difficulty levels help you find the right challenge.",
+  "@selectAvailablePrompts": {
+    "description": "Helper text explaining how to choose a journal challenge"
+  },
+  "journalCompletedToday": "Journal completed for today",
+  "@journalCompletedToday": {
+    "description": "Message indicating distanced journal is completed for the day"
+  },
+  "reflectionCompletedToday": "Reflection completed for today",
+  "@reflectionCompletedToday": {
+    "description": "Message indicating reflection is completed for the day"
+  },
+  "scenarioCompletedToday": "Scenario completed for today",
+  "@scenarioCompletedToday": {
+    "description": "Message indicating perspective scenario is completed for the day"
+  },
+  "exerciseNotInitialized": "Error: Exercise not initialized",
+  "@exerciseNotInitialized": {
+    "description": "Error message when exercise fails to initialize"
+  },
+  "responseSubmittedSuccessfully": "Response submitted successfully!",
+  "@responseSubmittedSuccessfully": {
+    "description": "Success message after submitting distanced journal response"
+  },
+  "errorSubmittingResponse": "Error submitting response: {error}",
+  "@errorSubmittingResponse": {
+    "description": "Error message when submitting distanced journal response fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "shareYourThoughts": "Share your thoughts...",
+  "@shareYourThoughts": {
+    "description": "Placeholder text for answer input fields"
+  },
+  "startingExercise": "Starting exercise...",
+  "@startingExercise": {
+    "description": "Loading message when initializing exercise"
+  },
+  "errorStartingExercise": "Error Starting Exercise",
+  "@errorStartingExercise": {
+    "description": "Error title when exercise initialization fails"
+  },
+  "loadingPersonalizedMessage": "Loading your personalized message...",
+  "@loadingPersonalizedMessage": {
+    "description": "Placeholder text while loading growth message"
+  },
+  "errorCompletingPrimer": "Error completing primer: {error}",
+  "@errorCompletingPrimer": {
+    "description": "Error message when primer completion fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "sessionFlowPageError": "Error in SessionFlowPage",
+  "@sessionFlowPageError": {
+    "description": "Error title in session flow orchestrator"
   }
 }

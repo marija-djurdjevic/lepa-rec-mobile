@@ -21,10 +21,10 @@ class AppLocalizationsSr extends AppLocalizations {
   String get welcome => 'Dobro došli';
 
   @override
-  String get primerWelcomeTitle => 'Dobro došli na putanju disanja';
+  String get primerWelcomeTitle => 'Hajde da zajedno prodišemo';
 
   @override
-  String get primerWelcomeDescription => 'Pronađi tiho mesto gde možeš biti prisutan/na sa sobom. Ovo je tvoje vreme.';
+  String get primerWelcomeDescription => 'Smesti se negde gde ti je prijatno i gde te niko neće prekidati. Ovo je tvoje vreme, zaslužuješ ga.';
 
   @override
   String get proceed => 'Nastavi';
@@ -43,7 +43,7 @@ class AppLocalizationsSr extends AppLocalizations {
     final intl.NumberFormat secondsNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String secondsString = secondsNumberFormat.format(seconds);
 
-    return 'Udahni u toku $secondsString sekundi';
+    return 'Udiši $secondsString sekundi';
   }
 
   @override
@@ -51,7 +51,7 @@ class AppLocalizationsSr extends AppLocalizations {
     final intl.NumberFormat secondsNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String secondsString = secondsNumberFormat.format(seconds);
 
-    return 'Izdahni u toku $secondsString sekundi';
+    return 'Izdiši $secondsString sekundi';
   }
 
   @override
@@ -64,10 +64,10 @@ class AppLocalizationsSr extends AppLocalizations {
   String get complete => 'Završi';
 
   @override
-  String get sessionComplete => 'Odličan posao!';
+  String get sessionComplete => 'Svaka čast, učinio/la si nešto divno za sebe!';
 
   @override
-  String get sessionCompleteMessage => 'Zavrsio/la si vežbu disanja. Radiš neverovatno!';
+  String get sessionCompleteMessage => 'Završio/la si vežbu disanja. Idemo dalje!';
 
   @override
   String get continueToNext => 'Nastavi';
@@ -76,38 +76,137 @@ class AppLocalizationsSr extends AppLocalizations {
   String get home => 'Početna';
 
   @override
-  String get dashboard => 'Kontrolna tabla';
+  String get dashboard => 'Pregled';
 
   @override
   String get loadingSession => 'Učitavanje...';
 
   @override
-  String get valueStatementTitle => 'Šta je za tebe najvažnije?';
+  String get valueStatementTitle => 'Koja izjava najviše rezonuje s tobom danas?';
 
   @override
-  String get growthMessageTitle => 'Tvoja Poruka Rasta';
+  String get growthMessageTitle => 'Poruka za tebe';
 
   @override
-  String get completePrimer => 'Završi Pripremu';
+  String get completePrimer => 'Završi pripremu';
 
   @override
-  String get errorLoadingStatements => 'Greška pri Učitavanju Iskaza';
+  String get errorLoadingStatements => 'Greška pri učitavanju iskaza';
 
   @override
-  String get failedLoadValueStatements => 'Neuspešno učitavanje vrednosnih iskaza';
+  String get failedLoadValueStatements => 'Neuspešno učitavanje iskaza';
 
   @override
-  String get errorLoadingMessage => 'Greška pri Učitavanju Poruke';
+  String get errorLoadingMessage => 'Greška pri učitavanju poruke';
 
   @override
   String get failedLoadGrowthMessage => 'Neuspešno učitavanje poruke rasta';
 
   @override
-  String get retry => 'Pokušaj Ponovo';
+  String get retry => 'Pokušaj ponovo';
 
   @override
-  String get errorRenderingGrowthMessage => 'Greška pri Crtanju Ekrana Poruke Rasta';
+  String get errorRenderingGrowthMessage => 'Greška pri prikazivanju ekrana poruke rasta';
 
   @override
-  String get errorInSessionFlowPage => 'Greška u Ekranu Toka Sesije';
+  String get errorInSessionFlowPage => 'Greška pri prikazivanju ekrana toka sesije';
+
+  @override
+  String get distancedJournal => 'Dnevnik sa distance';
+
+  @override
+  String get yourAnswer => 'Tvoj odgovor';
+
+  @override
+  String get followUpAnswer => 'Odgovor na pitanje';
+
+  @override
+  String get answerRequired => 'Ovo polje je obavezno';
+
+  @override
+  String get submit => 'Pošalji';
+
+  @override
+  String get errorLoadingPlan => 'Greška pri učitavanju današnjeg plana';
+
+  @override
+  String get unknownError => 'Nepoznata greška';
+
+  @override
+  String get noTasksToday => 'Nema zadataka danas';
+
+  @override
+  String get completedAllTasks => 'Odličan posao! Završio/la si sve dostupne zadatke.';
+
+  @override
+  String get todaysPractice => 'Današnja vežba';
+
+  @override
+  String tasksToComplete(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'zadataka',
+      one: 'zadatak',
+    );
+    return '$_temp0 za rad';
+  }
+
+  @override
+  String get yourTasks => 'Tvoji zadaci';
+
+  @override
+  String get reflection => 'Refleksija';
+
+  @override
+  String get perspectiveScenario => 'Scenario perspektive';
+
+  @override
+  String get comingSoon => 'Uskoro dostupno';
+
+  @override
+  String get chooseJournalChallenge => 'Izaberi temu o kojoj ćeš pisati danas';
+
+  @override
+  String get selectAvailablePrompts => 'Izaberi jedno od dostupnih pitanja koja te privlači. Nivoi težine ti pomažu da pronađeš pravi izazov.';
+
+  @override
+  String get journalCompletedToday => 'Dnevnik završen za danas';
+
+  @override
+  String get reflectionCompletedToday => 'Refleksija završena za danas';
+
+  @override
+  String get scenarioCompletedToday => 'Scenario završen za danas';
+
+  @override
+  String get exerciseNotInitialized => 'Greška: Vežba nije inicijalizovana';
+
+  @override
+  String get responseSubmittedSuccessfully => 'Odgovor je uspešno poslat!';
+
+  @override
+  String errorSubmittingResponse(String error) {
+    return 'Greška pri slanju odgovora: $error';
+  }
+
+  @override
+  String get shareYourThoughts => 'Podeli svoje misli...';
+
+  @override
+  String get startingExercise => 'Pokretanje vežbe...';
+
+  @override
+  String get errorStartingExercise => 'Greška pri pokretanju vežbe';
+
+  @override
+  String get loadingPersonalizedMessage => 'Učitavanje poruke...';
+
+  @override
+  String errorCompletingPrimer(String error) {
+    return 'Greška pri završavanju primerske faze: $error';
+  }
+
+  @override
+  String get sessionFlowPageError => 'Greška tokom sesije';
 }

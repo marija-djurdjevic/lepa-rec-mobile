@@ -280,6 +280,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error in SessionFlowPage'**
   String get errorInSessionFlowPage;
+
+  /// Title for the distanced journal exercise screen
+  ///
+  /// In en, this message translates to:
+  /// **'Distanced Journal'**
+  String get distancedJournal;
+
+  /// Label for the main answer text field in distanced journal
+  ///
+  /// In en, this message translates to:
+  /// **'Your Answer'**
+  String get yourAnswer;
+
+  /// Label for the follow-up answer text field in distanced journal
+  ///
+  /// In en, this message translates to:
+  /// **'Follow-up Answer'**
+  String get followUpAnswer;
+
+  /// Validation error message when an answer field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required'**
+  String get answerRequired;
+
+  /// Submit button label for distanced journal
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get submit;
+
+  /// Error title when today's practice plan fails to load
+  ///
+  /// In en, this message translates to:
+  /// **'Error Loading Today\'s Plan'**
+  String get errorLoadingPlan;
+
+  /// Generic error message
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown error'**
+  String get unknownError;
+
+  /// Message when there are no tasks to complete today
+  ///
+  /// In en, this message translates to:
+  /// **'No Tasks Today'**
+  String get noTasksToday;
+
+  /// Congratulatory message when all tasks are completed
+  ///
+  /// In en, this message translates to:
+  /// **'Great job! You\'ve completed all available tasks.'**
+  String get completedAllTasks;
+
+  /// Header for today's practice tasks
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Practice'**
+  String get todaysPractice;
+
+  /// Label showing number of tasks to complete
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{task} other{tasks}} to complete'**
+  String tasksToComplete(int count);
+
+  /// Section header for task list
+  ///
+  /// In en, this message translates to:
+  /// **'Your Tasks'**
+  String get yourTasks;
+
+  /// Label for reflection exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Reflection'**
+  String get reflection;
+
+  /// Label for perspective scenario exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Perspective Scenario'**
+  String get perspectiveScenario;
+
+  /// Text indicating a feature is not yet available
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get comingSoon;
+
+  /// Instruction to select a journal challenge
+  ///
+  /// In en, this message translates to:
+  /// **'Choose one journal challenge for today'**
+  String get chooseJournalChallenge;
+
+  /// Helper text explaining how to choose a journal challenge
+  ///
+  /// In en, this message translates to:
+  /// **'Select one of the available prompts that resonates with you. The difficulty levels help you find the right challenge.'**
+  String get selectAvailablePrompts;
+
+  /// Message indicating distanced journal is completed for the day
+  ///
+  /// In en, this message translates to:
+  /// **'Journal completed for today'**
+  String get journalCompletedToday;
+
+  /// Message indicating reflection is completed for the day
+  ///
+  /// In en, this message translates to:
+  /// **'Reflection completed for today'**
+  String get reflectionCompletedToday;
+
+  /// Message indicating perspective scenario is completed for the day
+  ///
+  /// In en, this message translates to:
+  /// **'Scenario completed for today'**
+  String get scenarioCompletedToday;
+
+  /// Error message when exercise fails to initialize
+  ///
+  /// In en, this message translates to:
+  /// **'Error: Exercise not initialized'**
+  String get exerciseNotInitialized;
+
+  /// Success message after submitting distanced journal response
+  ///
+  /// In en, this message translates to:
+  /// **'Response submitted successfully!'**
+  String get responseSubmittedSuccessfully;
+
+  /// Error message when submitting distanced journal response fails
+  ///
+  /// In en, this message translates to:
+  /// **'Error submitting response: {error}'**
+  String errorSubmittingResponse(String error);
+
+  /// Placeholder text for answer input fields
+  ///
+  /// In en, this message translates to:
+  /// **'Share your thoughts...'**
+  String get shareYourThoughts;
+
+  /// Loading message when initializing exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Starting exercise...'**
+  String get startingExercise;
+
+  /// Error title when exercise initialization fails
+  ///
+  /// In en, this message translates to:
+  /// **'Error Starting Exercise'**
+  String get errorStartingExercise;
+
+  /// Placeholder text while loading growth message
+  ///
+  /// In en, this message translates to:
+  /// **'Loading your personalized message...'**
+  String get loadingPersonalizedMessage;
+
+  /// Error message when primer completion fails
+  ///
+  /// In en, this message translates to:
+  /// **'Error completing primer: {error}'**
+  String errorCompletingPrimer(String error);
+
+  /// Error title in session flow orchestrator
+  ///
+  /// In en, this message translates to:
+  /// **'Error in SessionFlowPage'**
+  String get sessionFlowPageError;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

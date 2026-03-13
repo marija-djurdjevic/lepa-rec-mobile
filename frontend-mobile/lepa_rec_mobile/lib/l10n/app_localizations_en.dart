@@ -110,4 +110,103 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorInSessionFlowPage => 'Error in SessionFlowPage';
+
+  @override
+  String get distancedJournal => 'Distanced Journal';
+
+  @override
+  String get yourAnswer => 'Your Answer';
+
+  @override
+  String get followUpAnswer => 'Follow-up Answer';
+
+  @override
+  String get answerRequired => 'This field is required';
+
+  @override
+  String get submit => 'Submit';
+
+  @override
+  String get errorLoadingPlan => 'Error Loading Today\'s Plan';
+
+  @override
+  String get unknownError => 'Unknown error';
+
+  @override
+  String get noTasksToday => 'No Tasks Today';
+
+  @override
+  String get completedAllTasks => 'Great job! You\'ve completed all available tasks.';
+
+  @override
+  String get todaysPractice => 'Today\'s Practice';
+
+  @override
+  String tasksToComplete(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'tasks',
+      one: 'task',
+    );
+    return '$_temp0 to complete';
+  }
+
+  @override
+  String get yourTasks => 'Your Tasks';
+
+  @override
+  String get reflection => 'Reflection';
+
+  @override
+  String get perspectiveScenario => 'Perspective Scenario';
+
+  @override
+  String get comingSoon => 'Coming soon';
+
+  @override
+  String get chooseJournalChallenge => 'Choose one journal challenge for today';
+
+  @override
+  String get selectAvailablePrompts => 'Select one of the available prompts that resonates with you. The difficulty levels help you find the right challenge.';
+
+  @override
+  String get journalCompletedToday => 'Journal completed for today';
+
+  @override
+  String get reflectionCompletedToday => 'Reflection completed for today';
+
+  @override
+  String get scenarioCompletedToday => 'Scenario completed for today';
+
+  @override
+  String get exerciseNotInitialized => 'Error: Exercise not initialized';
+
+  @override
+  String get responseSubmittedSuccessfully => 'Response submitted successfully!';
+
+  @override
+  String errorSubmittingResponse(String error) {
+    return 'Error submitting response: $error';
+  }
+
+  @override
+  String get shareYourThoughts => 'Share your thoughts...';
+
+  @override
+  String get startingExercise => 'Starting exercise...';
+
+  @override
+  String get errorStartingExercise => 'Error Starting Exercise';
+
+  @override
+  String get loadingPersonalizedMessage => 'Loading your personalized message...';
+
+  @override
+  String errorCompletingPrimer(String error) {
+    return 'Error completing primer: $error';
+  }
+
+  @override
+  String get sessionFlowPageError => 'Error in SessionFlowPage';
 }

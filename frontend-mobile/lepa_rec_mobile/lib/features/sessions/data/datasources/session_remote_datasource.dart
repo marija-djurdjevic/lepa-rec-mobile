@@ -1,16 +1,18 @@
-import 'package:flutter/foundation.dart';
 import '../../../../core/network/api_client.dart';
 import '../models/complete_primer_dto.dart';
 import '../models/daily_session_state_dto.dart';
+import '../models/distanced_journal_exercise_dto.dart';
 import '../models/growth_message_dto.dart';
 import '../models/primer_statement_dto.dart';
+import '../models/start_distanced_journal_exercise_dto.dart';
+import '../models/submit_distanced_journal_answer_dto.dart';
+import '../models/today_practice_plan_dto.dart';
 
 class SessionRemoteDataSource {
   static const String _baseEndpoint = '/sessions';
 
   Future<DailySessionStateDto> getTodaySession() async {
     const path = '$_baseEndpoint/today';
-    final fullUrl = '${ApiClient.dio.options.baseUrl}$path';
 
     try {
       final response = await ApiClient.dio.get(path);
@@ -26,7 +28,6 @@ class SessionRemoteDataSource {
 
   Future<DailySessionStateDto> completePrimer() async {
     const path = '$_baseEndpoint/primer/complete';
-    final fullUrl = '${ApiClient.dio.options.baseUrl}$path';
 
     try {
       final response = await ApiClient.dio.post(
@@ -45,7 +46,6 @@ class SessionRemoteDataSource {
 
   Future<void> completePrimerWithData(CompletePrimerDto primerData) async {
     const path = '$_baseEndpoint/primer/complete';
-    final fullUrl = '${ApiClient.dio.options.baseUrl}$path';
     try {
       final response = await ApiClient.dio.post(
         path,
@@ -59,7 +59,6 @@ class SessionRemoteDataSource {
 
   Future<List<PrimerStatementDto>> getRandomPrimerStatements() async {
     const path = '/practice/affirmation-values/random-statements';
-    final fullUrl = '${ApiClient.dio.options.baseUrl}$path';
 
     try {
       final response = await ApiClient.dio.get(path);
@@ -78,7 +77,6 @@ class SessionRemoteDataSource {
 
   Future<GrowthMessageDto> getRandomGrowthMessage() async {
     const path = '/practice/growth-messages/random';
-    final fullUrl = '${ApiClient.dio.options.baseUrl}$path';
 
     try {
       final response = await ApiClient.dio.get(path);
@@ -94,7 +92,6 @@ class SessionRemoteDataSource {
 
   Future<DailySessionStateDto> recordExercise(String exerciseName) async {
     const path = '$_baseEndpoint/exercises/record';
-    final fullUrl = '${ApiClient.dio.options.baseUrl}$path';
 
     try {
       final response = await ApiClient.dio.post(
@@ -113,7 +110,6 @@ class SessionRemoteDataSource {
 
   Future<DailySessionStateDto> completeSession() async {
     const path = '$_baseEndpoint/complete';
-    final fullUrl = '${ApiClient.dio.options.baseUrl}$path';
 
     try {
       final response = await ApiClient.dio.post(path);
@@ -122,6 +118,58 @@ class SessionRemoteDataSource {
           DailySessionStateDto.fromJson(response.data as Map<String, dynamic>);
      
       return dto;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<TodayPracticePlanDto> getTodaysPracticePlan() async {
+    const path = '$_baseEndpoint/today-plan';
+
+    try {
+      final response = await ApiClient.dio.get(path);
+
+      final dto = TodayPracticePlanDto.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+
+      return dto;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<DistancedJournalExerciseDto> startDistancedJournalExercise(
+    StartDistancedJournalExerciseDto startRequest,
+  ) async {
+    const path = '/DistancedJournals/start';
+
+    try {
+      final response = await ApiClient.dio.post(
+        path,
+        data: startRequest.toJson(),
+      );
+
+      final dto = DistancedJournalExerciseDto.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+
+      return dto;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> submitDistancedJournalAnswer(
+    SubmitDistancedJournalAnswerDto submitRequest,
+  ) async {
+    const path = '/DistancedJournals/submit';
+
+    try {
+      await ApiClient.dio.post(
+        path,
+        data: submitRequest.toJson(),
+      );
     } catch (e) {
       rethrow;
     }
