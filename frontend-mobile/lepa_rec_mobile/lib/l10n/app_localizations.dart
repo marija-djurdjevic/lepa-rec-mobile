@@ -454,6 +454,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error in SessionFlowPage'**
   String get sessionFlowPageError;
+
+  /// Title for the reflection screen
+  ///
+  /// In en, this message translates to:
+  /// **'Your Reflection'**
+  String get reflectionTitle;
+
+  /// Main prompt for the reflection exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Do you have any new insights on this topic?'**
+  String get reflectionPrompt;
+
+  /// Label for yesterday's journal topic
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday\'s Topic'**
+  String get yesterdaysTopic;
+
+  /// Label for the user's previous main answer
+  ///
+  /// In en, this message translates to:
+  /// **'Your Answer'**
+  String get yourPreviousAnswer;
+
+  /// Label for the previous follow-up question
+  ///
+  /// In en, this message translates to:
+  /// **'Follow-up Question'**
+  String get previousFollowUpQuestion;
+
+  /// Label for the user's previous follow-up answer
+  ///
+  /// In en, this message translates to:
+  /// **'Your Follow-up Answer'**
+  String get yourPreviousFollowUpAnswer;
+
+  /// Label for today's reflection input field
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Reflection'**
+  String get todayReflection;
+
+  /// Validation error message when reflection field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Please share your reflection'**
+  String get reflectionRequired;
+
+  /// Success message after submitting reflection
+  ///
+  /// In en, this message translates to:
+  /// **'Reflection submitted successfully!'**
+  String get reflectionSubmittedSuccessfully;
+
+  /// Error message when reflection submission fails
+  ///
+  /// In en, this message translates to:
+  /// **'Error submitting reflection: {error}'**
+  String errorSubmittingReflection(String error);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

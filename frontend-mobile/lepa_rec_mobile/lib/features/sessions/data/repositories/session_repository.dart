@@ -6,6 +6,7 @@ import '../models/growth_message_dto.dart';
 import '../models/primer_statement_dto.dart';
 import '../models/start_distanced_journal_exercise_dto.dart';
 import '../models/submit_distanced_journal_answer_dto.dart';
+import '../models/submit_reflection_answer_dto.dart';
 import '../models/today_practice_plan_dto.dart';
 
 class SessionRepository {
@@ -44,4 +45,7 @@ class SessionRepository {
     SubmitDistancedJournalAnswerDto submitRequest,
   ) =>
       _remote.submitDistancedJournalAnswer(submitRequest);
+
+  Future<void> submitReflectionAnswer(SubmitReflectionAnswerDto submitRequest) =>
+      _remote.submitReflectionAnswer(submitRequest);
 }

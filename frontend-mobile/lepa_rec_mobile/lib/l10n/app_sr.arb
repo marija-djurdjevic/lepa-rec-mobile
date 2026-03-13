@@ -265,6 +265,49 @@
   },
   "sessionFlowPageError": "Greška tokom sesije",
   "@sessionFlowPageError": {
-    "description": "Naslov greške u orcestratoru toka sesije"
-  }
+    "description": "Naslov greške u orcestratoru toka sesije"  },
+  "reflectionTitle": "Tvoj Osvrt",
+  "@reflectionTitle": {
+    "description": "Naslov za ekran osvrtanja"
+  },
+  "reflectionPrompt": "Da li imaš neki novi uvid na ovu temu?",
+  "@reflectionPrompt": {
+    "description": "Glavna poruka za vežbu osvrtanja"
+  },
+  "yesterdaysTopic": "Jučerašnja tema",
+  "@yesterdaysTopic": {
+    "description": "Labela za jučerašnju temu dnevnika"
+  },
+  "yourPreviousAnswer": "Tvoj odgovor",
+  "@yourPreviousAnswer": {
+    "description": "Labela za korisnički prethodni glavni odgovor"
+  },
+  "previousFollowUpQuestion": "Dodatno pitanje",
+  "@previousFollowUpQuestion": {
+    "description": "Labela za prethodno nastavno pitanje"
+  },
+  "yourPreviousFollowUpAnswer": "Tvoj odgovor na pitanje",
+  "@yourPreviousFollowUpAnswer": {
+    "description": "Labela za korisnički prethodni odgovor na nastavno pitanje"
+  },
+  "todayReflection": "Današnja refleksija",
+  "@todayReflection": {
+    "description": "Labela za danasnje polje unosa osvrtanja"
+  },
+  "reflectionRequired": "Molim te podeli tvoj osvrt",
+  "@reflectionRequired": {
+    "description": "Poruka greške pri validaciji kada je polje osvrtanja prazno"
+  },
+  "reflectionSubmittedSuccessfully": "Osvrt je uspešno poslat!",
+  "@reflectionSubmittedSuccessfully": {
+    "description": "Poruka uspeha nakon slanja osvrtanja"
+  },
+  "errorSubmittingReflection": "Greška pri slanju osvrtanja: {error}",
+  "@errorSubmittingReflection": {
+    "description": "Poruka greške ako slanje osvrtanja ne uspije",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }  }
 }

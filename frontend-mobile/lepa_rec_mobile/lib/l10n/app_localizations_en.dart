@@ -209,4 +209,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sessionFlowPageError => 'Error in SessionFlowPage';
+
+  @override
+  String get reflectionTitle => 'Your Reflection';
+
+  @override
+  String get reflectionPrompt => 'Do you have any new insights on this topic?';
+
+  @override
+  String get yesterdaysTopic => 'Yesterday\'s Topic';
+
+  @override
+  String get yourPreviousAnswer => 'Your Answer';
+
+  @override
+  String get previousFollowUpQuestion => 'Follow-up Question';
+
+  @override
+  String get yourPreviousFollowUpAnswer => 'Your Follow-up Answer';
+
+  @override
+  String get todayReflection => 'Today\'s Reflection';
+
+  @override
+  String get reflectionRequired => 'Please share your reflection';
+
+  @override
+  String get reflectionSubmittedSuccessfully => 'Reflection submitted successfully!';
+
+  @override
+  String errorSubmittingReflection(String error) {
+    return 'Error submitting reflection: $error';
+  }
 }

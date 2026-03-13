@@ -266,5 +266,50 @@
   "sessionFlowPageError": "Error in SessionFlowPage",
   "@sessionFlowPageError": {
     "description": "Error title in session flow orchestrator"
+  },
+  "reflectionTitle": "Your Reflection",
+  "@reflectionTitle": {
+    "description": "Title for the reflection screen"
+  },
+  "reflectionPrompt": "Do you have any new insights on this topic?",
+  "@reflectionPrompt": {
+    "description": "Main prompt for the reflection exercise"
+  },
+  "yesterdaysTopic": "Yesterday's Topic",
+  "@yesterdaysTopic": {
+    "description": "Label for yesterday's journal topic"
+  },
+  "yourPreviousAnswer": "Your Answer",
+  "@yourPreviousAnswer": {
+    "description": "Label for the user's previous main answer"
+  },
+  "previousFollowUpQuestion": "Follow-up Question",
+  "@previousFollowUpQuestion": {
+    "description": "Label for the previous follow-up question"
+  },
+  "yourPreviousFollowUpAnswer": "Your Follow-up Answer",
+  "@yourPreviousFollowUpAnswer": {
+    "description": "Label for the user's previous follow-up answer"
+  },
+  "todayReflection": "Today's Reflection",
+  "@todayReflection": {
+    "description": "Label for today's reflection input field"
+  },
+  "reflectionRequired": "Please share your reflection",
+  "@reflectionRequired": {
+    "description": "Validation error message when reflection field is empty"
+  },
+  "reflectionSubmittedSuccessfully": "Reflection submitted successfully!",
+  "@reflectionSubmittedSuccessfully": {
+    "description": "Success message after submitting reflection"
+  },
+  "errorSubmittingReflection": "Error submitting reflection: {error}",
+  "@errorSubmittingReflection": {
+    "description": "Error message when reflection submission fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
   }
 }

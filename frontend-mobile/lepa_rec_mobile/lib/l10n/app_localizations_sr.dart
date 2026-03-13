@@ -118,7 +118,7 @@ class AppLocalizationsSr extends AppLocalizations {
   String get yourAnswer => 'Tvoj odgovor';
 
   @override
-  String get followUpAnswer => 'Odgovor na pitanje';
+  String get followUpAnswer => 'Tvoj odgovor';
 
   @override
   String get answerRequired => 'Ovo polje je obavezno';
@@ -209,4 +209,36 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String get sessionFlowPageError => 'Greška tokom sesije';
+
+  @override
+  String get reflectionTitle => 'Tvoj Osvrt';
+
+  @override
+  String get reflectionPrompt => 'Da li imaš neki novi uvid na ovu temu?';
+
+  @override
+  String get yesterdaysTopic => 'Jučerašnja tema';
+
+  @override
+  String get yourPreviousAnswer => 'Tvoj odgovor';
+
+  @override
+  String get previousFollowUpQuestion => 'Dodatno pitanje';
+
+  @override
+  String get yourPreviousFollowUpAnswer => 'Tvoj odgovor na pitanje';
+
+  @override
+  String get todayReflection => 'Današnja refleksija';
+
+  @override
+  String get reflectionRequired => 'Molim te podeli tvoj osvrt';
+
+  @override
+  String get reflectionSubmittedSuccessfully => 'Osvrt je uspešno poslat!';
+
+  @override
+  String errorSubmittingReflection(String error) {
+    return 'Greška pri slanju osvrtanja: $error';
+  }
 }

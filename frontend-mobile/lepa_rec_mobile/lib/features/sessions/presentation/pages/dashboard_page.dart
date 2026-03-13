@@ -7,6 +7,7 @@ import '../../data/models/today_practice_task_dto.dart';
 import '../../data/repositories/session_repository.dart';
 import '../models/dashboard_view_state.dart';
 import 'distanced_journal_page.dart';
+import 'reflection_page.dart';
 
 class DashboardPage extends StatefulWidget {
   final VoidCallback? onLogout;
@@ -59,7 +60,30 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   void _handleReflectionTap() {
-    // TODO: Navigate to reflection detail screen
+    if (_viewState.todayPlan?.reflectionPrompt == null) {
+      return;
+    }
+
+    _navigateToReflection(_viewState.todayPlan!.reflectionPrompt!);
+  }
+
+  Future<void> _navigateToReflection(
+    DistancedJournalReflectionPromptDto reflectionPrompt,
+  ) async {
+    final result = await Navigator.push<bool?>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ReflectionPage(
+          reflectionPrompt: reflectionPrompt,
+        ),
+      ),
+    );
+
+    if (!mounted) return;
+
+    if (result == true) {
+      _loadTodaysPlan();
+    }
   }
 
   Future<void> _handleJournalTap(DistancedJournalChallengeDto challenge) async {

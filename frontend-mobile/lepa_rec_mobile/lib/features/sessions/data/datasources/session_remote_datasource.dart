@@ -6,6 +6,7 @@ import '../models/growth_message_dto.dart';
 import '../models/primer_statement_dto.dart';
 import '../models/start_distanced_journal_exercise_dto.dart';
 import '../models/submit_distanced_journal_answer_dto.dart';
+import '../models/submit_reflection_answer_dto.dart';
 import '../models/today_practice_plan_dto.dart';
 
 class SessionRemoteDataSource {
@@ -164,6 +165,21 @@ class SessionRemoteDataSource {
     SubmitDistancedJournalAnswerDto submitRequest,
   ) async {
     const path = '/DistancedJournals/submit';
+
+    try {
+      await ApiClient.dio.post(
+        path,
+        data: submitRequest.toJson(),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> submitReflectionAnswer(
+    SubmitReflectionAnswerDto submitRequest,
+  ) async {
+    const path = '/DistancedJournals/reflection';
 
     try {
       await ApiClient.dio.post(
