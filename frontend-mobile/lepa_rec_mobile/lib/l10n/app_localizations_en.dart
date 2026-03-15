@@ -232,10 +232,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get todayReflection => 'Today\'s Reflection';
 
   @override
+  String get journalFeedbackTitle => 'Reflection Feedback';
+
+  @override
+  String get journalFeedbackSubtitle => 'Here is a gentle reflection on your journaling style';
+
+  @override
+  String get continueToDashboard => 'Continue';
+
+  @override
+  String get goodDistancingFeedback => 'You described the situation with a good sense of distance. This can help you look at the experience more calmly.';
+
+  @override
+  String get mixedDistancingFeedback => 'You already show some distance in the way you wrote. You can go even further by talking about yourself more from the outside.';
+
+  @override
+  String get needsMoreDistancingFeedback => 'Your response stayed quite close to the immediate experience. Next time, try describing the event more as if you were observing someone from the outside.';
+
+  @override
   String get reflectionRequired => 'Please share your reflection';
 
   @override
   String get reflectionSubmittedSuccessfully => 'Reflection submitted successfully!';
+
+  @override
+  String get startBreathing => 'Tap to start';
+
+  @override
+  String get beginWhenReady => 'Begin when you are ready';
+
+  @override
+  String get getReady => 'Get ready';
 
   @override
   String errorSubmittingReflection(String error) {

@@ -41,10 +41,10 @@ class SessionRepository {
   ) =>
       _remote.startDistancedJournalExercise(startRequest);
 
-  Future<void> submitDistancedJournalAnswer(
-    SubmitDistancedJournalAnswerDto submitRequest,
+  Future<SubmitDistancedJournalResultDto> submitDistancedJournalAnswer(
+  SubmitDistancedJournalAnswerDto submitRequest,
   ) =>
-      _remote.submitDistancedJournalAnswer(submitRequest);
+    _remote.submitDistancedJournalAnswer(submitRequest);
 
   Future<void> submitReflectionAnswer(SubmitReflectionAnswerDto submitRequest) =>
       _remote.submitReflectionAnswer(submitRequest);

@@ -295,6 +295,30 @@
   "@todayReflection": {
     "description": "Label for today's reflection input field"
   },
+  "journalFeedbackTitle": "Reflection Feedback",
+"@journalFeedbackTitle": {
+  "description": "Title for the journal feedback screen"
+},
+"journalFeedbackSubtitle": "Here is a gentle reflection on your journaling style",
+"@journalFeedbackSubtitle": {
+  "description": "Subtitle on the feedback screen"
+},
+"continueToDashboard": "Continue",
+"@continueToDashboard": {
+  "description": "Button text to continue back to dashboard"
+},
+"goodDistancingFeedback": "You described the situation with a good sense of distance. This can help you look at the experience more calmly.",
+"@goodDistancingFeedback": {
+  "description": "Feedback shown when distancing was good"
+},
+"mixedDistancingFeedback": "You already show some distance in the way you wrote. You can go even further by talking about yourself more from the outside.",
+"@mixedDistancingFeedback": {
+  "description": "Feedback shown when distancing is mixed"
+},
+"needsMoreDistancingFeedback": "Your response stayed quite close to the immediate experience. Next time, try describing the event more as if you were observing someone from the outside.",
+"@needsMoreDistancingFeedback": {
+  "description": "Feedback shown when more distancing is needed"
+},
   "reflectionRequired": "Please share your reflection",
   "@reflectionRequired": {
     "description": "Validation error message when reflection field is empty"
@@ -303,6 +327,20 @@
   "@reflectionSubmittedSuccessfully": {
     "description": "Success message after submitting reflection"
   },
+
+  "startBreathing": "Tap to start",
+"@startBreathing": {
+  "description": "Text shown inside the breathing circle before the exercise starts"
+},
+"beginWhenReady": "Begin when you are ready",
+"@beginWhenReady": {
+  "description": "Instruction shown before the breathing exercise starts"
+},
+"getReady": "Get ready",
+"@getReady": {
+  "description": "Text shown during the short countdown before the breathing exercise starts"
+},
+  
   "errorSubmittingReflection": "Error submitting reflection: {error}",
   "@errorSubmittingReflection": {
     "description": "Error message when reflection submission fails",

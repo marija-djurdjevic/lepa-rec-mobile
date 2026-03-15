@@ -232,10 +232,37 @@ class AppLocalizationsSr extends AppLocalizations {
   String get todayReflection => 'Današnja refleksija';
 
   @override
+  String get journalFeedbackTitle => 'Povratna poruka';
+
+  @override
+  String get journalFeedbackSubtitle => 'Evo kratkog osvrta na način na koji si pisao/la';
+
+  @override
+  String get continueToDashboard => 'Nastavi';
+
+  @override
+  String get goodDistancingFeedback => 'Situaciju si opisao/la sa dobrom dozom distance. To može pomoći da je sagledaš mirnije i jasnije.';
+
+  @override
+  String get mixedDistancingFeedback => 'U pisanju se već vidi određena distanca. Sledeći put možeš još više govoriti o sebi kao o nekome sa strane.';
+
+  @override
+  String get needsMoreDistancingFeedback => 'Odgovor je ostao dosta blizu neposrednom doživljaju. Sledeći put pokušaj da događaj opišeš više kao da posmatraš nekoga sa strane.';
+
+  @override
   String get reflectionRequired => 'Molim te podeli tvoj osvrt';
 
   @override
   String get reflectionSubmittedSuccessfully => 'Osvrt je uspešno poslat!';
+
+  @override
+  String get startBreathing => 'Dodirni za početak';
+
+  @override
+  String get beginWhenReady => 'Započni kada budeš spreman/na';
+
+  @override
+  String get getReady => 'Pripremi se';
 
   @override
   String errorSubmittingReflection(String error) {

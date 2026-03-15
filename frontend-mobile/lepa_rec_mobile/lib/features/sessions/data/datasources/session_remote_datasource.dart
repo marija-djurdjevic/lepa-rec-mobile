@@ -9,6 +9,44 @@ import '../models/submit_distanced_journal_answer_dto.dart';
 import '../models/submit_reflection_answer_dto.dart';
 import '../models/today_practice_plan_dto.dart';
 
+class SubmitDistancedJournalResultDto {
+  final DistancedJournalExerciseDto exercise;
+  final String feedbackType;
+
+  SubmitDistancedJournalResultDto({
+    required this.exercise,
+    required this.feedbackType,
+  });
+
+  factory SubmitDistancedJournalResultDto.fromJson(
+    Map<String, dynamic> json,
+  ) {
+    return SubmitDistancedJournalResultDto(
+      exercise: DistancedJournalExerciseDto.fromJson(
+        json['exercise'] as Map<String, dynamic>,
+      ),
+      feedbackType: _mapFeedbackType(json['feedbackType']),
+    );
+  }
+
+  static String _mapFeedbackType(dynamic value) {
+  switch (value) {
+    case 0:
+      return 'GoodDistancing';
+    case 1:
+      return 'MixedDistancing';
+    case 2:
+      return 'NeedsMoreDistancing';
+    default:
+      return value.toString();
+  }
+}
+  Map<String, dynamic> toJson() => {
+        'exercise': exercise.toJson(),
+        'feedbackType': feedbackType,
+      };
+}
+
 class SessionRemoteDataSource {
   static const String _baseEndpoint = '/sessions';
 
@@ -161,20 +199,18 @@ class SessionRemoteDataSource {
     }
   }
 
-  Future<void> submitDistancedJournalAnswer(
-    SubmitDistancedJournalAnswerDto submitRequest,
-  ) async {
-    const path = '/DistancedJournals/submit';
+  Future<SubmitDistancedJournalResultDto> submitDistancedJournalAnswer(
+  SubmitDistancedJournalAnswerDto submitRequest,
+) async {
+  final response = await ApiClient.dio.post(
+    '/DistancedJournals/submit',
+    data: submitRequest.toJson(),
+  );
 
-    try {
-      await ApiClient.dio.post(
-        path,
-        data: submitRequest.toJson(),
-      );
-    } catch (e) {
-      rethrow;
-    }
-  }
+  return SubmitDistancedJournalResultDto.fromJson(
+    response.data as Map<String, dynamic>,
+  );
+}
 
   Future<void> submitReflectionAnswer(
     SubmitReflectionAnswerDto submitRequest,

@@ -6,6 +6,7 @@ import '../../data/models/distanced_journal_challenge_dto.dart';
 import '../../data/models/start_distanced_journal_exercise_dto.dart';
 import '../../data/models/submit_distanced_journal_answer_dto.dart';
 import '../../data/repositories/session_repository.dart';
+import 'journal_feedback_page.dart';
 
 class DistancedJournalPage extends StatefulWidget {
   final DistancedJournalChallengeDto challenge;
@@ -108,8 +109,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
         reflection: null,
       );
 
-      await _sessionRepository.submitDistancedJournalAnswer(submitRequest);
-
+      final result = await _sessionRepository.submitDistancedJournalAnswer(submitRequest);
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -120,9 +120,21 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
         ),
       );
 
-      if (mounted) {
-        Navigator.pop(context, true);
-      }
+
+final feedbackCompleted = await Navigator.push<bool>(
+  context,
+  MaterialPageRoute(
+    builder: (context) => JournalFeedbackPage(
+      feedbackType: result.feedbackType,
+    ),
+  ),
+);
+
+if (!mounted) return;
+
+if (feedbackCompleted == true) {
+  Navigator.pop(context, true);
+}
     } catch (e) {
       if (!mounted) return;
 

@@ -497,6 +497,42 @@ abstract class AppLocalizations {
   /// **'Today\'s Reflection'**
   String get todayReflection;
 
+  /// Title for the journal feedback screen
+  ///
+  /// In en, this message translates to:
+  /// **'Reflection Feedback'**
+  String get journalFeedbackTitle;
+
+  /// Subtitle on the feedback screen
+  ///
+  /// In en, this message translates to:
+  /// **'Here is a gentle reflection on your journaling style'**
+  String get journalFeedbackSubtitle;
+
+  /// Button text to continue back to dashboard
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueToDashboard;
+
+  /// Feedback shown when distancing was good
+  ///
+  /// In en, this message translates to:
+  /// **'You described the situation with a good sense of distance. This can help you look at the experience more calmly.'**
+  String get goodDistancingFeedback;
+
+  /// Feedback shown when distancing is mixed
+  ///
+  /// In en, this message translates to:
+  /// **'You already show some distance in the way you wrote. You can go even further by talking about yourself more from the outside.'**
+  String get mixedDistancingFeedback;
+
+  /// Feedback shown when more distancing is needed
+  ///
+  /// In en, this message translates to:
+  /// **'Your response stayed quite close to the immediate experience. Next time, try describing the event more as if you were observing someone from the outside.'**
+  String get needsMoreDistancingFeedback;
+
   /// Validation error message when reflection field is empty
   ///
   /// In en, this message translates to:
@@ -508,6 +544,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reflection submitted successfully!'**
   String get reflectionSubmittedSuccessfully;
+
+  /// Text shown inside the breathing circle before the exercise starts
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to start'**
+  String get startBreathing;
+
+  /// Instruction shown before the breathing exercise starts
+  ///
+  /// In en, this message translates to:
+  /// **'Begin when you are ready'**
+  String get beginWhenReady;
+
+  /// Text shown during the short countdown before the breathing exercise starts
+  ///
+  /// In en, this message translates to:
+  /// **'Get ready'**
+  String get getReady;
 
   /// Error message when reflection submission fails
   ///
