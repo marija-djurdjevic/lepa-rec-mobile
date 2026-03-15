@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/localization/localization_extension.dart';
 import '../../data/models/distanced_journal_challenge_dto.dart';
+import '../../data/models/today_practice_plan_dto.dart';
 import '../../data/models/today_practice_task_dto.dart';
 import '../../data/repositories/session_repository.dart';
 import '../models/dashboard_view_state.dart';
@@ -25,12 +26,39 @@ class _DashboardPageState extends State<DashboardPage> {
   late final SessionRepository _sessionRepository;
   late DashboardViewState _viewState;
 
+  bool _isCompletingSession = false;
+
   @override
   void initState() {
     super.initState();
     _sessionRepository = SessionRepository();
     _viewState = DashboardViewState(isLoading: true);
     _loadTodaysPlan();
+  }
+
+  bool _hasActiveTasks(TodayPracticePlanDto plan) {
+    return (plan.reflectionPrompt != null && !plan.isReflectionCompleted) ||
+        (plan.distancedJournalChoices.isNotEmpty &&
+            !plan.isDistancedJournalCompleted) ||
+        (plan.shouldShowPerspectiveScenario &&
+            !plan.isPerspectiveScenarioCompleted);
+  }
+
+  Future<void> _completeSessionIfNeeded(TodayPracticePlanDto plan) async {
+    if (_isCompletingSession) return;
+
+    final hasActiveTasks = _hasActiveTasks(plan);
+    if (hasActiveTasks) return;
+
+    _isCompletingSession = true;
+
+    try {
+      await _sessionRepository.completeSession();
+    } catch (_) {
+      // namjerno ne rušimo UX ako complete session ne uspije
+    } finally {
+      _isCompletingSession = false;
+    }
   }
 
   Future<void> _loadTodaysPlan() async {
@@ -46,6 +74,8 @@ class _DashboardPageState extends State<DashboardPage> {
           errorMessage: null,
         );
       });
+
+      await _completeSessionIfNeeded(plan);
     } catch (e) {
       if (!mounted) return;
 
@@ -82,12 +112,11 @@ class _DashboardPageState extends State<DashboardPage> {
     if (!mounted) return;
 
     if (result == true) {
-      _loadTodaysPlan();
+      await _loadTodaysPlan();
     }
   }
 
   Future<void> _handleJournalTap(DistancedJournalChallengeDto challenge) async {
-
     final result = await Navigator.push<bool?>(
       context,
       MaterialPageRoute(
@@ -100,8 +129,7 @@ class _DashboardPageState extends State<DashboardPage> {
     if (!mounted) return;
 
     if (result == true) {
-      _loadTodaysPlan();
-    } else {
+      await _loadTodaysPlan();
     }
   }
 
@@ -247,11 +275,9 @@ class _DashboardPageState extends State<DashboardPage> {
           SliverToBoxAdapter(
             child: _buildGreetingSection(),
           ),
-
           SliverToBoxAdapter(
             child: _buildTasksHeader(),
           ),
-
           if (plan.reflectionPrompt != null && !plan.isReflectionCompleted)
             SliverToBoxAdapter(
               child: _buildReflectionTaskCard(plan.reflectionPrompt!),
@@ -260,7 +286,6 @@ class _DashboardPageState extends State<DashboardPage> {
             SliverToBoxAdapter(
               child: _buildReflectionCompletedCard(),
             ),
-
           if (!plan.isDistancedJournalCompleted &&
               plan.distancedJournalChoices.isNotEmpty)
             SliverToBoxAdapter(
@@ -270,7 +295,6 @@ class _DashboardPageState extends State<DashboardPage> {
             SliverToBoxAdapter(
               child: _buildDistancedJournalCompletedCard(),
             ),
-
           if (plan.shouldShowPerspectiveScenario &&
               !plan.isPerspectiveScenarioCompleted)
             SliverToBoxAdapter(
@@ -280,8 +304,6 @@ class _DashboardPageState extends State<DashboardPage> {
             SliverToBoxAdapter(
               child: _buildPerspectiveScenarioCompletedCard(),
             ),
-
-          // Bottom padding
           SliverToBoxAdapter(
             child: const SizedBox(height: 32),
           ),
@@ -305,7 +327,6 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
           ),
           const SizedBox(height: 8),
-        
         ],
       ),
     );
@@ -329,10 +350,7 @@ class _DashboardPageState extends State<DashboardPage> {
     DistancedJournalReflectionPromptDto reflection,
   ) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 24,
-        vertical: 12,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       child: GestureDetector(
         onTap: _handleReflectionTap,
         child: Container(
@@ -411,10 +429,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Widget _buildPerspectiveScenarioCard() {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 24,
-        vertical: 12,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -490,10 +505,7 @@ class _DashboardPageState extends State<DashboardPage> {
     List<DistancedJournalChallengeDto> challenges,
   ) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 24,
-        vertical: 12,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -515,7 +527,6 @@ class _DashboardPageState extends State<DashboardPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Title
               Row(
                 children: [
                   Container(
@@ -547,8 +558,6 @@ class _DashboardPageState extends State<DashboardPage> {
                 ],
               ),
               const SizedBox(height: 12),
-
-              // Helper text
               Text(
                 context.l10n.chooseJournalChallenge,
                 style: GoogleFonts.quicksand(
@@ -568,8 +577,6 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Challenge options
               ...challenges.map((challenge) {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12),
@@ -590,7 +597,7 @@ class _DashboardPageState extends State<DashboardPage> {
         onTap: () => _handleJournalTap(challenge),
         borderRadius: BorderRadius.circular(8),
         child: Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.grey[50],
             borderRadius: BorderRadius.circular(8),
@@ -600,6 +607,7 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
           ),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 width: 32,
@@ -631,11 +639,12 @@ class _DashboardPageState extends State<DashboardPage> {
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                         color: Colors.black87,
+                        height: 1.4,
                       ),
-                      maxLines: 1,
+                      maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 6,
@@ -658,10 +667,13 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ),
               const SizedBox(width: 8),
-              Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.grey[400],
-                size: 14,
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Icon(
+                  Icons.arrow_forward_ios,
+                  color: Colors.grey[400],
+                  size: 14,
+                ),
               ),
             ],
           ),
@@ -672,10 +684,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Widget _buildDistancedJournalCompletedCard() {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 24,
-        vertical: 12,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -745,10 +754,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Widget _buildReflectionCompletedCard() {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 24,
-        vertical: 12,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -818,10 +824,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Widget _buildPerspectiveScenarioCompletedCard() {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 24,
-        vertical: 12,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -902,4 +905,3 @@ class _DashboardPageState extends State<DashboardPage> {
     }
   }
 }
-

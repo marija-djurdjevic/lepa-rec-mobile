@@ -25,10 +25,6 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
   late final TextEditingController _followUpAnswerController;
   late final SessionRepository _sessionRepository;
 
-  String? _exerciseId;
-  bool _isInitializing = true;
-  String? _initializationError;
-
   bool _showValidationErrors = false;
   bool _isSubmitting = false;
 
@@ -38,32 +34,6 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
     _mainAnswerController = TextEditingController();
     _followUpAnswerController = TextEditingController();
     _sessionRepository = SessionRepository();
-    _startExercise();
-  }
-
-  Future<void> _startExercise() async {
-    try {
-      final startRequest = StartDistancedJournalExerciseDto(
-        challengeId: widget.challenge.id,
-      );
-
-      final exercise =
-          await _sessionRepository.startDistancedJournalExercise(startRequest);
-
-      if (!mounted) return;
-
-      setState(() {
-        _exerciseId = exercise.id;
-        _isInitializing = false;
-        _initializationError = null;
-      });
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _isInitializing = false;
-        _initializationError = e.toString();
-      });
-    }
   }
 
   @override
@@ -86,55 +56,49 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
       return;
     }
 
-    if (_exerciseId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.exerciseNotInitialized),
-          backgroundColor: Colors.red[600],
-        ),
-      );
-      return;
-    }
-
     setState(() {
       _isSubmitting = true;
     });
 
     try {
+      final startRequest = StartDistancedJournalExerciseDto(
+        challengeId: widget.challenge.id,
+      );
+
+      final startedExercise =
+          await _sessionRepository.startDistancedJournalExercise(startRequest);
+
       final submitRequest = SubmitDistancedJournalAnswerDto(
-        exerciseId: _exerciseId!,
+        exerciseId: startedExercise.id,
         sessionDate: DateTime.now(),
         mainAnswer: _mainAnswerController.text.trim(),
         followUpAnswer: _followUpAnswerController.text.trim(),
         reflection: null,
       );
 
-      final result = await _sessionRepository.submitDistancedJournalAnswer(submitRequest);
+      final result =
+          await _sessionRepository.submitDistancedJournalAnswer(submitRequest);
+
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.responseSubmittedSuccessfully),
-          backgroundColor: Colors.green[600],
-          duration: const Duration(seconds: 1),
+      final feedbackCompleted = await Navigator.push<bool>(
+        context,
+        MaterialPageRoute(
+          builder: (context) => JournalFeedbackPage(
+            feedbackType: result.feedbackType,
+          ),
         ),
       );
 
+      if (!mounted) return;
 
-final feedbackCompleted = await Navigator.push<bool>(
-  context,
-  MaterialPageRoute(
-    builder: (context) => JournalFeedbackPage(
-      feedbackType: result.feedbackType,
-    ),
-  ),
-);
-
-if (!mounted) return;
-
-if (feedbackCompleted == true) {
-  Navigator.pop(context, true);
-}
+      if (feedbackCompleted == true) {
+        Navigator.pop(context, true);
+      } else {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
     } catch (e) {
       if (!mounted) return;
 
@@ -173,20 +137,13 @@ if (feedbackCompleted == true) {
         ),
       ),
       body: SafeArea(
-        child: _isInitializing
-            ? _buildInitializingState()
-            : _initializationError != null
-                ? _buildInitializationErrorState()
-                : SingleChildScrollView(
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.onDrag,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+        child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Challenge Level Badge
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
@@ -207,7 +164,6 @@ if (feedbackCompleted == true) {
                 ),
                 const SizedBox(height: 16),
 
-                // Challenge Content
                 Text(
                   widget.challenge.content,
                   style: GoogleFonts.quicksand(
@@ -219,7 +175,6 @@ if (feedbackCompleted == true) {
                 ),
                 const SizedBox(height: 32),
 
-                // Main Answer Label
                 Text(
                   context.l10n.yourAnswer,
                   style: GoogleFonts.quicksand(
@@ -230,11 +185,11 @@ if (feedbackCompleted == true) {
                 ),
                 const SizedBox(height: 8),
 
-                // Main Answer Text Field
                 _buildTextInputField(
                   controller: _mainAnswerController,
                   hintText: context.l10n.shareYourThoughts,
-                  isError: _showValidationErrors &&
+                  isError:
+                      _showValidationErrors &&
                       _mainAnswerController.text.trim().isEmpty,
                 ),
 
@@ -253,7 +208,6 @@ if (feedbackCompleted == true) {
 
                 const SizedBox(height: 32),
 
-                // Follow-up Question
                 Text(
                   widget.challenge.followUpQuestion,
                   style: GoogleFonts.quicksand(
@@ -265,7 +219,6 @@ if (feedbackCompleted == true) {
                 ),
                 const SizedBox(height: 8),
 
-                // Follow-up Answer Label
                 Text(
                   context.l10n.followUpAnswer,
                   style: GoogleFonts.quicksand(
@@ -276,11 +229,11 @@ if (feedbackCompleted == true) {
                 ),
                 const SizedBox(height: 8),
 
-                // Follow-up Answer Text Field
                 _buildTextInputField(
                   controller: _followUpAnswerController,
                   hintText: context.l10n.shareYourThoughts,
-                  isError: _showValidationErrors &&
+                  isError:
+                      _showValidationErrors &&
                       _followUpAnswerController.text.trim().isEmpty,
                 ),
 
@@ -299,7 +252,6 @@ if (feedbackCompleted == true) {
 
                 const SizedBox(height: 48),
 
-                // Submit Button
                 SizedBox(
                   width: double.infinity,
                   height: 56,
@@ -336,77 +288,10 @@ if (feedbackCompleted == true) {
                 ),
 
                 const SizedBox(height: 24),
-                      ],
-                    ),
-                  ),
-                ),
-      ),
-    );
-  }
-
-  Widget _buildInitializingState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF6B9B6E)),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            context.l10n.startingExercise,
-            style: GoogleFonts.quicksand(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: const Color(0xFF6B9B6E),
+              ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInitializationErrorState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            context.l10n.errorStartingExercise,
-            style: GoogleFonts.quicksand(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF6B9B6E),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Text(
-              _initializationError ?? context.l10n.unknownError,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.red,
-                fontSize: 12,
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: _startExercise,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF6B9B6E),
-            ),
-            child: Text(
-              context.l10n.retry,
-              style: GoogleFonts.quicksand(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -421,6 +306,11 @@ if (feedbackCompleted == true) {
       maxLines: 5,
       minLines: 5,
       enabled: !_isSubmitting,
+      onChanged: (_) {
+        if (_showValidationErrors) {
+          setState(() {});
+        }
+      },
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: TextStyle(
