@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'auth_local_datasource.dart';
 
 class AuthSessionReader {

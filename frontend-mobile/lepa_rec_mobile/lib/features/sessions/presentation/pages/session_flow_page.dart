@@ -1,6 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../core/localization/localization_extension.dart';
 import '../models/primer_flow_state.dart';
 import '../pages/breathing_exercise_page.dart';
 import '../pages/growth_message_page.dart';
@@ -76,8 +76,8 @@ class _SessionFlowPageState extends State<SessionFlowPage> {
             primerFlowState: _primerFlowState,
           );
         case SessionFlowStep.complete:
-          pageWidget = const Scaffold(
-            body: Center(child: Text('Complete')),
+          pageWidget = Scaffold(
+            body: Center(child: Text(context.l10n.complete)),
           );
       }
 
@@ -89,9 +89,9 @@ class _SessionFlowPageState extends State<SessionFlowPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
-                'Error in SessionFlowPage',
-                style: TextStyle(color: Colors.white, fontSize: 18),
+              Text(
+                context.l10n.sessionFlowPageError,
+                style: const TextStyle(color: Colors.white, fontSize: 18),
               ),
               const SizedBox(height: 16),
               Text(

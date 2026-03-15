@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -23,18 +22,25 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
     with TickerProviderStateMixin {
   late final AnimationController _breathingController;
   late final AnimationController _timerController;
+
   Timer? _countdownTimer;
+  Timer? _preStartTimer;
 
   static const int _totalRounds = 3;
   static const int _breathInDuration = 4;
   static const int _holdDuration = 4;
   static const int _breathOutDuration = 4;
+  static const int _preStartCountdownDuration = 3;
 
   int _currentRound = 0;
   BreathingPhase _currentPhase = BreathingPhase.breathIn;
   int _secondsLeft = _breathInDuration;
+  int _preStartCountdown = _preStartCountdownDuration;
+
   bool _isCompleted = false;
   bool _exerciseCompleted = false;
+  bool _hasStarted = false;
+  bool _isPreStartCountdownActive = false;
 
   @override
   void initState() {
@@ -43,8 +49,6 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
     _breathingController = AnimationController(vsync: this);
     _timerController = AnimationController(vsync: this)
       ..addStatusListener(_onAnimationStatusChanged);
-
-    _startPhase();
   }
 
   int _getPhaseDuration(BreathingPhase phase) {
@@ -53,6 +57,42 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
       BreathingPhase.hold => _holdDuration,
       BreathingPhase.breathOut => _breathOutDuration,
     };
+  }
+
+  void _onStartPressed() {
+    if (_hasStarted || _isPreStartCountdownActive || _isCompleted) return;
+
+    setState(() {
+      _isPreStartCountdownActive = true;
+      _preStartCountdown = _preStartCountdownDuration;
+    });
+
+    _preStartTimer?.cancel();
+    _preStartTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted || _isCompleted) {
+        timer.cancel();
+        return;
+      }
+
+      if (_preStartCountdown > 1) {
+        setState(() {
+          _preStartCountdown--;
+        });
+      } else {
+        timer.cancel();
+
+        if (!mounted) return;
+
+        setState(() {
+          _isPreStartCountdownActive = false;
+          _hasStarted = true;
+          _currentRound = 0;
+          _currentPhase = BreathingPhase.breathIn;
+        });
+
+        _startPhase();
+      }
+    });
   }
 
   void _startPhase() {
@@ -105,7 +145,7 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
   }
 
   void _onAnimationStatusChanged(AnimationStatus status) {
-    if (status == AnimationStatus.completed && !_isCompleted) {
+    if (status == AnimationStatus.completed && !_isCompleted && _hasStarted) {
       _moveToNextPhase();
     }
   }
@@ -143,6 +183,7 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
     _isCompleted = true;
 
     _countdownTimer?.cancel();
+    _preStartTimer?.cancel();
     _breathingController.stop();
     _timerController.stop();
 
@@ -211,11 +252,14 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
   @override
   void dispose() {
     _countdownTimer?.cancel();
+    _preStartTimer?.cancel();
     _timerController.removeStatusListener(_onAnimationStatusChanged);
     _breathingController.dispose();
     _timerController.dispose();
     super.dispose();
   }
+
+  bool get _isIdle => !_hasStarted && !_isPreStartCountdownActive;
 
   @override
   Widget build(BuildContext context) {
@@ -247,59 +291,120 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
                   BreathingCircle(
                     animation: _breathingController,
                     phase: _currentPhase,
+                    isIdle: _isIdle,
+                    onTap: _isIdle ? _onStartPressed : null,
+                    idleText: context.l10n.startBreathing,
                   ),
                   const SizedBox(height: 48),
-                  Text(
-                    '${_secondsLeft}s',
-                    style: GoogleFonts.quicksand(
-                      fontSize: 48,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFF6B9B6E),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    _getPhaseText(context, _currentPhase),
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.quicksand(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF666666),
-                    ),
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 400),
+                    child: _buildCenterContent(),
                   ),
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 32),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  _totalRounds,
-                  (index) => Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: CircleAvatar(
-                      radius: 12,
-                      backgroundColor: index < _currentRound
-                          ? const Color(0xFF6B9B6E)
-                          : index == _currentRound
-                              ? const Color(0x996B9B6E)
-                              : const Color(0xFFD0D0D0),
-                      child: index < _currentRound
-                          ? const Icon(
-                              Icons.check,
-                              color: Colors.white,
-                              size: 16,
-                            )
-                          : null,
+            if (_hasStarted || _isPreStartCountdownActive)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 32),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    _totalRounds,
+                    (index) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: CircleAvatar(
+                        radius: 12,
+                        backgroundColor: index < _currentRound
+                            ? const Color(0xFF6B9B6E)
+                            : index == _currentRound
+                                ? const Color(0x996B9B6E)
+                                : const Color(0xFFD0D0D0),
+                        child: index < _currentRound
+                            ? const Icon(
+                                Icons.check,
+                                color: Colors.white,
+                                size: 16,
+                              )
+                            : null,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
+              )
+            else
+              const SizedBox(height: 32),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildCenterContent() {
+    if (_isIdle) {
+      return Column(
+        key: const ValueKey('idle'),
+        children: [
+          Text(
+            context.l10n.beginWhenReady,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.quicksand(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF666666),
+            ),
+          ),
+        ],
+      );
+    }
+
+    if (_isPreStartCountdownActive) {
+      return Column(
+        key: const ValueKey('prestart'),
+        children: [
+          Text(
+            '$_preStartCountdown',
+            style: GoogleFonts.quicksand(
+              fontSize: 48,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFF6B9B6E),
+            ),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            context.l10n.getReady,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.quicksand(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF666666),
+            ),
+          ),
+        ],
+      );
+    }
+
+    return Column(
+      key: ValueKey(_currentPhase.name),
+      children: [
+        Text(
+          '${_secondsLeft}s',
+          style: GoogleFonts.quicksand(
+            fontSize: 48,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF6B9B6E),
+          ),
+        ),
+        const SizedBox(height: 24),
+        Text(
+          _getPhaseText(context, _currentPhase),
+          textAlign: TextAlign.center,
+          style: GoogleFonts.quicksand(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF666666),
+          ),
+        ),
+      ],
     );
   }
 

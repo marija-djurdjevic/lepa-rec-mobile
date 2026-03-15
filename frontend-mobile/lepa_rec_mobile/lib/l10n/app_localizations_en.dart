@@ -110,4 +110,162 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorInSessionFlowPage => 'Error in SessionFlowPage';
+
+  @override
+  String get distancedJournal => 'Distanced Journal';
+
+  @override
+  String get yourAnswer => 'Your Answer';
+
+  @override
+  String get followUpAnswer => 'Follow-up Answer';
+
+  @override
+  String get answerRequired => 'This field is required';
+
+  @override
+  String get submit => 'Submit';
+
+  @override
+  String get errorLoadingPlan => 'Error Loading Today\'s Plan';
+
+  @override
+  String get unknownError => 'Unknown error';
+
+  @override
+  String get noTasksToday => 'No Tasks Today';
+
+  @override
+  String get completedAllTasks => 'Great job! You\'ve completed all available tasks.';
+
+  @override
+  String get todaysPractice => 'Today\'s Practice';
+
+  @override
+  String tasksToComplete(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'tasks',
+      one: 'task',
+    );
+    return '$_temp0 to complete';
+  }
+
+  @override
+  String get yourTasks => 'Your Tasks';
+
+  @override
+  String get reflection => 'Reflection';
+
+  @override
+  String get perspectiveScenario => 'Perspective Scenario';
+
+  @override
+  String get comingSoon => 'Coming soon';
+
+  @override
+  String get chooseJournalChallenge => 'Choose one journal challenge for today';
+
+  @override
+  String get selectAvailablePrompts => 'Select one of the available prompts that resonates with you. The difficulty levels help you find the right challenge.';
+
+  @override
+  String get journalCompletedToday => 'Journal completed for today';
+
+  @override
+  String get reflectionCompletedToday => 'Reflection completed for today';
+
+  @override
+  String get scenarioCompletedToday => 'Scenario completed for today';
+
+  @override
+  String get exerciseNotInitialized => 'Error: Exercise not initialized';
+
+  @override
+  String get responseSubmittedSuccessfully => 'Response submitted successfully!';
+
+  @override
+  String errorSubmittingResponse(String error) {
+    return 'Error submitting response: $error';
+  }
+
+  @override
+  String get shareYourThoughts => 'Share your thoughts...';
+
+  @override
+  String get startingExercise => 'Starting exercise...';
+
+  @override
+  String get errorStartingExercise => 'Error Starting Exercise';
+
+  @override
+  String get loadingPersonalizedMessage => 'Loading your personalized message...';
+
+  @override
+  String errorCompletingPrimer(String error) {
+    return 'Error completing primer: $error';
+  }
+
+  @override
+  String get sessionFlowPageError => 'Error in SessionFlowPage';
+
+  @override
+  String get reflectionTitle => 'Your Reflection';
+
+  @override
+  String get reflectionPrompt => 'Do you have any new insights on this topic?';
+
+  @override
+  String get yesterdaysTopic => 'Yesterday\'s Topic';
+
+  @override
+  String get yourPreviousAnswer => 'Your Answer';
+
+  @override
+  String get previousFollowUpQuestion => 'Follow-up Question';
+
+  @override
+  String get yourPreviousFollowUpAnswer => 'Your Follow-up Answer';
+
+  @override
+  String get todayReflection => 'Today\'s Reflection';
+
+  @override
+  String get journalFeedbackTitle => 'Reflection Feedback';
+
+  @override
+  String get journalFeedbackSubtitle => 'Here is a gentle reflection on your journaling style';
+
+  @override
+  String get continueToDashboard => 'Continue';
+
+  @override
+  String get goodDistancingFeedback => 'You described the situation with a good sense of distance. This can help you look at the experience more calmly.';
+
+  @override
+  String get mixedDistancingFeedback => 'You already show some distance in the way you wrote. You can go even further by talking about yourself more from the outside.';
+
+  @override
+  String get needsMoreDistancingFeedback => 'Your response stayed quite close to the immediate experience. Next time, try describing the event more as if you were observing someone from the outside.';
+
+  @override
+  String get reflectionRequired => 'Please share your reflection';
+
+  @override
+  String get reflectionSubmittedSuccessfully => 'Reflection submitted successfully!';
+
+  @override
+  String get startBreathing => 'Tap to start';
+
+  @override
+  String get beginWhenReady => 'Begin when you are ready';
+
+  @override
+  String get getReady => 'Get ready';
+
+  @override
+  String errorSubmittingReflection(String error) {
+    return 'Error submitting reflection: $error';
+  }
 }

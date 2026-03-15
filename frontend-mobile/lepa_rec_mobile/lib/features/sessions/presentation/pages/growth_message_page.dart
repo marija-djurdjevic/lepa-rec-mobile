@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -89,7 +88,7 @@ class _GrowthMessagePageState extends State<GrowthMessagePage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error completing primer: $e'),
+            content: Text(context.l10n.errorCompletingPrimer(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -208,7 +207,7 @@ class _GrowthMessagePageState extends State<GrowthMessagePage> {
                       ),
                       child: Text(
                         _growthMessage?.text ??
-                            'Loading your personalized message...',
+                            context.l10n.loadingPersonalizedMessage,
                         textAlign: TextAlign.center,
                         style: GoogleFonts.quicksand(
                           fontSize: 16,
