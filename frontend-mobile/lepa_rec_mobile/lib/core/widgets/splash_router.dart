@@ -48,6 +48,7 @@ class _SplashRouterState extends State<SplashRouter> {
 
       if (e.response?.statusCode == 401) {
         await AuthLocalDataSource().clearSession();
+        if (!mounted) return;
         Navigator.of(context).pushNamedAndRemoveUntil('/login', (_) => false);
         return;
       }

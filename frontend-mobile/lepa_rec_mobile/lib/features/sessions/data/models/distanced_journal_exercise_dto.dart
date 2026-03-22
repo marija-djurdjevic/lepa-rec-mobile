@@ -35,15 +35,15 @@ class DistancedJournalExerciseDto {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'userId': userId,
-        'challengeId': challengeId,
-        'mainAnswer': mainAnswer,
-        'followUpAnswer': followUpAnswer,
-        'reflection': reflection,
-        'submittedAt': submittedAt?.toIso8601String(),
-        'isCompleted': isCompleted,
-      };
+    'id': id,
+    'userId': userId,
+    'challengeId': challengeId,
+    'mainAnswer': mainAnswer,
+    'followUpAnswer': followUpAnswer,
+    'reflection': reflection,
+    'submittedAt': submittedAt?.toIso8601String(),
+    'isCompleted': isCompleted,
+  };
 
   @override
   String toString() =>

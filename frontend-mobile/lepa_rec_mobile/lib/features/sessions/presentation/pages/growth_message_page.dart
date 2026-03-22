@@ -227,8 +227,9 @@ class _GrowthMessagePageState extends State<GrowthMessagePage> {
               child: SizedBox(
                 height: 56,
                 child: ElevatedButton(
-                  onPressed:
-                      _isCompleting ? null : _continueToNextAndCompletePrimer,
+                  onPressed: _isCompleting
+                      ? null
+                      : _continueToNextAndCompletePrimer,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF6B9B6E),
                     foregroundColor: Colors.white,
@@ -242,8 +243,9 @@ class _GrowthMessagePageState extends State<GrowthMessagePage> {
                           height: 24,
                           width: 24,
                           child: CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
                             strokeWidth: 2,
                           ),
                         )
@@ -264,4 +266,3 @@ class _GrowthMessagePageState extends State<GrowthMessagePage> {
     );
   }
 }
-

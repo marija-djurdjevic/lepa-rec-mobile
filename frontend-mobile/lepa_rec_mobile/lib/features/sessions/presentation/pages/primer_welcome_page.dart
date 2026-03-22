@@ -6,10 +6,7 @@ import '../../../../core/localization/localization_extension.dart';
 class PrimerWelcomePage extends StatelessWidget {
   final VoidCallback onProceed;
 
-  const PrimerWelcomePage({
-    super.key,
-    required this.onProceed,
-  });
+  const PrimerWelcomePage({super.key, required this.onProceed});
 
   @override
   Widget build(BuildContext context) {

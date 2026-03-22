@@ -1,4 +1,3 @@
-
 class DailySessionStateDto {
   final String sessionId;
   final String status;
@@ -17,7 +16,6 @@ class DailySessionStateDto {
   });
 
   factory DailySessionStateDto.fromJson(Map<String, dynamic> json) {
-
     try {
       final sessionId = json['sessionId'] as String;
 
@@ -31,7 +29,6 @@ class DailySessionStateDto {
 
       final completedExercisesCount =
           json['completedExercisesCount'] as int? ?? 0;
-
 
       return DailySessionStateDto(
         sessionId: sessionId,
@@ -47,11 +44,11 @@ class DailySessionStateDto {
   }
 
   Map<String, dynamic> toJson() => {
-        'sessionId': sessionId,
-        'status': status,
-        'requiresPrimer': requiresPrimer,
-        'primerCompleted': primerCompleted,
-        'primerSkipped': primerSkipped,
-        'completedExercisesCount': completedExercisesCount,
-      };
+    'sessionId': sessionId,
+    'status': status,
+    'requiresPrimer': requiresPrimer,
+    'primerCompleted': primerCompleted,
+    'primerSkipped': primerSkipped,
+    'completedExercisesCount': completedExercisesCount,
+  };
 }

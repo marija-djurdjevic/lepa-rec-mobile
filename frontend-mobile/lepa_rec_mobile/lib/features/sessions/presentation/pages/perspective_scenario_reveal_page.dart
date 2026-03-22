@@ -3,23 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/localization/localization_extension.dart';
 
-class JournalFeedbackPage extends StatelessWidget {
-  final String feedbackType;
+class PerspectiveScenarioRevealPage extends StatelessWidget {
+  final String reveal;
 
-  const JournalFeedbackPage({super.key, required this.feedbackType});
-
-  String _getFeedbackMessage(BuildContext context) {
-    switch (feedbackType) {
-      case 'GoodDistancing':
-        return context.l10n.goodDistancingFeedback;
-      case 'MixedDistancing':
-        return context.l10n.mixedDistancingFeedback;
-      case 'NeedsMoreDistancing':
-        return context.l10n.needsMoreDistancingFeedback;
-      default:
-        return context.l10n.mixedDistancingFeedback;
-    }
-  }
+  const PerspectiveScenarioRevealPage({super.key, required this.reveal});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +18,7 @@ class JournalFeedbackPage extends StatelessWidget {
         automaticallyImplyLeading: false,
         centerTitle: true,
         title: Text(
-          context.l10n.journalFeedbackTitle,
+          context.l10n.perspectiveRevealTitle,
           style: GoogleFonts.quicksand(
             fontSize: 20,
             fontWeight: FontWeight.w600,
@@ -66,13 +53,13 @@ class JournalFeedbackPage extends StatelessWidget {
                 child: Column(
                   children: [
                     Icon(
-                      Icons.forum_outlined,
+                      Icons.visibility_outlined,
                       size: 40,
                       color: const Color(0xFF6B9B6E),
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      context.l10n.journalFeedbackSubtitle,
+                      context.l10n.perspectiveRevealSubtitle,
                       textAlign: TextAlign.center,
                       style: GoogleFonts.quicksand(
                         fontSize: 16,
@@ -82,7 +69,7 @@ class JournalFeedbackPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      _getFeedbackMessage(context),
+                      reveal,
                       textAlign: TextAlign.center,
                       style: GoogleFonts.quicksand(
                         fontSize: 14,
@@ -99,9 +86,7 @@ class JournalFeedbackPage extends StatelessWidget {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context, true);
-                  },
+                  onPressed: () => Navigator.pop(context, true),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF6B9B6E),
                     shape: RoundedRectangleBorder(

@@ -20,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   String? _error;
 
   final Color bgColor = const Color(0xFFF5F9F3);
-  final Color titleColor = const Color(0xFF6B9B6E); 
+  final Color titleColor = const Color(0xFF6B9B6E);
   final Color sageGreen = const Color(0xFF6B9B6E);
 
   Future<void> _signInWithGoogle() async {
@@ -182,7 +182,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildLoadingOverlay() {
     return Container(
-      color: Colors.black.withOpacity(0.3),
+      color: Colors.black.withValues(alpha: 0.3),
       child: const Center(
         child: CircularProgressIndicator(
           color: Colors.white,

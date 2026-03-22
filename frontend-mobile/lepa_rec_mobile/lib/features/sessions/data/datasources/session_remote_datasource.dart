@@ -3,8 +3,12 @@ import '../models/complete_primer_dto.dart';
 import '../models/daily_session_state_dto.dart';
 import '../models/distanced_journal_exercise_dto.dart';
 import '../models/growth_message_dto.dart';
+import '../models/perspective_scenario_exercise_dto.dart';
 import '../models/primer_statement_dto.dart';
+import '../models/start_perspective_scenario_dto.dart';
 import '../models/start_distanced_journal_exercise_dto.dart';
+import '../models/submit_perspective_scenario_answer_dto.dart';
+import '../models/submit_perspective_scenario_result_dto.dart';
 import '../models/submit_distanced_journal_answer_dto.dart';
 import '../models/submit_reflection_answer_dto.dart';
 import '../models/today_practice_plan_dto.dart';
@@ -18,9 +22,7 @@ class SubmitDistancedJournalResultDto {
     required this.feedbackType,
   });
 
-  factory SubmitDistancedJournalResultDto.fromJson(
-    Map<String, dynamic> json,
-  ) {
+  factory SubmitDistancedJournalResultDto.fromJson(Map<String, dynamic> json) {
     return SubmitDistancedJournalResultDto(
       exercise: DistancedJournalExerciseDto.fromJson(
         json['exercise'] as Map<String, dynamic>,
@@ -30,21 +32,22 @@ class SubmitDistancedJournalResultDto {
   }
 
   static String _mapFeedbackType(dynamic value) {
-  switch (value) {
-    case 0:
-      return 'GoodDistancing';
-    case 1:
-      return 'MixedDistancing';
-    case 2:
-      return 'NeedsMoreDistancing';
-    default:
-      return value.toString();
+    switch (value) {
+      case 0:
+        return 'GoodDistancing';
+      case 1:
+        return 'MixedDistancing';
+      case 2:
+        return 'NeedsMoreDistancing';
+      default:
+        return value.toString();
+    }
   }
-}
+
   Map<String, dynamic> toJson() => {
-        'exercise': exercise.toJson(),
-        'feedbackType': feedbackType,
-      };
+    'exercise': exercise.toJson(),
+    'feedbackType': feedbackType,
+  };
 }
 
 class SessionRemoteDataSource {
@@ -56,9 +59,10 @@ class SessionRemoteDataSource {
     try {
       final response = await ApiClient.dio.get(path);
 
-      final dto =
-          DailySessionStateDto.fromJson(response.data as Map<String, dynamic>);
-      
+      final dto = DailySessionStateDto.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+
       return dto;
     } catch (e) {
       rethrow;
@@ -69,14 +73,12 @@ class SessionRemoteDataSource {
     const path = '$_baseEndpoint/primer/complete';
 
     try {
-      final response = await ApiClient.dio.post(
-        path,
-        data: {},
+      final response = await ApiClient.dio.post(path, data: {});
+
+      final dto = DailySessionStateDto.fromJson(
+        response.data as Map<String, dynamic>,
       );
 
-      final dto =
-          DailySessionStateDto.fromJson(response.data as Map<String, dynamic>);
-    
       return dto;
     } catch (e) {
       rethrow;
@@ -86,11 +88,10 @@ class SessionRemoteDataSource {
   Future<void> completePrimerWithData(CompletePrimerDto primerData) async {
     const path = '$_baseEndpoint/primer/complete';
     try {
-      final response = await ApiClient.dio.post(
+      await ApiClient.dio.post(
         path,
         data: primerData.toJson(),
       );
-
     } catch (e) {
       rethrow;
     }
@@ -104,8 +105,9 @@ class SessionRemoteDataSource {
 
       final List<dynamic> jsonList = response.data as List<dynamic>;
       final statements = jsonList
-          .map((json) =>
-              PrimerStatementDto.fromJson(json as Map<String, dynamic>))
+          .map(
+            (json) => PrimerStatementDto.fromJson(json as Map<String, dynamic>),
+          )
           .toList();
 
       return statements;
@@ -120,8 +122,9 @@ class SessionRemoteDataSource {
     try {
       final response = await ApiClient.dio.get(path);
 
-      final message =
-          GrowthMessageDto.fromJson(response.data as Map<String, dynamic>);
+      final message = GrowthMessageDto.fromJson(
+        response.data as Map<String, dynamic>,
+      );
 
       return message;
     } catch (e) {
@@ -138,9 +141,10 @@ class SessionRemoteDataSource {
         data: {'exerciseName': exerciseName},
       );
 
-      final dto =
-          DailySessionStateDto.fromJson(response.data as Map<String, dynamic>);
-     
+      final dto = DailySessionStateDto.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+
       return dto;
     } catch (e) {
       rethrow;
@@ -153,9 +157,10 @@ class SessionRemoteDataSource {
     try {
       final response = await ApiClient.dio.post(path);
 
-      final dto =
-          DailySessionStateDto.fromJson(response.data as Map<String, dynamic>);
-     
+      final dto = DailySessionStateDto.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+
       return dto;
     } catch (e) {
       rethrow;
@@ -200,17 +205,17 @@ class SessionRemoteDataSource {
   }
 
   Future<SubmitDistancedJournalResultDto> submitDistancedJournalAnswer(
-  SubmitDistancedJournalAnswerDto submitRequest,
-) async {
-  final response = await ApiClient.dio.post(
-    '/DistancedJournals/submit',
-    data: submitRequest.toJson(),
-  );
+    SubmitDistancedJournalAnswerDto submitRequest,
+  ) async {
+    final response = await ApiClient.dio.post(
+      '/DistancedJournals/submit',
+      data: submitRequest.toJson(),
+    );
 
-  return SubmitDistancedJournalResultDto.fromJson(
-    response.data as Map<String, dynamic>,
-  );
-}
+    return SubmitDistancedJournalResultDto.fromJson(
+      response.data as Map<String, dynamic>,
+    );
+  }
 
   Future<void> submitReflectionAnswer(
     SubmitReflectionAnswerDto submitRequest,
@@ -218,9 +223,44 @@ class SessionRemoteDataSource {
     const path = '/DistancedJournals/reflection';
 
     try {
-      await ApiClient.dio.post(
+      await ApiClient.dio.post(path, data: submitRequest.toJson());
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<PerspectiveScenarioExerciseDto> startPerspectiveScenario(
+    StartPerspectiveScenarioDto startRequest,
+  ) async {
+    const path = '/PerspectiveScenarios/start';
+
+    try {
+      final response = await ApiClient.dio.post(
+        path,
+        data: startRequest.toJson(),
+      );
+
+      return PerspectiveScenarioExerciseDto.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<SubmitPerspectiveScenarioResultDto> submitPerspectiveScenario(
+    SubmitPerspectiveScenarioAnswerDto submitRequest,
+  ) async {
+    const path = '/PerspectiveScenarios/submit';
+
+    try {
+      final response = await ApiClient.dio.post(
         path,
         data: submitRequest.toJson(),
+      );
+
+      return SubmitPerspectiveScenarioResultDto.fromJson(
+        response.data as Map<String, dynamic>,
       );
     } catch (e) {
       rethrow;

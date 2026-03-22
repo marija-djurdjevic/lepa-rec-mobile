@@ -3,20 +3,19 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/localization/localization_extension.dart';
 import '../../data/models/distanced_journal_challenge_dto.dart';
+import '../../data/models/perspective_scenario_prompt_dto.dart';
 import '../../data/models/today_practice_plan_dto.dart';
 import '../../data/models/today_practice_task_dto.dart';
 import '../../data/repositories/session_repository.dart';
 import '../models/dashboard_view_state.dart';
 import 'distanced_journal_page.dart';
+import 'perspective_scenario_page.dart';
 import 'reflection_page.dart';
 
 class DashboardPage extends StatefulWidget {
   final VoidCallback? onLogout;
 
-  const DashboardPage({
-    super.key,
-    this.onLogout,
-  });
+  const DashboardPage({super.key, this.onLogout});
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
@@ -41,6 +40,7 @@ class _DashboardPageState extends State<DashboardPage> {
         (plan.distancedJournalChoices.isNotEmpty &&
             !plan.isDistancedJournalCompleted) ||
         (plan.shouldShowPerspectiveScenario &&
+            plan.perspectiveScenarioPrompt != null &&
             !plan.isPerspectiveScenarioCompleted);
   }
 
@@ -103,9 +103,8 @@ class _DashboardPageState extends State<DashboardPage> {
     final result = await Navigator.push<bool?>(
       context,
       MaterialPageRoute(
-        builder: (context) => ReflectionPage(
-          reflectionPrompt: reflectionPrompt,
-        ),
+        builder: (context) =>
+            ReflectionPage(reflectionPrompt: reflectionPrompt),
       ),
     );
 
@@ -120,9 +119,24 @@ class _DashboardPageState extends State<DashboardPage> {
     final result = await Navigator.push<bool?>(
       context,
       MaterialPageRoute(
-        builder: (context) => DistancedJournalPage(
-          challenge: challenge,
-        ),
+        builder: (context) => DistancedJournalPage(challenge: challenge),
+      ),
+    );
+
+    if (!mounted) return;
+
+    if (result == true) {
+      await _loadTodaysPlan();
+    }
+  }
+
+  Future<void> _handlePerspectiveScenarioTap(
+    PerspectiveScenarioPromptDto prompt,
+  ) async {
+    final result = await Navigator.push<bool?>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PerspectiveScenarioPage(prompt: prompt),
       ),
     );
 
@@ -272,41 +286,34 @@ class _DashboardPageState extends State<DashboardPage> {
     return SafeArea(
       child: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(
-            child: _buildGreetingSection(),
-          ),
-          SliverToBoxAdapter(
-            child: _buildTasksHeader(),
-          ),
+          SliverToBoxAdapter(child: _buildGreetingSection()),
+          SliverToBoxAdapter(child: _buildTasksHeader()),
           if (plan.reflectionPrompt != null && !plan.isReflectionCompleted)
             SliverToBoxAdapter(
               child: _buildReflectionTaskCard(plan.reflectionPrompt!),
             )
           else if (plan.isReflectionCompleted)
-            SliverToBoxAdapter(
-              child: _buildReflectionCompletedCard(),
-            ),
+            SliverToBoxAdapter(child: _buildReflectionCompletedCard()),
           if (!plan.isDistancedJournalCompleted &&
               plan.distancedJournalChoices.isNotEmpty)
             SliverToBoxAdapter(
-              child: _buildDistancedJournalSection(plan.distancedJournalChoices),
+              child: _buildDistancedJournalSection(
+                plan.distancedJournalChoices,
+              ),
             )
           else if (plan.isDistancedJournalCompleted)
-            SliverToBoxAdapter(
-              child: _buildDistancedJournalCompletedCard(),
-            ),
+            SliverToBoxAdapter(child: _buildDistancedJournalCompletedCard()),
           if (plan.shouldShowPerspectiveScenario &&
+              plan.perspectiveScenarioPrompt != null &&
               !plan.isPerspectiveScenarioCompleted)
             SliverToBoxAdapter(
-              child: _buildPerspectiveScenarioCard(),
+              child: _buildPerspectiveScenarioCard(
+                plan.perspectiveScenarioPrompt!,
+              ),
             )
           else if (plan.isPerspectiveScenarioCompleted)
-            SliverToBoxAdapter(
-              child: _buildPerspectiveScenarioCompletedCard(),
-            ),
-          SliverToBoxAdapter(
-            child: const SizedBox(height: 32),
-          ),
+            SliverToBoxAdapter(child: _buildPerspectiveScenarioCompletedCard()),
+          SliverToBoxAdapter(child: const SizedBox(height: 32)),
         ],
       ),
     );
@@ -358,10 +365,7 @@ class _DashboardPageState extends State<DashboardPage> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: const Color(0xFF6B9B6E),
-              width: 1.5,
-            ),
+            border: Border.all(color: const Color(0xFF6B9B6E), width: 1.5),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.05),
@@ -427,75 +431,96 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildPerspectiveScenarioCard() {
+  Widget _buildPerspectiveScenarioCard(PerspectiveScenarioPromptDto prompt) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: const Color(0xFFE0E0E0),
-            width: 1.5,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(8),
+      child: GestureDetector(
+        onTap: () => _handlePerspectiveScenarioTap(prompt),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFF6B9B6E), width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
               ),
-              child: Center(
-                child: Icon(
-                  Icons.psychology_outlined,
-                  color: Colors.grey[400],
-                  size: 24,
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF5F9F3),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Center(
+                  child: Icon(
+                    Icons.psychology_outlined,
+                    color: Color(0xFF6B9B6E),
+                    size: 24,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    context.l10n.perspectiveScenario,
-                    style: GoogleFonts.quicksand(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[500],
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      context.l10n.perspectiveScenario,
+                      style: GoogleFonts.quicksand(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF6B9B6E),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    context.l10n.comingSoon,
-                    style: GoogleFonts.quicksand(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.grey[500],
+                    const SizedBox(height: 4),
+                    Text(
+                      prompt.scenarioText,
+                      style: GoogleFonts.quicksand(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.grey[600],
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _getLevelColor(prompt.challengeLevel),
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                      child: Text(
+                        prompt.challengeLevel,
+                        style: GoogleFonts.quicksand(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: 12),
-            Icon(
-              Icons.lock_outline,
-              color: Colors.grey[400],
-              size: 16,
-            ),
-          ],
+              const SizedBox(width: 12),
+              const Icon(
+                Icons.arrow_forward_ios,
+                color: Color(0xFF6B9B6E),
+                size: 16,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -510,10 +535,7 @@ class _DashboardPageState extends State<DashboardPage> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: const Color(0xFF6B9B6E),
-            width: 1.5,
-          ),
+          border: Border.all(color: const Color(0xFF6B9B6E), width: 1.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
@@ -601,10 +623,7 @@ class _DashboardPageState extends State<DashboardPage> {
           decoration: BoxDecoration(
             color: Colors.grey[50],
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: Colors.grey[200]!,
-              width: 1,
-            ),
+            border: Border.all(color: Colors.grey[200]!, width: 1),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -613,8 +632,9 @@ class _DashboardPageState extends State<DashboardPage> {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: _getLevelColor(challenge.challengeLevel)
-                      .withValues(alpha: 0.15),
+                  color: _getLevelColor(
+                    challenge.challengeLevel,
+                  ).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Center(
@@ -689,10 +709,7 @@ class _DashboardPageState extends State<DashboardPage> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Colors.green[200]!,
-            width: 1.5,
-          ),
+          border: Border.all(color: Colors.green[200]!, width: 1.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
@@ -759,10 +776,7 @@ class _DashboardPageState extends State<DashboardPage> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Colors.green[200]!,
-            width: 1.5,
-          ),
+          border: Border.all(color: Colors.green[200]!, width: 1.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
@@ -829,10 +843,7 @@ class _DashboardPageState extends State<DashboardPage> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Colors.green[200]!,
-            width: 1.5,
-          ),
+          border: Border.all(color: Colors.green[200]!, width: 1.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
@@ -870,7 +881,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       style: GoogleFonts.quicksand(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Colors.grey[500],
+                        color: Colors.green[700],
                       ),
                     ),
                     const SizedBox(height: 4),

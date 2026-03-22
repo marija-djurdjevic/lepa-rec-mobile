@@ -10,10 +10,10 @@ class SubmitReflectionAnswerDto {
   });
 
   Map<String, dynamic> toJson() => {
-        'exerciseId': exerciseId,
-        'sessionDate': sessionDate.toIso8601String(),
-        'reflection': reflection,
-      };
+    'exerciseId': exerciseId,
+    'sessionDate': sessionDate.toIso8601String(),
+    'reflection': reflection,
+  };
 
   @override
   String toString() =>

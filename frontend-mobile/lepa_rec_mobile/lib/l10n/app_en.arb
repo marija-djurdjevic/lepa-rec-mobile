@@ -197,6 +197,40 @@
   "@perspectiveScenario": {
     "description": "Label for perspective scenario exercise"
   },
+  "perspectiveScenarioPromptLabel": "Scenario",
+  "@perspectiveScenarioPromptLabel": {
+    "description": "Label shown above the perspective scenario text"
+  },
+  "answerEachScenarioQuestion": "Answer each question before you reveal the final perspective.",
+  "@answerEachScenarioQuestion": {
+    "description": "Helper text for the perspective scenario questionnaire"
+  },
+  "scenarioQuestionNumber": "Question {number}",
+  "@scenarioQuestionNumber": {
+    "description": "Label for a numbered perspective scenario question",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "perspectiveRevealTitle": "Perspective Reveal",
+  "@perspectiveRevealTitle": {
+    "description": "Title for the perspective scenario reveal screen"
+  },
+  "perspectiveRevealSubtitle": "Here is the revealed perspective from this scenario.",
+  "@perspectiveRevealSubtitle": {
+    "description": "Subtitle for the perspective scenario reveal screen"
+  },
+  "errorSubmittingPerspectiveScenario": "Error submitting perspective scenario: {error}",
+  "@errorSubmittingPerspectiveScenario": {
+    "description": "Error message when submitting a perspective scenario fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "comingSoon": "Coming soon",
   "@comingSoon": {
     "description": "Text indicating a feature is not yet available"

@@ -12,16 +12,13 @@ enum SessionFlowStep {
   breathingExercise,
   valueStatement,
   growthMessage,
-  complete
+  complete,
 }
 
 class SessionFlowPage extends StatefulWidget {
   final VoidCallback onSessionComplete;
 
-  const SessionFlowPage({
-    super.key,
-    required this.onSessionComplete,
-  });
+  const SessionFlowPage({super.key, required this.onSessionComplete});
 
   @override
   State<SessionFlowPage> createState() => _SessionFlowPageState();

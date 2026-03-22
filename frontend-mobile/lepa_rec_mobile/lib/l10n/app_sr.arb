@@ -197,6 +197,40 @@
   "@perspectiveScenario": {
     "description": "Labela za vežbu scenarija perspektive"
   },
+  "perspectiveScenarioPromptLabel": "Scenario",
+  "@perspectiveScenarioPromptLabel": {
+    "description": "Labela iznad teksta scenarija perspektive"
+  },
+  "answerEachScenarioQuestion": "Odgovori na svako pitanje pre nego što otkriješ završnu perspektivu.",
+  "@answerEachScenarioQuestion": {
+    "description": "Pomoćni tekst za pitanja u scenariju perspektive"
+  },
+  "scenarioQuestionNumber": "Pitanje {number}",
+  "@scenarioQuestionNumber": {
+    "description": "Labela za numerisano pitanje scenarija perspektive",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "perspectiveRevealTitle": "Otkrivanje perspektive",
+  "@perspectiveRevealTitle": {
+    "description": "Naslov za ekran otkrivanja perspektive"
+  },
+  "perspectiveRevealSubtitle": "Evo perspektive koja se otkriva nakon ovog scenarija.",
+  "@perspectiveRevealSubtitle": {
+    "description": "Podnaslov za ekran otkrivanja perspektive"
+  },
+  "errorSubmittingPerspectiveScenario": "Greška pri slanju scenarija perspektive: {error}",
+  "@errorSubmittingPerspectiveScenario": {
+    "description": "Poruka greške pri slanju scenarija perspektive",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "comingSoon": "Uskoro dostupno",
   "@comingSoon": {
     "description": "Tekst koji označava da funkcija još nije dostupna"

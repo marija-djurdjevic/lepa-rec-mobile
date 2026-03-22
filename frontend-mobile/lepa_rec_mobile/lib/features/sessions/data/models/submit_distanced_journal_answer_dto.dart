@@ -14,12 +14,12 @@ class SubmitDistancedJournalAnswerDto {
   });
 
   Map<String, dynamic> toJson() => {
-        'exerciseId': exerciseId,
-        'sessionDate': sessionDate.toIso8601String(),
-        'mainAnswer': mainAnswer,
-        'followUpAnswer': followUpAnswer,
-        'reflection': reflection,
-      };
+    'exerciseId': exerciseId,
+    'sessionDate': sessionDate.toIso8601String(),
+    'mainAnswer': mainAnswer,
+    'followUpAnswer': followUpAnswer,
+    'reflection': reflection,
+  };
 
   @override
   String toString() =>

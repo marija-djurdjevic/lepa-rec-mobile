@@ -2,18 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/localization/localization_extension.dart';
-import '../../data/models/distanced_journal_challenge_dto.dart';
-import '../../data/models/submit_reflection_answer_dto.dart';
 import '../../data/models/today_practice_task_dto.dart';
+import '../../data/models/submit_reflection_answer_dto.dart';
 import '../../data/repositories/session_repository.dart';
 
 class ReflectionPage extends StatefulWidget {
   final DistancedJournalReflectionPromptDto reflectionPrompt;
 
-  const ReflectionPage({
-    super.key,
-    required this.reflectionPrompt,
-  });
+  const ReflectionPage({super.key, required this.reflectionPrompt});
 
   @override
   State<ReflectionPage> createState() => _ReflectionPageState();
@@ -149,10 +145,7 @@ class _ReflectionPageState extends State<ReflectionPage> {
                   decoration: BoxDecoration(
                     color: Colors.grey[50],
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: Colors.grey[200]!,
-                      width: 1,
-                    ),
+                    border: Border.all(color: Colors.grey[200]!, width: 1),
                   ),
                   child: Text(
                     widget.reflectionPrompt.challengeContent,
@@ -181,10 +174,7 @@ class _ReflectionPageState extends State<ReflectionPage> {
                   decoration: BoxDecoration(
                     color: Colors.grey[50],
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: Colors.grey[200]!,
-                      width: 1,
-                    ),
+                    border: Border.all(color: Colors.grey[200]!, width: 1),
                   ),
                   child: Text(
                     widget.reflectionPrompt.previousMainAnswer ?? '',
@@ -214,10 +204,7 @@ class _ReflectionPageState extends State<ReflectionPage> {
                   decoration: BoxDecoration(
                     color: Colors.grey[50],
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: Colors.grey[200]!,
-                      width: 1,
-                    ),
+                    border: Border.all(color: Colors.grey[200]!, width: 1),
                   ),
                   child: Text(
                     widget.reflectionPrompt.challengeFollowUpQuestion,
@@ -246,10 +233,7 @@ class _ReflectionPageState extends State<ReflectionPage> {
                   decoration: BoxDecoration(
                     color: Colors.grey[50],
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: Colors.grey[200]!,
-                      width: 1,
-                    ),
+                    border: Border.all(color: Colors.grey[200]!, width: 1),
                   ),
                   child: Text(
                     widget.reflectionPrompt.previousFollowUpAnswer ?? '',
@@ -289,10 +273,7 @@ class _ReflectionPageState extends State<ReflectionPage> {
                     padding: const EdgeInsets.only(top: 8),
                     child: Text(
                       context.l10n.reflectionRequired,
-                      style: const TextStyle(
-                        color: Colors.red,
-                        fontSize: 12,
-                      ),
+                      style: const TextStyle(color: Colors.red, fontSize: 12),
                     ),
                   ),
 
@@ -354,10 +335,7 @@ class _ReflectionPageState extends State<ReflectionPage> {
       enabled: !_isSubmitting,
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: TextStyle(
-          color: Colors.grey[400],
-          fontSize: 14,
-        ),
+        hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(
@@ -381,10 +359,7 @@ class _ReflectionPageState extends State<ReflectionPage> {
         ),
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(
-            color: Colors.grey[200]!,
-            width: 1.5,
-          ),
+          borderSide: BorderSide(color: Colors.grey[200]!, width: 1.5),
         ),
         filled: true,
         fillColor: Colors.white,

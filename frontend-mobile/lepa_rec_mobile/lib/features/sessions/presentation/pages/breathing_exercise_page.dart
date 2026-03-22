@@ -9,10 +9,7 @@ import '../widgets/breathing_circle.dart';
 class BreathingExercisePage extends StatefulWidget {
   final VoidCallback onComplete;
 
-  const BreathingExercisePage({
-    super.key,
-    required this.onComplete,
-  });
+  const BreathingExercisePage({super.key, required this.onComplete});
 
   @override
   State<BreathingExercisePage> createState() => _BreathingExercisePageState();
@@ -198,7 +195,9 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           backgroundColor: const Color(0xFFF5F9F3),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: Text(
             dialogContext.l10n.sessionComplete,
             textAlign: TextAlign.center,
@@ -317,8 +316,8 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
                         backgroundColor: index < _currentRound
                             ? const Color(0xFF6B9B6E)
                             : index == _currentRound
-                                ? const Color(0x996B9B6E)
-                                : const Color(0xFFD0D0D0),
+                            ? const Color(0x996B9B6E)
+                            : const Color(0xFFD0D0D0),
                         child: index < _currentRound
                             ? const Icon(
                                 Icons.check,

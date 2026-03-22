@@ -34,16 +34,15 @@ class DistancedJournalReflectionPromptDto {
   }
 
   Map<String, dynamic> toJson() => {
-        'exerciseId': exerciseId,
-        'challengeContent': challengeContent,
-        'challengeFollowUpQuestion': challengeFollowUpQuestion,
-        'previousMainAnswer': previousMainAnswer,
-        'previousFollowUpAnswer': previousFollowUpAnswer,
-      };
+    'exerciseId': exerciseId,
+    'challengeContent': challengeContent,
+    'challengeFollowUpQuestion': challengeFollowUpQuestion,
+    'previousMainAnswer': previousMainAnswer,
+    'previousFollowUpAnswer': previousFollowUpAnswer,
+  };
 
   @override
   String toString() =>
       'DistancedJournalReflectionPromptDto(exerciseId: $exerciseId, '
       'challengeContent: $challengeContent)';
 }
-

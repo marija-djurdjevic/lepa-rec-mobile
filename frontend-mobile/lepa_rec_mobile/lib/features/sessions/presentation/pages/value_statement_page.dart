@@ -73,6 +73,7 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
 
     widget.onComplete();
   }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -167,12 +168,12 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
                       .map((statement) => _buildStatementButton(statement))
                       .toList()
                       .fold<List<Widget>>([], (acc, widget) {
-                    acc.add(widget);
-                    if (acc.length < _statements.length * 2) {
-                      acc.add(const SizedBox(height: 16));
-                    }
-                    return acc;
-                  }),
+                        acc.add(widget);
+                        if (acc.length < _statements.length * 2) {
+                          acc.add(const SizedBox(height: 16));
+                        }
+                        return acc;
+                      }),
                 ),
               ),
             ),
@@ -191,15 +192,11 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         backgroundColor: isSelected ? const Color(0xFF6B9B6E) : Colors.white,
-        foregroundColor:
-            isSelected ? Colors.white : const Color(0xFF6B9B6E),
+        foregroundColor: isSelected ? Colors.white : const Color(0xFF6B9B6E),
         elevation: isSelected ? 2 : 1,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(
-            color: const Color(0xFF6B9B6E),
-            width: 1.5,
-          ),
+          side: BorderSide(color: const Color(0xFF6B9B6E), width: 1.5),
         ),
       ),
       child: Text(
@@ -214,4 +211,3 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
     );
   }
 }
-

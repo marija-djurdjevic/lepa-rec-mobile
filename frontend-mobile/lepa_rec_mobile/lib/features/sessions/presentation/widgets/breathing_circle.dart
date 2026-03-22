@@ -29,14 +29,11 @@ class BreathingCircle extends StatelessWidget {
           height: 200,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: const Color(0xFF6B9B6E).withOpacity(0.12),
-            border: Border.all(
-              color: const Color(0xFF6B9B6E),
-              width: 3,
-            ),
+            color: const Color(0xFF6B9B6E).withValues(alpha: 0.12),
+            border: Border.all(color: const Color(0xFF6B9B6E), width: 3),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF6B9B6E).withOpacity(0.08),
+                color: const Color(0xFF6B9B6E).withValues(alpha: 0.08),
                 blurRadius: 16,
                 offset: const Offset(0, 4),
               ),
@@ -96,14 +93,11 @@ class BreathingCircle extends StatelessWidget {
             height: 200,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: const Color(0xFF6B9B6E).withOpacity(0.2),
-              border: Border.all(
-                color: const Color(0xFF6B9B6E),
-                width: 3,
-              ),
+              color: const Color(0xFF6B9B6E).withValues(alpha: 0.2),
+              border: Border.all(color: const Color(0xFF6B9B6E), width: 3),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF6B9B6E).withOpacity(0.08),
+                  color: const Color(0xFF6B9B6E).withValues(alpha: 0.08),
                   blurRadius: 16,
                   offset: const Offset(0, 4),
                 ),

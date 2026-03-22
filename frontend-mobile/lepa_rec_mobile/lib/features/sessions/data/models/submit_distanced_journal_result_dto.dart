@@ -9,9 +9,7 @@ class SubmitDistancedJournalResultDto {
     required this.feedbackType,
   });
 
-  factory SubmitDistancedJournalResultDto.fromJson(
-    Map<String, dynamic> json,
-  ) {
+  factory SubmitDistancedJournalResultDto.fromJson(Map<String, dynamic> json) {
     return SubmitDistancedJournalResultDto(
       exercise: DistancedJournalExerciseDto.fromJson(
         json['exercise'] as Map<String, dynamic>,
@@ -21,7 +19,7 @@ class SubmitDistancedJournalResultDto {
   }
 
   Map<String, dynamic> toJson() => {
-        'exercise': exercise.toJson(),
-        'feedbackType': feedbackType,
-      };
+    'exercise': exercise.toJson(),
+    'feedbackType': feedbackType,
+  };
 }

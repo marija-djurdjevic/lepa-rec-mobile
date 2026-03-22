@@ -11,10 +11,7 @@ import 'journal_feedback_page.dart';
 class DistancedJournalPage extends StatefulWidget {
   final DistancedJournalChallengeDto challenge;
 
-  const DistancedJournalPage({
-    super.key,
-    required this.challenge,
-  });
+  const DistancedJournalPage({super.key, required this.challenge});
 
   @override
   State<DistancedJournalPage> createState() => _DistancedJournalPageState();
@@ -65,8 +62,8 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
         challengeId: widget.challenge.id,
       );
 
-      final startedExercise =
-          await _sessionRepository.startDistancedJournalExercise(startRequest);
+      final startedExercise = await _sessionRepository
+          .startDistancedJournalExercise(startRequest);
 
       final submitRequest = SubmitDistancedJournalAnswerDto(
         exerciseId: startedExercise.id,
@@ -76,17 +73,17 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
         reflection: null,
       );
 
-      final result =
-          await _sessionRepository.submitDistancedJournalAnswer(submitRequest);
+      final result = await _sessionRepository.submitDistancedJournalAnswer(
+        submitRequest,
+      );
 
       if (!mounted) return;
 
       final feedbackCompleted = await Navigator.push<bool>(
         context,
         MaterialPageRoute(
-          builder: (context) => JournalFeedbackPage(
-            feedbackType: result.feedbackType,
-          ),
+          builder: (context) =>
+              JournalFeedbackPage(feedbackType: result.feedbackType),
         ),
       );
 
@@ -199,10 +196,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                     padding: const EdgeInsets.only(top: 8),
                     child: Text(
                       context.l10n.answerRequired,
-                      style: const TextStyle(
-                        color: Colors.red,
-                        fontSize: 12,
-                      ),
+                      style: const TextStyle(color: Colors.red, fontSize: 12),
                     ),
                   ),
 
@@ -243,10 +237,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                     padding: const EdgeInsets.only(top: 8),
                     child: Text(
                       context.l10n.answerRequired,
-                      style: const TextStyle(
-                        color: Colors.red,
-                        fontSize: 12,
-                      ),
+                      style: const TextStyle(color: Colors.red, fontSize: 12),
                     ),
                   ),
 
@@ -313,10 +304,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
       },
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: TextStyle(
-          color: Colors.grey[400],
-          fontSize: 14,
-        ),
+        hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(
@@ -340,10 +328,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
         ),
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(
-            color: Colors.grey[200]!,
-            width: 1.5,
-          ),
+          borderSide: BorderSide(color: Colors.grey[200]!, width: 1.5),
         ),
         filled: true,
         fillColor: Colors.white,
