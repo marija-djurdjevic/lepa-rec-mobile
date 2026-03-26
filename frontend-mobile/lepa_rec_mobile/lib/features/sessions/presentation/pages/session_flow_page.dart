@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lepa_rec_mobile/features/sessions/presentation/state/primer_flow_state.dart';
 
 import '../../../../core/localization/localization_extension.dart';
-import '../models/primer_flow_state.dart';
 import '../pages/breathing_exercise_page.dart';
 import '../pages/growth_message_page.dart';
 import '../pages/primer_welcome_page.dart';

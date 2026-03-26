@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../features/auth/data/datasources/auth_local_datasource.dart';
-import '../../features/sessions/presentation/pages/dashboard_page.dart';
+import '../features/auth/data/datasources/auth_local_datasource.dart';
+import '../features/sessions/presentation/pages/dashboard_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/localization/localization_extension.dart';
-import '../../data/models/perspective_scenario_answer_dto.dart';
-import '../../data/models/perspective_scenario_exercise_dto.dart';
-import '../../data/models/perspective_scenario_prompt_dto.dart';
-import '../../data/models/start_perspective_scenario_dto.dart';
-import '../../data/models/submit_perspective_scenario_answer_dto.dart';
+import '../../data/dtos/perspective_scenario_answer_dto.dart';
+import '../../data/dtos/perspective_scenario_exercise_dto.dart';
+import '../../data/dtos/perspective_scenario_prompt_dto.dart';
+import '../../data/dtos/start_perspective_scenario_dto.dart';
+import '../../data/dtos/submit_perspective_scenario_answer_dto.dart';
 import '../../data/repositories/session_repository.dart';
 import 'perspective_scenario_reveal_page.dart';
 
@@ -146,7 +146,7 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
 
       if (!mounted) return;
 
-      if (revealSeen == true) {
+      if (revealSeen != false) {
         Navigator.pop(context, true);
       } else {
         setState(() {

@@ -1,4 +1,4 @@
-import '../../data/models/today_practice_plan_dto.dart';
+import '../../data/dtos/today_practice_plan_dto.dart';
 
 class DashboardViewState {
   final bool isLoading;

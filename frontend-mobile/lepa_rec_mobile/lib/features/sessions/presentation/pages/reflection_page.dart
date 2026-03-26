@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/localization/localization_extension.dart';
-import '../../data/models/today_practice_task_dto.dart';
-import '../../data/models/submit_reflection_answer_dto.dart';
+import '../../data/dtos/today_practice_task_dto.dart';
+import '../../data/dtos/submit_reflection_answer_dto.dart';
 import '../../data/repositories/session_repository.dart';
 
 class ReflectionPage extends StatefulWidget {

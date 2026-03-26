@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import '../../features/auth/data/datasources/auth_session_reader.dart';
-import '../../features/auth/data/datasources/auth_local_datasource.dart';
-import '../../features/sessions/data/repositories/session_repository.dart';
+import '../features/auth/data/datasources/auth_session_reader.dart';
+import '../features/auth/data/datasources/auth_local_datasource.dart';
+import '../features/sessions/data/repositories/session_repository.dart';
 
 class SplashRouter extends StatefulWidget {
   const SplashRouter({super.key});

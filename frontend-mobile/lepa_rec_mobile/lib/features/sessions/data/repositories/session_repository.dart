@@ -1,17 +1,17 @@
 import '../datasources/session_remote_datasource.dart';
-import '../models/complete_primer_dto.dart';
-import '../models/daily_session_state_dto.dart';
-import '../models/distanced_journal_exercise_dto.dart';
-import '../models/growth_message_dto.dart';
-import '../models/perspective_scenario_exercise_dto.dart';
-import '../models/primer_statement_dto.dart';
-import '../models/start_perspective_scenario_dto.dart';
-import '../models/start_distanced_journal_exercise_dto.dart';
-import '../models/submit_perspective_scenario_answer_dto.dart';
-import '../models/submit_perspective_scenario_result_dto.dart';
-import '../models/submit_distanced_journal_answer_dto.dart';
-import '../models/submit_reflection_answer_dto.dart';
-import '../models/today_practice_plan_dto.dart';
+import '../dtos/complete_primer_dto.dart';
+import '../dtos/daily_session_state_dto.dart';
+import '../dtos/distanced_journal_exercise_dto.dart';
+import '../dtos/growth_message_dto.dart';
+import '../dtos/perspective_scenario_exercise_dto.dart';
+import '../dtos/primer_statement_dto.dart';
+import '../dtos/start_perspective_scenario_dto.dart';
+import '../dtos/start_distanced_journal_exercise_dto.dart';
+import '../dtos/submit_perspective_scenario_answer_dto.dart';
+import '../dtos/submit_perspective_scenario_result_dto.dart';
+import '../dtos/submit_distanced_journal_answer_dto.dart';
+import '../dtos/submit_reflection_answer_dto.dart';
+import '../dtos/today_practice_plan_dto.dart';
 
 class SessionRepository {
   final SessionRemoteDataSource _remote;

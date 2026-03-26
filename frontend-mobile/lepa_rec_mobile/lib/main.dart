@@ -3,8 +3,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:lepa_rec_mobile/core/network/api_client.dart';
 import 'package:lepa_rec_mobile/l10n/app_localizations.dart';
 
-import 'core/widgets/home_page.dart';
-import 'core/widgets/splash_router.dart';
+import 'app/home_page.dart';
+import 'app/splash_router.dart';
 import 'features/auth/presentation/pages/login_page.dart';
 import 'features/sessions/presentation/pages/session_flow_page.dart';
 

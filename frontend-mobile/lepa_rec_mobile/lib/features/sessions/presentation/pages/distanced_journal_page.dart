@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/localization/localization_extension.dart';
-import '../../data/models/distanced_journal_challenge_dto.dart';
-import '../../data/models/start_distanced_journal_exercise_dto.dart';
-import '../../data/models/submit_distanced_journal_answer_dto.dart';
+import '../../data/dtos/distanced_journal_challenge_dto.dart';
+import '../../data/dtos/start_distanced_journal_exercise_dto.dart';
+import '../../data/dtos/submit_distanced_journal_answer_dto.dart';
 import '../../data/repositories/session_repository.dart';
 import 'journal_feedback_page.dart';
 

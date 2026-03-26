@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lepa_rec_mobile/features/sessions/presentation/state/primer_flow_state.dart';
 
 import '../../../../core/localization/localization_extension.dart';
-import '../../data/models/primer_statement_dto.dart';
+import '../../data/dtos/primer_statement_dto.dart';
 import '../../data/repositories/session_repository.dart';
-import '../models/primer_flow_state.dart';
 
 class ValueStatementPage extends StatefulWidget {
   final VoidCallback onComplete;

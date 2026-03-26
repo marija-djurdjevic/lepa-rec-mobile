@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lepa_rec_mobile/features/sessions/presentation/state/dashboard_view_state.dart';
 
 import '../../../../core/localization/localization_extension.dart';
-import '../../data/models/distanced_journal_challenge_dto.dart';
-import '../../data/models/perspective_scenario_prompt_dto.dart';
-import '../../data/models/today_practice_plan_dto.dart';
-import '../../data/models/today_practice_task_dto.dart';
+import '../../data/dtos/distanced_journal_challenge_dto.dart';
+import '../../data/dtos/perspective_scenario_prompt_dto.dart';
+import '../../data/dtos/today_practice_plan_dto.dart';
+import '../../data/dtos/today_practice_task_dto.dart';
 import '../../data/repositories/session_repository.dart';
-import '../models/dashboard_view_state.dart';
 import 'distanced_journal_page.dart';
 import 'perspective_scenario_page.dart';
 import 'reflection_page.dart';
@@ -53,6 +53,12 @@ class _DashboardPageState extends State<DashboardPage> {
     _isCompletingSession = true;
 
     try {
+      final sessionState = await _sessionRepository.getTodaySession();
+      final status = sessionState.status.toLowerCase();
+      if (status == 'completed' || status == 'abandoned') {
+        return;
+      }
+
       await _sessionRepository.completeSession();
     } catch (_) {
       // namjerno ne rušimo UX ako complete session ne uspije
