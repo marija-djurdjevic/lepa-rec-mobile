@@ -24,8 +24,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get primerWelcomeTitle => 'Welcome to Your Breathing Journey';
 
   @override
-  String get primerWelcomeDescription =>
-      'Find a quiet place where you can be present with yourself. This is your time.';
+  String get primerWelcomeDescription => 'Find a quiet place where you can be present with yourself. This is your time.';
 
   @override
   String get proceed => 'Proceed';
@@ -41,8 +40,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String breatheInForSeconds(int seconds) {
-    final intl.NumberFormat secondsNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat secondsNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String secondsString = secondsNumberFormat.format(seconds);
 
     return 'Breathe in for $secondsString seconds';
@@ -50,8 +48,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String breatheOutForSeconds(int seconds) {
-    final intl.NumberFormat secondsNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat secondsNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String secondsString = secondsNumberFormat.format(seconds);
 
     return 'Breathe out for $secondsString seconds';
@@ -70,8 +67,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sessionComplete => 'Great job!';
 
   @override
-  String get sessionCompleteMessage =>
-      'You have completed your breathing exercise. You are doing amazing!';
+  String get sessionCompleteMessage => 'You have completed your breathing exercise. You are doing amazing!';
 
   @override
   String get continueToNext => 'Continue';
@@ -110,8 +106,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retry => 'Retry';
 
   @override
-  String get errorRenderingGrowthMessage =>
-      'Error rendering Growth Message page';
+  String get errorRenderingGrowthMessage => 'Error rendering Growth Message page';
 
   @override
   String get errorInSessionFlowPage => 'Error in SessionFlowPage';
@@ -141,8 +136,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noTasksToday => 'No Tasks Today';
 
   @override
-  String get completedAllTasks =>
-      'Great job! You\'ve completed all available tasks.';
+  String get completedAllTasks => 'Great job! You\'ve completed all available tasks.';
 
   @override
   String get todaysPractice => 'Today\'s Practice';
@@ -171,8 +165,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get perspectiveScenarioPromptLabel => 'Scenario';
 
   @override
-  String get answerEachScenarioQuestion =>
-      'Answer each question before you reveal the final perspective.';
+  String get answerEachScenarioQuestion => 'Answer each question before you reveal the final perspective.';
 
   @override
   String scenarioQuestionNumber(int number) {
@@ -183,8 +176,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get perspectiveRevealTitle => 'Perspective Reveal';
 
   @override
-  String get perspectiveRevealSubtitle =>
-      'Here is the revealed perspective from this scenario.';
+  String get perspectiveRevealSubtitle => 'Here is the revealed perspective from this scenario.';
 
   @override
   String errorSubmittingPerspectiveScenario(String error) {
@@ -198,8 +190,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chooseJournalChallenge => 'Choose one journal challenge for today';
 
   @override
-  String get selectAvailablePrompts =>
-      'Select one of the available prompts that resonates with you. The difficulty levels help you find the right challenge.';
+  String get selectAvailablePrompts => 'Select one of the available prompts that resonates with you. The difficulty levels help you find the right challenge.';
 
   @override
   String get journalCompletedToday => 'Journal completed for today';
@@ -214,8 +205,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exerciseNotInitialized => 'Error: Exercise not initialized';
 
   @override
-  String get responseSubmittedSuccessfully =>
-      'Response submitted successfully!';
+  String get responseSubmittedSuccessfully => 'Response submitted successfully!';
 
   @override
   String errorSubmittingResponse(String error) {
@@ -232,8 +222,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorStartingExercise => 'Error Starting Exercise';
 
   @override
-  String get loadingPersonalizedMessage =>
-      'Loading your personalized message...';
+  String get loadingPersonalizedMessage => 'Loading your personalized message...';
 
   @override
   String errorCompletingPrimer(String error) {
@@ -268,30 +257,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get journalFeedbackTitle => 'Reflection Feedback';
 
   @override
-  String get journalFeedbackSubtitle =>
-      'Here is a gentle reflection on your journaling style';
+  String get journalFeedbackSubtitle => 'Here is a gentle reflection on your journaling style';
 
   @override
   String get continueToDashboard => 'Continue';
 
   @override
-  String get goodDistancingFeedback =>
-      'You described the situation with a good sense of distance. This can help you look at the experience more calmly.';
+  String get goodDistancingFeedback => 'You described the situation with a good sense of distance. This can help you look at the experience more calmly.';
 
   @override
-  String get mixedDistancingFeedback =>
-      'You already show some distance in the way you wrote. You can go even further by talking about yourself more from the outside.';
+  String get mixedDistancingFeedback => 'You already show some distance in the way you wrote. You can go even further by talking about yourself more from the outside.';
 
   @override
-  String get needsMoreDistancingFeedback =>
-      'Your response stayed quite close to the immediate experience. Next time, try describing the event more as if you were observing someone from the outside.';
+  String get needsMoreDistancingFeedback => 'Your response stayed quite close to the immediate experience. Next time, try describing the event more as if you were observing someone from the outside.';
 
   @override
   String get reflectionRequired => 'Please share your reflection';
 
   @override
-  String get reflectionSubmittedSuccessfully =>
-      'Reflection submitted successfully!';
+  String get reflectionSubmittedSuccessfully => 'Reflection submitted successfully!';
 
   @override
   String get startBreathing => 'Tap to start';
@@ -306,4 +290,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String errorSubmittingReflection(String error) {
     return 'Error submitting reflection: $error';
   }
+
+  @override
+  String get progress => 'Progress';
+
+  @override
+  String get profile => 'Profile';
+
+  @override
+  String get dailySession => 'Daily Session';
+
+  @override
+  String get close => 'Close';
 }

@@ -24,8 +24,7 @@ class AppLocalizationsSr extends AppLocalizations {
   String get primerWelcomeTitle => 'Hajde da zajedno prodišemo';
 
   @override
-  String get primerWelcomeDescription =>
-      'Smesti se negde gde ti je prijatno i gde te niko neće prekidati. Ovo je tvoje vreme, zaslužuješ ga.';
+  String get primerWelcomeDescription => 'Smesti se negde gde ti je prijatno i gde te niko neće prekidati. Ovo je tvoje vreme, zaslužuješ ga.';
 
   @override
   String get proceed => 'Nastavi';
@@ -41,8 +40,7 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String breatheInForSeconds(int seconds) {
-    final intl.NumberFormat secondsNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat secondsNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String secondsString = secondsNumberFormat.format(seconds);
 
     return 'Udiši $secondsString sekundi';
@@ -50,8 +48,7 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String breatheOutForSeconds(int seconds) {
-    final intl.NumberFormat secondsNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat secondsNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String secondsString = secondsNumberFormat.format(seconds);
 
     return 'Izdiši $secondsString sekundi';
@@ -70,8 +67,7 @@ class AppLocalizationsSr extends AppLocalizations {
   String get sessionComplete => 'Svaka čast, učinio/la si nešto divno za sebe!';
 
   @override
-  String get sessionCompleteMessage =>
-      'Završio/la si vežbu disanja. Idemo dalje!';
+  String get sessionCompleteMessage => 'Završio/la si vežbu disanja. Idemo dalje!';
 
   @override
   String get continueToNext => 'Nastavi';
@@ -86,8 +82,7 @@ class AppLocalizationsSr extends AppLocalizations {
   String get loadingSession => 'Učitavanje...';
 
   @override
-  String get valueStatementTitle =>
-      'Koja izjava najviše rezonuje s tobom danas?';
+  String get valueStatementTitle => 'Koja izjava najviše rezonuje s tobom danas?';
 
   @override
   String get growthMessageTitle => 'Poruka za tebe';
@@ -111,12 +106,10 @@ class AppLocalizationsSr extends AppLocalizations {
   String get retry => 'Pokušaj ponovo';
 
   @override
-  String get errorRenderingGrowthMessage =>
-      'Greška pri prikazivanju ekrana poruke rasta';
+  String get errorRenderingGrowthMessage => 'Greška pri prikazivanju ekrana poruke rasta';
 
   @override
-  String get errorInSessionFlowPage =>
-      'Greška pri prikazivanju ekrana toka sesije';
+  String get errorInSessionFlowPage => 'Greška pri prikazivanju ekrana toka sesije';
 
   @override
   String get distancedJournal => 'Dnevnik sa distance';
@@ -143,8 +136,7 @@ class AppLocalizationsSr extends AppLocalizations {
   String get noTasksToday => 'Nema zadataka danas';
 
   @override
-  String get completedAllTasks =>
-      'Odličan posao! Završio/la si sve dostupne zadatke.';
+  String get completedAllTasks => 'Odličan posao! Završio/la si sve dostupne zadatke.';
 
   @override
   String get todaysPractice => 'Današnja vežba';
@@ -173,8 +165,7 @@ class AppLocalizationsSr extends AppLocalizations {
   String get perspectiveScenarioPromptLabel => 'Scenario';
 
   @override
-  String get answerEachScenarioQuestion =>
-      'Odgovori na svako pitanje pre nego što otkriješ završnu perspektivu.';
+  String get answerEachScenarioQuestion => 'Odgovori na svako pitanje pre nego što otkriješ završnu perspektivu.';
 
   @override
   String scenarioQuestionNumber(int number) {
@@ -185,8 +176,7 @@ class AppLocalizationsSr extends AppLocalizations {
   String get perspectiveRevealTitle => 'Otkrivanje perspektive';
 
   @override
-  String get perspectiveRevealSubtitle =>
-      'Evo perspektive koja se otkriva nakon ovog scenarija.';
+  String get perspectiveRevealSubtitle => 'Evo perspektive koja se otkriva nakon ovog scenarija.';
 
   @override
   String errorSubmittingPerspectiveScenario(String error) {
@@ -200,8 +190,7 @@ class AppLocalizationsSr extends AppLocalizations {
   String get chooseJournalChallenge => 'Izaberi temu o kojoj ćeš pisati danas';
 
   @override
-  String get selectAvailablePrompts =>
-      'Izaberi jedno od dostupnih pitanja koja te privlači. Nivoi težine ti pomažu da pronađeš pravi izazov.';
+  String get selectAvailablePrompts => 'Izaberi jedno od dostupnih pitanja koja te privlači. Nivoi težine ti pomažu da pronađeš pravi izazov.';
 
   @override
   String get journalCompletedToday => 'Dnevnik završen za danas';
@@ -268,23 +257,19 @@ class AppLocalizationsSr extends AppLocalizations {
   String get journalFeedbackTitle => 'Povratna poruka';
 
   @override
-  String get journalFeedbackSubtitle =>
-      'Evo kratkog osvrta na način na koji si pisao/la';
+  String get journalFeedbackSubtitle => 'Evo kratkog osvrta na način na koji si pisao/la';
 
   @override
   String get continueToDashboard => 'Nastavi';
 
   @override
-  String get goodDistancingFeedback =>
-      'Situaciju si opisao/la sa dobrom dozom distance. To može pomoći da je sagledaš mirnije i jasnije.';
+  String get goodDistancingFeedback => 'Situaciju si opisao/la sa dobrom dozom distance. To može pomoći da je sagledaš mirnije i jasnije.';
 
   @override
-  String get mixedDistancingFeedback =>
-      'U pisanju se već vidi određena distanca. Sledeći put možeš još više govoriti o sebi kao o nekome sa strane.';
+  String get mixedDistancingFeedback => 'U pisanju se već vidi određena distanca. Sledeći put možeš još više govoriti o sebi kao o nekome sa strane.';
 
   @override
-  String get needsMoreDistancingFeedback =>
-      'Odgovor je ostao dosta blizu neposrednom doživljaju. Sledeći put pokušaj da događaj opišeš više kao da posmatraš nekoga sa strane.';
+  String get needsMoreDistancingFeedback => 'Odgovor je ostao dosta blizu neposrednom doživljaju. Sledeći put pokušaj da događaj opišeš više kao da posmatraš nekoga sa strane.';
 
   @override
   String get reflectionRequired => 'Molim te podeli tvoj osvrt';
@@ -305,4 +290,16 @@ class AppLocalizationsSr extends AppLocalizations {
   String errorSubmittingReflection(String error) {
     return 'Greška pri slanju osvrtanja: $error';
   }
+
+  @override
+  String get progress => 'Napredak';
+
+  @override
+  String get profile => 'Profil';
+
+  @override
+  String get dailySession => 'Dnevna sesija';
+
+  @override
+  String get close => 'Zatvori';
 }

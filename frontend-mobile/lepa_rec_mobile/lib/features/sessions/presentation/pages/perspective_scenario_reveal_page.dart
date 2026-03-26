@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/localization/localization_extension.dart';
+import '../../../../core/constants/app_spacing.dart';
 
 class PerspectiveScenarioRevealPage extends StatelessWidget {
   final String reveal;
@@ -28,15 +29,18 @@ class PerspectiveScenarioRevealPage extends StatelessWidget {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           child: Column(
             children: [
               const Spacer(),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(AppSpacing.lg),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .secondary
+                      .withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: const Color(0xFF6B9B6E),
@@ -57,7 +61,7 @@ class PerspectiveScenarioRevealPage extends StatelessWidget {
                       size: 40,
                       color: const Color(0xFF6B9B6E),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppSpacing.md),
                     Text(
                       context.l10n.perspectiveRevealSubtitle,
                       textAlign: TextAlign.center,
@@ -67,7 +71,7 @@ class PerspectiveScenarioRevealPage extends StatelessWidget {
                         color: const Color(0xFF6B9B6E),
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppSpacing.sm),
                     Text(
                       reveal,
                       textAlign: TextAlign.center,

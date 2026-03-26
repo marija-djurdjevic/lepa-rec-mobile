@@ -5,6 +5,7 @@ import 'package:lepa_rec_mobile/l10n/app_localizations.dart';
 
 import 'app/home_page.dart';
 import 'app/splash_router.dart';
+import 'core/constants/app_theme.dart';
 import 'features/auth/presentation/pages/login_page.dart';
 import 'features/sessions/presentation/pages/session_flow_page.dart';
 
@@ -21,6 +22,7 @@ class LepaRecApp extends StatelessWidget {
     return MaterialApp(
       title: 'Lepa reč',
       debugShowCheckedModeBanner: false,
+      theme: AppTheme.light(),
       initialRoute: '/',
       localizationsDelegates: [
         AppLocalizations.delegate,
@@ -42,3 +44,4 @@ class LepaRecApp extends StatelessWidget {
     );
   }
 }
+

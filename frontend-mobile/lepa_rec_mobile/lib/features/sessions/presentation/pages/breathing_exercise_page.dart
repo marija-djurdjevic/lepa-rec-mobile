@@ -3,13 +3,20 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
+import '../../../../core/widgets/app_top_bar.dart';
 import '../widgets/breathing_circle.dart';
 
 class BreathingExercisePage extends StatefulWidget {
   final VoidCallback onComplete;
+  final VoidCallback onClose;
 
-  const BreathingExercisePage({super.key, required this.onComplete});
+  const BreathingExercisePage({
+    super.key,
+    required this.onComplete,
+    required this.onClose,
+  });
 
   @override
   State<BreathingExercisePage> createState() => _BreathingExercisePageState();
@@ -220,18 +227,20 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
           actions: [
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(dialogContext).pop();
-                  widget.onComplete();
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  backgroundColor: const Color(0xFF6B9B6E),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop();
+                    widget.onComplete();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.md,
+                    ),
+                    backgroundColor: const Color(0xFF6B9B6E),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                 ),
                 child: Text(
                   dialogContext.l10n.continueToNext,
@@ -264,10 +273,11 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F9F3),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF5F9F3),
-        elevation: 0,
-        leading: null,
+      appBar: AppTopBar(
+        title: context.l10n.dailySession,
+        showClose: true,
+        onClose: widget.onClose,
+        closeTooltip: context.l10n.close,
       ),
       body: SafeArea(
         child: Column(
@@ -282,7 +292,7 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
                 color: const Color(0xFF6B9B6E),
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: AppSpacing.xl),
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -294,7 +304,7 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
                     onTap: _isIdle ? _onStartPressed : null,
                     idleText: context.l10n.startBreathing,
                   ),
-                  const SizedBox(height: 48),
+                  const SizedBox(height: AppSpacing.xxl),
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 400),
                     child: _buildCenterContent(),
@@ -304,13 +314,15 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
             ),
             if (_hasStarted || _isPreStartCountdownActive)
               Padding(
-                padding: const EdgeInsets.only(bottom: 32),
+                padding: const EdgeInsets.only(bottom: AppSpacing.xl),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(
                     _totalRounds,
                     (index) => Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.xs,
+                      ),
                       child: CircleAvatar(
                         radius: 12,
                         backgroundColor: index < _currentRound
@@ -331,7 +343,7 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
                 ),
               )
             else
-              const SizedBox(height: 32),
+              const SizedBox(height: AppSpacing.xl),
           ],
         ),
       ),
@@ -368,7 +380,7 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
               color: const Color(0xFF6B9B6E),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSpacing.lg),
           Text(
             context.l10n.getReady,
             textAlign: TextAlign.center,
@@ -393,7 +405,7 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
             color: const Color(0xFF6B9B6E),
           ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: AppSpacing.lg),
         Text(
           _getPhaseText(context, _currentPhase),
           textAlign: TextAlign.center,

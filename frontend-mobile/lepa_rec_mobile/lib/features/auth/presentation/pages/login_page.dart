@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../../../core/constants/app_spacing.dart';
+
 import '../../data/datasources/auth_local_datasource.dart';
 import '../../data/datasources/auth_remote_datasource.dart';
 
@@ -79,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: 85),
+            const SizedBox(height: AppSpacing.xxl + AppSpacing.lg + AppSpacing.sm),
             Text(
               'Lepa reč',
               textAlign: TextAlign.center,
@@ -90,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
                 letterSpacing: -1.0,
               ),
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: AppSpacing.xl + AppSpacing.xs),
             SizedBox(
               height: 360,
               width: double.infinity,
@@ -99,19 +101,19 @@ class _LoginPageState extends State<LoginPage> {
                 fit: BoxFit.cover,
               ),
             ),
-            const SizedBox(height: 25),
+            const SizedBox(height: AppSpacing.md + AppSpacing.sm),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               child: _buildGoogleButton(),
             ),
             if (_error != null) ...[
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                 child: _buildErrorBox(),
               ),
             ],
-            const SizedBox(height: 40),
+            const SizedBox(height: AppSpacing.xl + AppSpacing.xs),
           ],
         ),
       ),
@@ -127,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
           backgroundColor: sageGreen,
           foregroundColor: Colors.white,
           elevation: 2,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
           shadowColor: Colors.black12,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
@@ -148,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
                 height: 20,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AppSpacing.sm),
             Flexible(
               child: Text(
                 'Prijavi se preko Google-a',
@@ -191,3 +193,4 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+

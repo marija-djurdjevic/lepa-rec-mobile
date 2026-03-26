@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/localization/localization_extension.dart';
+import '../../../../core/constants/app_spacing.dart';
 import '../../data/dtos/perspective_scenario_answer_dto.dart';
 import '../../data/dtos/perspective_scenario_exercise_dto.dart';
 import '../../data/dtos/perspective_scenario_prompt_dto.dart';
@@ -207,7 +208,7 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
 
     if (_loadingError != null) {
       return Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -221,7 +222,7 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.sm),
               Text(
                 _loadingError!,
                 textAlign: TextAlign.center,
@@ -230,7 +231,7 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
                   color: Colors.red[600],
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.lg),
               ElevatedButton(
                 onPressed: _startScenario,
                 style: ElevatedButton.styleFrom(
@@ -254,7 +255,10 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
     return SingleChildScrollView(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.lg,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -273,7 +277,7 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             Text(
               context.l10n.perspectiveScenarioPromptLabel,
               style: GoogleFonts.quicksand(
@@ -282,12 +286,15 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
                 color: const Color(0xFF6B9B6E),
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.xs),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSpacing.md),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context)
+                    .colorScheme
+                    .secondary
+                    .withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: const Color(0xFF6B9B6E), width: 1.5),
               ),
@@ -301,7 +308,7 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.lg),
             Text(
               context.l10n.answerEachScenarioQuestion,
               style: GoogleFonts.quicksand(
@@ -310,12 +317,12 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
                 color: const Color(0xFF6B9B6E),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             for (var i = 0; i < widget.prompt.questions.length; i++) ...[
               _buildQuestionCard(i),
-              const SizedBox(height: 20),
+              const SizedBox(height: AppSpacing.md + 4),
             ],
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             SizedBox(
               width: double.infinity,
               height: 56,
@@ -349,7 +356,7 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
                       ),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.lg),
           ],
         ),
       ),
@@ -362,9 +369,12 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
     final hasError = _showValidationErrors && controller.text.trim().isEmpty;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context)
+            .colorScheme
+            .secondary
+            .withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: hasError ? Colors.red : Colors.grey[300]!,
@@ -392,7 +402,7 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
               height: 1.4,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.sm),
           TextField(
             controller: controller,
             maxLines: 4,
@@ -432,8 +442,11 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
                 borderSide: BorderSide(color: Colors.grey[200]!, width: 1.5),
               ),
               filled: true,
-              fillColor: Colors.white,
-              contentPadding: const EdgeInsets.all(12),
+              fillColor: Theme.of(context)
+                  .colorScheme
+                  .secondary
+                  .withValues(alpha: 0.12),
+              contentPadding: const EdgeInsets.all(AppSpacing.md),
             ),
             style: GoogleFonts.quicksand(
               fontSize: 14,
@@ -444,7 +457,7 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
           ),
           if (hasError)
             Padding(
-              padding: const EdgeInsets.only(top: 8),
+              padding: const EdgeInsets.only(top: AppSpacing.xs),
               child: Text(
                 context.l10n.answerRequired,
                 style: const TextStyle(color: Colors.red, fontSize: 12),

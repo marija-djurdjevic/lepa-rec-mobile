@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lepa_rec_mobile/features/sessions/presentation/state/primer_flow_state.dart';
 
+import '../../../../core/constants/app_spacing.dart';
+
 import '../../../../core/localization/localization_extension.dart';
+import '../../../../core/widgets/app_top_bar.dart';
 import '../../data/dtos/primer_statement_dto.dart';
 import '../../data/repositories/session_repository.dart';
 
@@ -10,12 +13,14 @@ class ValueStatementPage extends StatefulWidget {
   final VoidCallback onComplete;
   final Function(PrimerFlowState) onStateUpdate;
   final PrimerFlowState primerFlowState;
+  final VoidCallback onClose;
 
   const ValueStatementPage({
     super.key,
     required this.onComplete,
     required this.onStateUpdate,
     required this.primerFlowState,
+    required this.onClose,
   });
 
   @override
@@ -79,10 +84,11 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
     if (_isLoading) {
       return Scaffold(
         backgroundColor: const Color(0xFFF5F9F3),
-        appBar: AppBar(
-          backgroundColor: const Color(0xFFF5F9F3),
-          elevation: 0,
-          leading: null,
+        appBar: AppTopBar(
+          title: context.l10n.dailySession,
+          showClose: true,
+          onClose: widget.onClose,
+          closeTooltip: context.l10n.close,
         ),
         body: const Center(
           child: CircularProgressIndicator(
@@ -95,10 +101,11 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
     if (_errorMessage != null) {
       return Scaffold(
         backgroundColor: const Color(0xFFF5F9F3),
-        appBar: AppBar(
-          backgroundColor: const Color(0xFFF5F9F3),
-          elevation: 0,
-          leading: null,
+        appBar: AppTopBar(
+          title: context.l10n.dailySession,
+          showClose: true,
+          onClose: widget.onClose,
+          closeTooltip: context.l10n.close,
         ),
         body: Center(
           child: Column(
@@ -112,13 +119,13 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
                   color: Color(0xFF6B9B6E),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
               Text(
                 '$_errorMessage',
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: Colors.red),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.lg),
               ElevatedButton(
                 onPressed: () {
                   setState(() {
@@ -137,17 +144,18 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F9F3),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF5F9F3),
-        elevation: 0,
-        leading: null,
+      appBar: AppTopBar(
+        title: context.l10n.dailySession,
+        showClose: true,
+        onClose: widget.onClose,
+        closeTooltip: context.l10n.close,
       ),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               child: Text(
                 context.l10n.valueStatementTitle,
                 textAlign: TextAlign.center,
@@ -158,10 +166,10 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: AppSpacing.xl),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: _statements
@@ -170,14 +178,14 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
                       .fold<List<Widget>>([], (acc, widget) {
                         acc.add(widget);
                         if (acc.length < _statements.length * 2) {
-                          acc.add(const SizedBox(height: 16));
+                          acc.add(const SizedBox(height: AppSpacing.md));
                         }
                         return acc;
                       }),
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.lg),
           ],
         ),
       ),
@@ -190,8 +198,16 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
     return ElevatedButton(
       onPressed: () => _selectValue(statement),
       style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        backgroundColor: isSelected ? const Color(0xFF6B9B6E) : Colors.white,
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.md,
+        ),
+        backgroundColor: isSelected
+            ? const Color(0xFF6B9B6E)
+            : Theme.of(context)
+                .colorScheme
+                .secondary
+                .withValues(alpha: 0.15),
         foregroundColor: isSelected ? Colors.white : const Color(0xFF6B9B6E),
         elevation: isSelected ? 2 : 1,
         shape: RoundedRectangleBorder(
@@ -211,3 +227,4 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
     );
   }
 }
+

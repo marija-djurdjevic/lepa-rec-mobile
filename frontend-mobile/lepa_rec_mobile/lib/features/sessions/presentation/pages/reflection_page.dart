@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/localization/localization_extension.dart';
+import '../../../../core/constants/app_spacing.dart';
 import '../../data/dtos/today_practice_task_dto.dart';
 import '../../data/dtos/submit_reflection_answer_dto.dart';
 import '../../data/repositories/session_repository.dart';
@@ -114,7 +115,10 @@ class _ReflectionPageState extends State<ReflectionPage> {
         child: SingleChildScrollView(
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.lg,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -128,7 +132,7 @@ class _ReflectionPageState extends State<ReflectionPage> {
                     height: 1.4,
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: AppSpacing.xl),
 
                 // Yesterday's topic section
                 Text(
@@ -139,13 +143,22 @@ class _ReflectionPageState extends State<ReflectionPage> {
                     color: const Color(0xFF6B9B6E),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.xs),
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.grey[50],
+                    color: Theme.of(context)
+                        .colorScheme
+                        .secondary
+                        .withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey[200]!, width: 1),
+                    border: Border.all(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withValues(alpha: 0.45),
+                      width: 1,
+                    ),
                   ),
                   child: Text(
                     widget.reflectionPrompt.challengeContent,
@@ -157,7 +170,7 @@ class _ReflectionPageState extends State<ReflectionPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSpacing.lg),
 
                 // Previous answer section
                 Text(
@@ -168,13 +181,22 @@ class _ReflectionPageState extends State<ReflectionPage> {
                     color: const Color(0xFF6B9B6E),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.xs),
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.grey[50],
+                    color: Theme.of(context)
+                        .colorScheme
+                        .secondary
+                        .withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey[200]!, width: 1),
+                    border: Border.all(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withValues(alpha: 0.45),
+                      width: 1,
+                    ),
                   ),
                   child: Text(
                     widget.reflectionPrompt.previousMainAnswer ?? '',
@@ -186,7 +208,7 @@ class _ReflectionPageState extends State<ReflectionPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSpacing.lg),
 
                 // Previous follow-up question
                 Text(
@@ -198,13 +220,22 @@ class _ReflectionPageState extends State<ReflectionPage> {
                     height: 1.4,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.xs),
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.grey[50],
+                    color: Theme.of(context)
+                        .colorScheme
+                        .secondary
+                        .withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey[200]!, width: 1),
+                    border: Border.all(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withValues(alpha: 0.45),
+                      width: 1,
+                    ),
                   ),
                   child: Text(
                     widget.reflectionPrompt.challengeFollowUpQuestion,
@@ -216,7 +247,7 @@ class _ReflectionPageState extends State<ReflectionPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSpacing.lg),
 
                 // Previous follow-up answer
                 Text(
@@ -227,13 +258,22 @@ class _ReflectionPageState extends State<ReflectionPage> {
                     color: const Color(0xFF6B9B6E),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.xs),
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.grey[50],
+                    color: Theme.of(context)
+                        .colorScheme
+                        .secondary
+                        .withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey[200]!, width: 1),
+                    border: Border.all(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withValues(alpha: 0.45),
+                      width: 1,
+                    ),
                   ),
                   child: Text(
                     widget.reflectionPrompt.previousFollowUpAnswer ?? '',
@@ -245,7 +285,7 @@ class _ReflectionPageState extends State<ReflectionPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: AppSpacing.xl),
 
                 // Today's reflection input
                 Text(
@@ -256,7 +296,7 @@ class _ReflectionPageState extends State<ReflectionPage> {
                     color: const Color(0xFF6B9B6E),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.xs),
 
                 // Reflection text field
                 _buildTextInputField(
@@ -270,14 +310,14 @@ class _ReflectionPageState extends State<ReflectionPage> {
                 if (_showValidationErrors &&
                     _reflectionController.text.trim().isEmpty)
                   Padding(
-                    padding: const EdgeInsets.only(top: 8),
+                    padding: const EdgeInsets.only(top: AppSpacing.xs),
                     child: Text(
                       context.l10n.reflectionRequired,
                       style: const TextStyle(color: Colors.red, fontSize: 12),
                     ),
                   ),
 
-                const SizedBox(height: 48),
+                const SizedBox(height: AppSpacing.xxl),
 
                 // Submit button
                 SizedBox(
@@ -314,7 +354,7 @@ class _ReflectionPageState extends State<ReflectionPage> {
                   ),
                 ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSpacing.lg),
               ],
             ),
           ),
@@ -362,8 +402,11 @@ class _ReflectionPageState extends State<ReflectionPage> {
           borderSide: BorderSide(color: Colors.grey[200]!, width: 1.5),
         ),
         filled: true,
-        fillColor: Colors.white,
-        contentPadding: const EdgeInsets.all(12),
+        fillColor: Theme.of(context)
+            .colorScheme
+            .secondary
+            .withValues(alpha: 0.12),
+        contentPadding: const EdgeInsets.all(AppSpacing.md),
       ),
       style: GoogleFonts.quicksand(
         fontSize: 14,

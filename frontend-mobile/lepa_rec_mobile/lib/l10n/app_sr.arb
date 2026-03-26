@@ -380,4 +380,22 @@
         "type": "String"
       }
     }  }
+,
+  "progress": "Napredak",
+  "@progress": {
+    "description": "Labela za napredak"
+  },
+  "profile": "Profil",
+  "@profile": {
+    "description": "Labela za profil"
+  }
+,
+  "dailySession": "Dnevna sesija",
+  "@dailySession": {
+    "description": "Naslov za dnevni tok sesije"
+  },
+  "close": "Zatvori",
+  "@close": {
+    "description": "Labela za zatvaranje"
+  }
 }

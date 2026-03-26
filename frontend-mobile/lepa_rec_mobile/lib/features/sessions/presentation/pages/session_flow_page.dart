@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lepa_rec_mobile/features/sessions/presentation/state/primer_flow_state.dart';
 
 import '../../../../core/localization/localization_extension.dart';
+import '../../../../core/constants/app_spacing.dart';
 import '../pages/breathing_exercise_page.dart';
 import '../pages/growth_message_page.dart';
 import '../pages/primer_welcome_page.dart';
@@ -50,6 +51,10 @@ class _SessionFlowPageState extends State<SessionFlowPage> {
     });
   }
 
+  void _handleClose() {
+    Navigator.of(context).pushNamedAndRemoveUntil('/home', (_) => false);
+  }
+
   @override
   Widget build(BuildContext context) {
     try {
@@ -57,20 +62,28 @@ class _SessionFlowPageState extends State<SessionFlowPage> {
 
       switch (_currentStep) {
         case SessionFlowStep.primerWelcome:
-          pageWidget = PrimerWelcomePage(onProceed: _moveToNext);
+          pageWidget = PrimerWelcomePage(
+            onProceed: _moveToNext,
+            onClose: _handleClose,
+          );
         case SessionFlowStep.breathingExercise:
-          pageWidget = BreathingExercisePage(onComplete: _moveToNext);
+          pageWidget = BreathingExercisePage(
+            onComplete: _moveToNext,
+            onClose: _handleClose,
+          );
         case SessionFlowStep.valueStatement:
           pageWidget = ValueStatementPage(
             onComplete: _moveToNext,
             onStateUpdate: _updatePrimerFlowState,
             primerFlowState: _primerFlowState,
+            onClose: _handleClose,
           );
         case SessionFlowStep.growthMessage:
           pageWidget = GrowthMessagePage(
             onComplete: _moveToNext,
             onStateUpdate: _updatePrimerFlowState,
             primerFlowState: _primerFlowState,
+            onClose: _handleClose,
           );
         case SessionFlowStep.complete:
           pageWidget = Scaffold(
@@ -90,7 +103,7 @@ class _SessionFlowPageState extends State<SessionFlowPage> {
                 context.l10n.sessionFlowPageError,
                 style: const TextStyle(color: Colors.white, fontSize: 18),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
               Text(
                 e.toString(),
                 style: const TextStyle(color: Colors.white),

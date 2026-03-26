@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lepa_rec_mobile/features/sessions/presentation/state/dashboard_view_state.dart';
 
 import '../../../../core/localization/localization_extension.dart';
+import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/widgets/app_top_bar.dart';
 import '../../data/dtos/distanced_journal_challenge_dto.dart';
 import '../../data/dtos/perspective_scenario_prompt_dto.dart';
 import '../../data/dtos/today_practice_plan_dto.dart';
@@ -161,33 +163,17 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F9F3),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF5F9F3),
-        elevation: 0,
-        title: Text(
-          context.l10n.dashboard,
-          style: GoogleFonts.quicksand(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: const Color(0xFF6B9B6E),
-          ),
-        ),
-        centerTitle: true,
-        leading: null,
+      appBar: AppTopBar(
+        title: context.l10n.dashboard,
         actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Center(
-              child: GestureDetector(
-                onTap: _handleLogout,
-                child: Text(
-                  context.l10n.logout,
-                  style: GoogleFonts.quicksand(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: const Color(0xFF6B9B6E),
-                  ),
-                ),
+          TextButton(
+            onPressed: _handleLogout,
+            child: Text(
+              context.l10n.logout,
+              style: GoogleFonts.quicksand(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF6B9B6E),
               ),
             ),
           ),
@@ -327,7 +313,12 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Widget _buildGreetingSection() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.lg,
+        AppSpacing.lg,
+        AppSpacing.xs,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -339,7 +330,7 @@ class _DashboardPageState extends State<DashboardPage> {
               color: const Color(0xFF6B9B6E),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.xs),
         ],
       ),
     );
@@ -347,13 +338,31 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Widget _buildTasksHeader() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
-      child: Text(
-        context.l10n.yourTasks,
-        style: GoogleFonts.quicksand(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: const Color(0xFF6B9B6E),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.md,
+        AppSpacing.lg,
+        AppSpacing.xs,
+      ),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: Theme.of(context)
+                .colorScheme
+                .secondary
+                .withValues(alpha: 0.35),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            context.l10n.yourTasks,
+            style: GoogleFonts.quicksand(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF6B9B6E),
+            ),
+          ),
         ),
       ),
     );
@@ -386,7 +395,10 @@ class _DashboardPageState extends State<DashboardPage> {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF5F9F3),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .secondary
+                      .withValues(alpha: 0.25),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Center(
@@ -462,7 +474,10 @@ class _DashboardPageState extends State<DashboardPage> {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF5F9F3),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .secondary
+                      .withValues(alpha: 0.25),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Center(
@@ -561,7 +576,10 @@ class _DashboardPageState extends State<DashboardPage> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF5F9F3),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withValues(alpha: 0.25),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Center(
@@ -627,9 +645,18 @@ class _DashboardPageState extends State<DashboardPage> {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.grey[50],
+            color: Theme.of(context)
+                .colorScheme
+                .secondary
+                .withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey[200]!, width: 1),
+            border: Border.all(
+              color: Theme.of(context)
+                  .colorScheme
+                  .secondary
+                  .withValues(alpha: 0.45),
+              width: 1,
+            ),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,

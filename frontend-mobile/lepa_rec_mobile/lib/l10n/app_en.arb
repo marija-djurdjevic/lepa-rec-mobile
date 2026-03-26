@@ -384,4 +384,22 @@
       }
     }
   }
+,
+  "progress": "Progress",
+  "@progress": {
+    "description": "Progress page label"
+  },
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile page label"
+  }
+,
+  "dailySession": "Daily Session",
+  "@dailySession": {
+    "description": "Title for daily session flow"
+  },
+  "close": "Close",
+  "@close": {
+    "description": "Close button label"
+  }
 }

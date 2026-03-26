@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/localization/localization_extension.dart';
+import '../../../../core/constants/app_spacing.dart';
 import '../../data/dtos/distanced_journal_challenge_dto.dart';
 import '../../data/dtos/start_distanced_journal_exercise_dto.dart';
 import '../../data/dtos/submit_distanced_journal_answer_dto.dart';
@@ -137,7 +138,10 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
         child: SingleChildScrollView(
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.lg,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -159,7 +163,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.md),
 
                 Text(
                   widget.challenge.content,
@@ -170,7 +174,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                     height: 1.4,
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: AppSpacing.xl),
 
                 Text(
                   context.l10n.yourAnswer,
@@ -180,7 +184,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                     color: const Color(0xFF6B9B6E),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.xs),
 
                 _buildTextInputField(
                   controller: _mainAnswerController,
@@ -193,14 +197,14 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                 if (_showValidationErrors &&
                     _mainAnswerController.text.trim().isEmpty)
                   Padding(
-                    padding: const EdgeInsets.only(top: 8),
+                    padding: const EdgeInsets.only(top: AppSpacing.xs),
                     child: Text(
                       context.l10n.answerRequired,
                       style: const TextStyle(color: Colors.red, fontSize: 12),
                     ),
                   ),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: AppSpacing.xl),
 
                 Text(
                   widget.challenge.followUpQuestion,
@@ -211,7 +215,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                     height: 1.4,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.xs),
 
                 Text(
                   context.l10n.followUpAnswer,
@@ -221,7 +225,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                     color: const Color(0xFF6B9B6E),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.xs),
 
                 _buildTextInputField(
                   controller: _followUpAnswerController,
@@ -234,14 +238,14 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                 if (_showValidationErrors &&
                     _followUpAnswerController.text.trim().isEmpty)
                   Padding(
-                    padding: const EdgeInsets.only(top: 8),
+                    padding: const EdgeInsets.only(top: AppSpacing.xs),
                     child: Text(
                       context.l10n.answerRequired,
                       style: const TextStyle(color: Colors.red, fontSize: 12),
                     ),
                   ),
 
-                const SizedBox(height: 48),
+                const SizedBox(height: AppSpacing.xxl),
 
                 SizedBox(
                   width: double.infinity,
@@ -278,7 +282,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                   ),
                 ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSpacing.lg),
               ],
             ),
           ),
@@ -331,8 +335,11 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
           borderSide: BorderSide(color: Colors.grey[200]!, width: 1.5),
         ),
         filled: true,
-        fillColor: Colors.white,
-        contentPadding: const EdgeInsets.all(12),
+        fillColor: Theme.of(context)
+            .colorScheme
+            .secondary
+            .withValues(alpha: 0.12),
+        contentPadding: const EdgeInsets.all(AppSpacing.md),
       ),
       style: GoogleFonts.quicksand(
         fontSize: 14,
