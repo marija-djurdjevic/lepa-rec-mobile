@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/localization/localization_extension.dart';
@@ -41,6 +42,14 @@ class _ReflectionPageState extends State<ReflectionPage> {
   }
 
   Future<void> _handleSubmit() async {
+    if (widget.reflectionPrompt.exerciseId.trim().isEmpty) {
+      _showExerciseNotFound();
+      if (mounted) {
+        Navigator.pop(context, true);
+      }
+      return;
+    }
+
     if (!_validateForm()) {
       setState(() {
         _showValidationErrors = true;
@@ -74,6 +83,25 @@ class _ReflectionPageState extends State<ReflectionPage> {
       if (mounted) {
         Navigator.pop(context, true);
       }
+    } on DioException catch (e) {
+      if (!mounted) return;
+
+      if (e.response?.statusCode == 404) {
+        _showExerciseNotFound();
+        Navigator.pop(context, true);
+        return;
+      }
+
+      setState(() {
+        _isSubmitting = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(context.l10n.errorSubmittingReflection(e.toString())),
+          backgroundColor: Colors.red[600],
+        ),
+      );
     } catch (e) {
       if (!mounted) return;
 
@@ -414,6 +442,15 @@ class _ReflectionPageState extends State<ReflectionPage> {
         color: Colors.black87,
       ),
       textAlignVertical: TextAlignVertical.top,
+    );
+  }
+
+  void _showExerciseNotFound() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(context.l10n.exerciseNotFoundOrOwned),
+        backgroundColor: Colors.red[600],
+      ),
     );
   }
 }

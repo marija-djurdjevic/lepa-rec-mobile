@@ -1,5 +1,6 @@
 class SubmitDistancedJournalAnswerDto {
   final String exerciseId;
+  /// Informational only; the backend ignores this field.
   final DateTime sessionDate;
   final String mainAnswer;
   final String followUpAnswer;

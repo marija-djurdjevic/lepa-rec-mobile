@@ -205,6 +205,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exerciseNotInitialized => 'Error: Exercise not initialized';
 
   @override
+  String get exerciseNotFoundOrOwned => 'This exercise isn\'t available or doesn\'t belong to you.';
+
+  @override
+  String get missingPrimerData => 'Missing required primer data. Please restart the session.';
+
+  @override
   String get responseSubmittedSuccessfully => 'Response submitted successfully!';
 
   @override

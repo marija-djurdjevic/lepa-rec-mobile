@@ -11,11 +11,9 @@ class AppTheme {
     final colorScheme = const ColorScheme.light(
       primary: Color.from(alpha: 1, red: 0.42, green: 0.608, blue: 0.431),
       secondary: secondaryWarm,
-      background: background,
       surface: surface,
       onPrimary: Colors.white,
       onSecondary: Colors.white,
-      onBackground: Color(0xFF1C1C1C),
       onSurface: Color(0xFF1C1C1C),
     );
 

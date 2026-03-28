@@ -259,6 +259,14 @@
   "@exerciseNotInitialized": {
     "description": "Poruka greške kada vežba ne uspije da se inicijalizuje"
   },
+  "exerciseNotFoundOrOwned": "Ova vežba nije dostupna ili nije povezana sa tvojim nalogom.",
+  "@exerciseNotFoundOrOwned": {
+    "description": "Poruka kada vežba ne postoji ili nije u vlasništvu korisnika"
+  },
+  "missingPrimerData": "Nedostaju podaci za pripremu. Pokušaj ponovo.",
+  "@missingPrimerData": {
+    "description": "Poruka kada nedostaju podaci za završetak pripreme"
+  },
   "responseSubmittedSuccessfully": "Odgovor je uspešno poslat!",
   "@responseSubmittedSuccessfully": {
     "description": "Poruka uspeha nakon slanja odgovora na distancirani dnevnik"

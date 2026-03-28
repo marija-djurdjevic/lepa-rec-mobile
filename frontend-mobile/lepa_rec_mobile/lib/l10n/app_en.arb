@@ -259,6 +259,14 @@
   "@exerciseNotInitialized": {
     "description": "Error message when exercise fails to initialize"
   },
+  "exerciseNotFoundOrOwned": "This exercise isn't available or doesn't belong to you.",
+  "@exerciseNotFoundOrOwned": {
+    "description": "Shown when an exercise is missing or the user does not own it"
+  },
+  "missingPrimerData": "Missing required primer data. Please restart the session.",
+  "@missingPrimerData": {
+    "description": "Shown when primer completion is missing required data"
+  },
   "responseSubmittedSuccessfully": "Response submitted successfully!",
   "@responseSubmittedSuccessfully": {
     "description": "Success message after submitting distanced journal response"

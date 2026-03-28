@@ -443,6 +443,18 @@ abstract class AppLocalizations {
   /// **'Error: Exercise not initialized'**
   String get exerciseNotInitialized;
 
+  /// Shown when an exercise is missing or the user does not own it
+  ///
+  /// In en, this message translates to:
+  /// **'This exercise isn\'t available or doesn\'t belong to you.'**
+  String get exerciseNotFoundOrOwned;
+
+  /// Shown when primer completion is missing required data
+  ///
+  /// In en, this message translates to:
+  /// **'Missing required primer data. Please restart the session.'**
+  String get missingPrimerData;
+
   /// Success message after submitting distanced journal response
   ///
   /// In en, this message translates to:

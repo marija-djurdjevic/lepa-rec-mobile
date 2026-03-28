@@ -34,7 +34,8 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return AppBar(
-      backgroundColor: backgroundColor ?? colorScheme.background,
+      backgroundColor:
+          backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
       elevation: 0,
       centerTitle: centerTitle,
       titleSpacing: 24,

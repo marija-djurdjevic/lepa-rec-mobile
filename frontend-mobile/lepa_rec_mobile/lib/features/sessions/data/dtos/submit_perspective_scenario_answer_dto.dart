@@ -2,6 +2,7 @@ import 'perspective_scenario_answer_dto.dart';
 
 class SubmitPerspectiveScenarioAnswerDto {
   final String exerciseId;
+  /// Informational only; the backend ignores this field.
   final DateTime sessionDate;
   final List<PerspectiveScenarioAnswerDto> answers;
 

@@ -77,6 +77,20 @@ class _GrowthMessagePageState extends State<GrowthMessagePage> {
 
       widget.onStateUpdate(updatedState);
 
+      if (updatedState.selectedStatementId == null ||
+          updatedState.growthMessageId == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(context.l10n.missingPrimerData),
+              backgroundColor: Colors.red,
+            ),
+          );
+          setState(() => _isCompleting = false);
+        }
+        return;
+      }
+
       final completePrimerDto = CompletePrimerDto(
         isSkipped: false,
         presentedStatementIds: updatedState.presentedStatementIds,

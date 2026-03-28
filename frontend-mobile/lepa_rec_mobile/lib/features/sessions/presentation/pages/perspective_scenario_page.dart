@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/localization/localization_extension.dart';
@@ -78,6 +79,19 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
         _exercise = startedExercise;
         _isStarting = false;
       });
+    } on DioException catch (e) {
+      if (!mounted) return;
+
+      if (e.response?.statusCode == 404) {
+        _showExerciseNotFound();
+        Navigator.pop(context, true);
+        return;
+      }
+
+      setState(() {
+        _loadingError = e.toString();
+        _isStarting = false;
+      });
     } catch (e) {
       if (!mounted) return;
 
@@ -154,6 +168,27 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
           _isSubmitting = false;
         });
       }
+    } on DioException catch (e) {
+      if (!mounted) return;
+
+      if (e.response?.statusCode == 404) {
+        _showExerciseNotFound();
+        Navigator.pop(context, true);
+        return;
+      }
+
+      setState(() {
+        _isSubmitting = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            context.l10n.errorSubmittingPerspectiveScenario(e.toString()),
+          ),
+          backgroundColor: Colors.red[600],
+        ),
+      );
     } catch (e) {
       if (!mounted) return;
 
@@ -194,6 +229,15 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
         ),
       ),
       body: SafeArea(child: _buildBody()),
+    );
+  }
+
+  void _showExerciseNotFound() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(context.l10n.exerciseNotFoundOrOwned),
+        backgroundColor: Colors.red[600],
+      ),
     );
   }
 

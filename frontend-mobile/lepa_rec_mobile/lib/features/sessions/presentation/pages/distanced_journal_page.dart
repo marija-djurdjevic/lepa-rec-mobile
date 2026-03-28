@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/localization/localization_extension.dart';
@@ -97,6 +98,25 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
           _isSubmitting = false;
         });
       }
+    } on DioException catch (e) {
+      if (!mounted) return;
+
+      if (e.response?.statusCode == 404) {
+        _showExerciseNotFound();
+        Navigator.pop(context, true);
+        return;
+      }
+
+      setState(() {
+        _isSubmitting = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(context.l10n.errorSubmittingResponse(e.toString())),
+          backgroundColor: Colors.red[600],
+        ),
+      );
     } catch (e) {
       if (!mounted) return;
 
@@ -287,6 +307,15 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  void _showExerciseNotFound() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(context.l10n.exerciseNotFoundOrOwned),
+        backgroundColor: Colors.red[600],
       ),
     );
   }

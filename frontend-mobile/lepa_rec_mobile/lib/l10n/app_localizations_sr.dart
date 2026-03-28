@@ -205,6 +205,12 @@ class AppLocalizationsSr extends AppLocalizations {
   String get exerciseNotInitialized => 'Greška: Vežba nije inicijalizovana';
 
   @override
+  String get exerciseNotFoundOrOwned => 'Ova vežba nije dostupna ili nije povezana sa tvojim nalogom.';
+
+  @override
+  String get missingPrimerData => 'Nedostaju podaci za pripremu. Pokušaj ponovo.';
+
+  @override
   String get responseSubmittedSuccessfully => 'Odgovor je uspešno poslat!';
 
   @override
