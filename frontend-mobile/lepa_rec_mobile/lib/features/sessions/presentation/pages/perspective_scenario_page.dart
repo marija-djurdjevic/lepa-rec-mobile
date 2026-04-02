@@ -307,49 +307,62 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: _getLevelColor(widget.prompt.challengeLevel),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                widget.prompt.challengeLevel,
-                style: GoogleFonts.quicksand(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              context.l10n.perspectiveScenarioPromptLabel,
-              style: GoogleFonts.quicksand(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF6B9B6E),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(AppSpacing.md),
-              decoration: BoxDecoration(
-                color: Theme.of(context)
-                    .colorScheme
-                    .secondary
-                    .withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFF6B9B6E), width: 1.5),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.lg,
               ),
-              child: Text(
-                widget.prompt.scenarioText,
-                style: GoogleFonts.quicksand(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black87,
-                  height: 1.5,
+              decoration: BoxDecoration(
+                color: const Color(0xFF6B9B6E).withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(
+                  color: const Color(0xFF6B9B6E).withValues(alpha: 0.35),
+                  width: 1.2,
                 ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.psychology_outlined,
+                        color: Color(0xFF6B9B6E),
+                        size: 22,
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color:
+                              _getLevelColor(widget.prompt.challengeLevel),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          widget.prompt.challengeLevel,
+                          style: GoogleFonts.quicksand(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(
+                    widget.prompt.scenarioText,
+                    style: GoogleFonts.quicksand(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF2F3A2F),
+                      height: 1.5,
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
@@ -357,14 +370,23 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
               context.l10n.answerEachScenarioQuestion,
               style: GoogleFonts.quicksand(
                 fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: const Color(0xFF6B9B6E),
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF3E4A3E),
               ),
             ),
             const SizedBox(height: AppSpacing.md),
             for (var i = 0; i < widget.prompt.questions.length; i++) ...[
               _buildQuestionCard(i),
-              const SizedBox(height: AppSpacing.md + 4),
+              if (i != widget.prompt.questions.length - 1) ...[
+                const SizedBox(height: AppSpacing.lg),
+                Divider(
+                  color: const Color(0xFF6B9B6E).withValues(alpha: 0.2),
+                  thickness: 1,
+                  height: 1,
+                ),
+                const SizedBox(height: AppSpacing.lg),
+              ] else
+                const SizedBox(height: AppSpacing.lg),
             ],
             const SizedBox(height: AppSpacing.md),
             SizedBox(
@@ -412,45 +434,43 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
     final controller = _answerControllers[index];
     final hasError = _showValidationErrors && controller.text.trim().isEmpty;
 
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: Theme.of(context)
-            .colorScheme
-            .secondary
-            .withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: hasError ? Colors.red : Colors.grey[300]!,
-          width: 1.2,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          context.l10n.scenarioQuestionNumber(index + 1),
+          style: GoogleFonts.quicksand(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF6B9B6E),
+          ),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            context.l10n.scenarioQuestionNumber(index + 1),
-            style: GoogleFonts.quicksand(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF6B9B6E),
-            ),
+        const SizedBox(height: AppSpacing.sm),
+        Text(
+          question.questionText,
+          style: GoogleFonts.quicksand(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF2F3A2F),
+            height: 1.4,
           ),
-          const SizedBox(height: 8),
-          Text(
-            question.questionText,
-            style: GoogleFonts.quicksand(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: Colors.black87,
-              height: 1.4,
-            ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-          const SizedBox(height: AppSpacing.sm),
-          TextField(
+          child: TextField(
             controller: controller,
-            maxLines: 4,
-            minLines: 4,
+            maxLines: 5,
+            minLines: 5,
             enabled: !_isSubmitting,
             onChanged: (_) {
               if (_showValidationErrors) {
@@ -459,56 +479,61 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
             },
             decoration: InputDecoration(
               hintText: context.l10n.shareYourThoughts,
-              hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+              hintStyle: TextStyle(
+                color: Colors.grey[500],
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+              ),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(18),
                 borderSide: BorderSide(
                   color: hasError ? Colors.red : Colors.grey[300]!,
-                  width: 1.5,
+                  width: 1.2,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(18),
                 borderSide: BorderSide(
                   color: hasError ? Colors.red : Colors.grey[300]!,
-                  width: 1.5,
+                  width: 1.2,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(18),
                 borderSide: BorderSide(
                   color: hasError ? Colors.red : const Color(0xFF6B9B6E),
                   width: 2,
                 ),
               ),
               disabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.grey[200]!, width: 1.5),
+                borderRadius: BorderRadius.circular(18),
+                borderSide: BorderSide(color: Colors.grey[200]!, width: 1.2),
               ),
               filled: true,
-              fillColor: Theme.of(context)
-                  .colorScheme
-                  .secondary
-                  .withValues(alpha: 0.12),
-              contentPadding: const EdgeInsets.all(AppSpacing.md),
+              fillColor: const Color(0xFFF2F4F0),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.lg,
+              ),
             ),
+            cursorColor: const Color(0xFF6B9B6E),
             style: GoogleFonts.quicksand(
-              fontSize: 14,
+              fontSize: 15,
               fontWeight: FontWeight.w400,
-              color: Colors.black87,
+              color: const Color(0xFF2F3A2F),
             ),
             textAlignVertical: TextAlignVertical.top,
           ),
-          if (hasError)
-            Padding(
-              padding: const EdgeInsets.only(top: AppSpacing.xs),
-              child: Text(
-                context.l10n.answerRequired,
-                style: const TextStyle(color: Colors.red, fontSize: 12),
-              ),
+        ),
+        if (hasError)
+          Padding(
+            padding: const EdgeInsets.only(top: AppSpacing.xs),
+            child: Text(
+              context.l10n.answerRequired,
+              style: const TextStyle(color: Colors.red, fontSize: 12),
             ),
-        ],
-      ),
+          ),
+      ],
     );
   }
 

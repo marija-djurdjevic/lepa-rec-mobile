@@ -167,51 +167,92 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
+                    horizontal: AppSpacing.lg,
+                    vertical: AppSpacing.lg,
                   ),
                   decoration: BoxDecoration(
-                    color: _getLevelColor(widget.challenge.challengeLevel),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    widget.challenge.challengeLevel,
-                    style: GoogleFonts.quicksand(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                    color: const Color(0xFF6B9B6E).withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: const Color(0xFF6B9B6E).withValues(alpha: 0.35),
+                      width: 1.2,
                     ),
                   ),
-                ),
-                const SizedBox(height: AppSpacing.md),
-
-                Text(
-                  widget.challenge.content,
-                  style: GoogleFonts.quicksand(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF6B9B6E),
-                    height: 1.4,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.edit_note_rounded,
+                            color: Color(0xFF6B9B6E),
+                            size: 22,
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color:
+                                  _getLevelColor(widget.challenge.challengeLevel),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              widget.challenge.challengeLevel,
+                              style: GoogleFonts.quicksand(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      Text(
+                        widget.challenge.content,
+                        style: GoogleFonts.quicksand(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF2F3A2F),
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: AppSpacing.xl),
+                const SizedBox(height: AppSpacing.xl + AppSpacing.xs),
 
                 Text(
                   context.l10n.yourAnswer,
                   style: GoogleFonts.quicksand(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF6B9B6E),
+                    color: const Color(0xFF3E4A3E),
                   ),
                 ),
                 const SizedBox(height: AppSpacing.xs),
 
-                _buildTextInputField(
-                  controller: _mainAnswerController,
-                  hintText: context.l10n.shareYourThoughts,
-                  isError:
-                      _showValidationErrors &&
-                      _mainAnswerController.text.trim().isEmpty,
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(18),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: _buildTextInputField(
+                    controller: _mainAnswerController,
+                    hintText: context.l10n.shareYourThoughts,
+                    isError:
+                        _showValidationErrors &&
+                        _mainAnswerController.text.trim().isEmpty,
+                  ),
                 ),
 
                 if (_showValidationErrors &&
@@ -224,35 +265,53 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                     ),
                   ),
 
+                const SizedBox(height: AppSpacing.lg),
+                Divider(
+                  color: const Color(0xFF6B9B6E).withValues(alpha: 0.2),
+                  thickness: 1,
+                  height: 1,
+                ),
                 const SizedBox(height: AppSpacing.xl),
 
                 Text(
                   widget.challenge.followUpQuestion,
                   style: GoogleFonts.quicksand(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: const Color(0xFF6B9B6E),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF2F3A2F),
                     height: 1.4,
                   ),
                 ),
-                const SizedBox(height: AppSpacing.xs),
+                const SizedBox(height: AppSpacing.md),
 
                 Text(
                   context.l10n.followUpAnswer,
                   style: GoogleFonts.quicksand(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF6B9B6E),
+                    color: const Color(0xFF3E4A3E),
                   ),
                 ),
                 const SizedBox(height: AppSpacing.xs),
 
-                _buildTextInputField(
-                  controller: _followUpAnswerController,
-                  hintText: context.l10n.shareYourThoughts,
-                  isError:
-                      _showValidationErrors &&
-                      _followUpAnswerController.text.trim().isEmpty,
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(18),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: _buildTextInputField(
+                    controller: _followUpAnswerController,
+                    hintText: context.l10n.shareYourThoughts,
+                    isError:
+                        _showValidationErrors &&
+                        _followUpAnswerController.text.trim().isEmpty,
+                  ),
                 ),
 
                 if (_showValidationErrors &&
@@ -265,7 +324,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                     ),
                   ),
 
-                const SizedBox(height: AppSpacing.xxl),
+                const SizedBox(height: AppSpacing.xxl + AppSpacing.md),
 
                 SizedBox(
                   width: double.infinity,
@@ -327,8 +386,8 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
   }) {
     return TextField(
       controller: controller,
-      maxLines: 5,
-      minLines: 5,
+      maxLines: 7,
+      minLines: 7,
       enabled: !_isSubmitting,
       onChanged: (_) {
         if (_showValidationErrors) {
@@ -337,43 +396,48 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
       },
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+        hintStyle: TextStyle(
+          color: Colors.grey[500],
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+        ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(18),
           borderSide: BorderSide(
             color: isError ? Colors.red : Colors.grey[300]!,
-            width: 1.5,
+            width: 1.2,
           ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(18),
           borderSide: BorderSide(
             color: isError ? Colors.red : Colors.grey[300]!,
-            width: 1.5,
+            width: 1.2,
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(18),
           borderSide: BorderSide(
             color: isError ? Colors.red : const Color(0xFF6B9B6E),
             width: 2,
           ),
         ),
         disabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.grey[200]!, width: 1.5),
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide(color: Colors.grey[200]!, width: 1.2),
         ),
         filled: true,
-        fillColor: Theme.of(context)
-            .colorScheme
-            .secondary
-            .withValues(alpha: 0.12),
-        contentPadding: const EdgeInsets.all(AppSpacing.md),
+        fillColor: const Color(0xFFF2F4F0),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.lg,
+        ),
       ),
+      cursorColor: const Color(0xFF6B9B6E),
       style: GoogleFonts.quicksand(
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: FontWeight.w400,
-        color: Colors.black87,
+        color: const Color(0xFF2F3A2F),
       ),
       textAlignVertical: TextAlignVertical.top,
     );

@@ -32,23 +32,24 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    const Color appBarGreen = Color(0xFF6B9B6E);
     return AppBar(
-      backgroundColor:
-          backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: backgroundColor ?? appBarGreen,
       elevation: 0,
       centerTitle: centerTitle,
       titleSpacing: 24,
+      iconTheme: const IconThemeData(color: Colors.white),
+      actionsIconTheme: const IconThemeData(color: Colors.white),
       title: Text(
         title,
         style: GoogleFonts.quicksand(
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          color: colorScheme.primary,
+          color: Colors.white,
         ),
       ),
       leading: _buildLeading(context),
-      actions: _wrapActions(actions),
+      actions: _buildActions(context),
     );
   }
 
@@ -62,16 +63,21 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
       );
     }
 
-    if (showClose) {
-      return IconButton(
-        icon: const Icon(Icons.close),
-        color: Theme.of(context).colorScheme.primary,
-        tooltip: closeTooltip,
-        onPressed: onClose ?? () => Navigator.of(context).maybePop(),
-      );
-    }
-
     return null;
+  }
+
+  List<Widget>? _buildActions(BuildContext context) {
+    final List<Widget> baseActions = [
+      if (actions != null) ...actions!,
+      if (showClose)
+        IconButton(
+          icon: const Icon(Icons.close),
+          tooltip: closeTooltip,
+          onPressed: onClose ?? () => Navigator.of(context).maybePop(),
+        ),
+    ];
+
+    return _wrapActions(baseActions);
   }
 
   List<Widget>? _wrapActions(List<Widget>? actions) {
@@ -81,7 +87,28 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
         .map(
           (action) => Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Center(child: action),
+            child: Center(
+              child: IconTheme.merge(
+                data: const IconThemeData(color: Colors.white),
+                child: TextButtonTheme(
+                  data: TextButtonThemeData(
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      textStyle: GoogleFonts.quicksand(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  child: DefaultTextStyle(
+                    style: GoogleFonts.quicksand(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    child: action,
+                  ),
+                ),
+              ),
+            ),
           ),
         )
         .toList();

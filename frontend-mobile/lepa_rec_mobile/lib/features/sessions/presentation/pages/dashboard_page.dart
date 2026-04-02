@@ -173,7 +173,7 @@ class _DashboardPageState extends State<DashboardPage> {
               style: GoogleFonts.quicksand(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF6B9B6E),
+                color: Colors.white,
               ),
             ),
           ),

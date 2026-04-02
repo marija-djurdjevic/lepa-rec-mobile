@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -283,6 +284,7 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const SizedBox(height: AppSpacing.lg),
             Text(
               context.l10n.breathingExercise,
               textAlign: TextAlign.center,
@@ -294,20 +296,58 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
             ),
             const SizedBox(height: AppSpacing.xl),
             Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  BreathingCircle(
-                    animation: _breathingController,
-                    phase: _currentPhase,
-                    isIdle: _isIdle,
-                    onTap: _isIdle ? _onStartPressed : null,
-                    idleText: context.l10n.startBreathing,
+                  Transform.translate(
+                    offset: const Offset(0, -8),
+                    child: AnimatedScale(
+                    duration: const Duration(milliseconds: 2000),
+                    curve: Curves.easeInOutCubic,
+                    scale: _isIdle ? 1.0 : 1.28,
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 2000),
+                      curve: Curves.easeInOutCubic,
+                      opacity: _isIdle ? 1 : 0,
+                      child: CustomPaint(
+                        size: const Size(280, 280),
+                        painter: _BreathingLinesPainter(),
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: AppSpacing.xxl),
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 400),
-                    child: _buildCenterContent(),
+                  ),
+                  Transform.translate(
+                    offset: const Offset(0, -12),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                      SizedBox(
+                        width: 280,
+                        height: 280,
+                        child: Center(
+                          child: Transform.translate(
+                            offset: Offset(0, _isIdle ? 0 : 20),
+                            child: BreathingCircle(
+                              animation: _breathingController,
+                              phase: _currentPhase,
+                              isIdle: _isIdle,
+                              onTap: _isIdle ? _onStartPressed : null,
+                              idleText: context.l10n.startBreathing,
+                            ),
+                          ),
+                        ),
+                      ),
+                        const SizedBox(height: AppSpacing.xxl + AppSpacing.md),
+                        Transform.translate(
+                          offset: const Offset(0, 24),
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 400),
+                            child: _buildCenterContent(),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -429,3 +469,47 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
 }
 
 enum BreathingPhase { breathIn, hold, breathOut }
+
+class _BreathingLinesPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint linePaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.4
+      ..color = const Color(0xFF6B9B6E).withValues(alpha: 0.5);
+
+    final Offset center = Offset(size.width / 2, size.height / 2 - 60);
+    final double baseRadius = size.width * 0.42;
+
+    void drawWavyRing(
+      double radius,
+      double amplitude,
+      double phaseShift,
+      int waves,
+    ) {
+      final Path path = Path();
+      const int steps = 220;
+      for (int i = 0; i <= steps; i++) {
+        final double t = (i / steps) * math.pi * 2;
+        final double wave = math.sin((t * waves) + phaseShift) * amplitude;
+        final double r = radius + wave;
+        final double x = center.dx + math.cos(t) * r;
+        final double y = center.dy + math.sin(t) * r;
+        if (i == 0) {
+          path.moveTo(x, y);
+        } else {
+          path.lineTo(x, y);
+        }
+      }
+      path.close();
+      canvas.drawPath(path, linePaint);
+    }
+
+    drawWavyRing(baseRadius, size.width * 0.02, 0.0, 6);
+    drawWavyRing(baseRadius + size.width * 0.06, size.width * 0.018, 1.2, 7);
+    drawWavyRing(baseRadius + size.width * 0.12, size.width * 0.016, 2.3, 8);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}

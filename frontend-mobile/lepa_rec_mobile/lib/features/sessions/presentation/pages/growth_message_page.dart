@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lepa_rec_mobile/features/sessions/presentation/state/primer_flow_state.dart';
@@ -30,6 +32,7 @@ class GrowthMessagePage extends StatefulWidget {
 
 class _GrowthMessagePageState extends State<GrowthMessagePage> {
   late final SessionRepository _sessionRepository;
+  late final IconData _accentIcon;
   bool _isLoading = true;
   bool _isCompleting = false;
   String? _errorMessage;
@@ -39,7 +42,17 @@ class _GrowthMessagePageState extends State<GrowthMessagePage> {
   void initState() {
     super.initState();
     _sessionRepository = SessionRepository();
+    _accentIcon = _pickAccentIcon();
     _loadGrowthMessage();
+  }
+
+  IconData _pickAccentIcon() {
+    final icons = [
+      Icons.favorite_border_rounded,
+      Icons.wb_sunny_outlined,
+      Icons.sentiment_satisfied_alt_outlined,
+    ];
+    return icons[math.Random().nextInt(icons.length)];
   }
 
   Future<void> _loadGrowthMessage() async {
@@ -195,100 +208,229 @@ class _GrowthMessagePageState extends State<GrowthMessagePage> {
         closeTooltip: context.l10n.close,
       ),
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Stack(
           children: [
-            const SizedBox(height: AppSpacing.lg),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-              child: Text(
-                context.l10n.growthMessageTitle,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.quicksand(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
-                  color: const Color(0xFF6B9B6E),
-                ),
+            Positioned.fill(
+              child: CustomPaint(
+                painter: _GrowthBackgroundPainter(),
               ),
             ),
-            const SizedBox(height: AppSpacing.xl),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-                child: Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(AppSpacing.lg),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .secondary
-                            .withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: const Color(0xFF6B9B6E),
-                          width: 1.5,
-                        ),
-                      ),
-                      child: Text(
-                        _growthMessage?.text ??
-                            context.l10n.loadingPersonalizedMessage,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.quicksand(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: const Color(0xFF6B9B6E),
-                          height: 1.6,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-              child: SizedBox(
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: _isCompleting
-                      ? null
-                      : _continueToNextAndCompletePrimer,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF6B9B6E),
-                    foregroundColor: Colors.white,
-                    disabledBackgroundColor: const Color(0xFFBBBBBB),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: AppSpacing.xxl),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                  child: Text(
+                    context.l10n.growthMessageTitle,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.quicksand(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF6B9B6E),
                     ),
                   ),
-                  child: _isCompleting
-                      ? const SizedBox(
-                          height: 24,
-                          width: 24,
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.white,
-                            ),
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : Text(
-                          context.l10n.completePrimer,
-                          style: GoogleFonts.quicksand(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
                 ),
-              ),
+                const SizedBox(height: AppSpacing.lg),
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      const double topYFrac = 0.24;
+                      const double midYFrac = 0.62;
+                      final double centerY =
+                          constraints.maxHeight * ((topYFrac + midYFrac) / 2);
+
+                      final String messageText = _growthMessage?.text ??
+                          context.l10n.loadingPersonalizedMessage;
+                      final TextStyle messageStyle = GoogleFonts.quicksand(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF6B9B6E),
+                        height: 1.5,
+                      );
+
+                      final TextPainter textPainter = TextPainter(
+                        text: TextSpan(text: messageText, style: messageStyle),
+                        textAlign: TextAlign.center,
+                        textDirection: TextDirection.ltr,
+                        maxLines: null,
+                      )..layout(
+                          maxWidth:
+                              constraints.maxWidth - (AppSpacing.lg * 2),
+                        );
+
+                      const double iconSize = 40;
+                      const double iconSpacing = AppSpacing.md;
+                      final double blockHeight =
+                          textPainter.height + iconSpacing + iconSize;
+                      final double topPadding =
+                          math.max(0, centerY - (blockHeight / 2));
+                      final double bottomPadding = math.max(
+                        0,
+                        constraints.maxHeight - topPadding - blockHeight,
+                      );
+
+                      return SingleChildScrollView(
+                        padding: EdgeInsets.fromLTRB(
+                          AppSpacing.lg,
+                          topPadding,
+                          AppSpacing.lg,
+                          bottomPadding,
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              messageText,
+                              textAlign: TextAlign.center,
+                              style: messageStyle,
+                            ),
+                            const SizedBox(height: iconSpacing),
+                            Icon(
+                              _accentIcon,
+                              size: iconSize,
+                              color: const Color(0xFF6B9B6E)
+                                  .withValues(alpha: 0.85),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                  child: SizedBox(
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: _isCompleting
+                          ? null
+                          : _continueToNextAndCompletePrimer,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF6B9B6E),
+                        foregroundColor: Colors.white,
+                        disabledBackgroundColor: const Color(0xFFBBBBBB),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: _isCompleting
+                          ? const SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Text(
+                              context.l10n.completePrimer,
+                              style: GoogleFonts.quicksand(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.lg),
+              ],
             ),
-            const SizedBox(height: AppSpacing.lg),
           ],
         ),
       ),
     );
   }
+}
+
+class _GrowthBackgroundPainter extends CustomPainter {
+  static const Color _baseGreen = Color(0xFF6B9B6E);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final double width = size.width;
+    final double height = size.height;
+
+    final double topY = height * 0.24;
+    final double midY = height * 0.62;
+    final double amplitude = height * 0.06;
+
+    final Path fillPath = Path();
+    fillPath.moveTo(0, topY);
+    for (double x = 0; x <= width; x += 10) {
+      final double wave = math.sin((x / width) * math.pi * 2) * amplitude;
+      fillPath.lineTo(x, topY + wave);
+    }
+    for (double x = width; x >= 0; x -= 10) {
+      final double wave =
+          math.sin((x / width) * math.pi * 2 + math.pi / 2) *
+              amplitude *
+              0.7;
+      fillPath.lineTo(x, midY + wave);
+    }
+    fillPath.close();
+
+    final Paint fillPaint =
+        Paint()..color = _baseGreen.withValues(alpha: 0.22);
+    canvas.drawPath(fillPath, fillPaint);
+
+    final Paint linePaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.4
+      ..color = _baseGreen.withValues(alpha: 0.55);
+
+    final List<double> edgeOffsets = [0, 10, 20];
+    for (final offset in edgeOffsets) {
+      final Path topEdge = Path();
+      for (double x = 0; x <= width; x += 8) {
+        final double wave =
+            math.sin((x / width) * math.pi * 2 + offset * 0.08) *
+                (amplitude * 0.55);
+        if (x == 0) {
+          topEdge.moveTo(x, topY + wave + offset);
+        } else {
+          topEdge.lineTo(x, topY + wave + offset);
+        }
+      }
+      canvas.drawPath(topEdge, linePaint);
+
+      final Path bottomEdge = Path();
+      for (double x = 0; x <= width; x += 8) {
+        final double wave =
+            math.sin((x / width) * math.pi * 2 + offset * 0.08 + math.pi / 3) *
+                (amplitude * 0.5);
+        if (x == 0) {
+          bottomEdge.moveTo(x, midY + wave - offset);
+        } else {
+          bottomEdge.lineTo(x, midY + wave - offset);
+        }
+      }
+      canvas.drawPath(
+        bottomEdge,
+        linePaint..color = _baseGreen.withValues(alpha: 0.5),
+      );
+    }
+
+    final Path bottomEdge = Path();
+    for (double x = 0; x <= width; x += 10) {
+      final double wave =
+          math.sin((x / width) * math.pi * 2 + math.pi / 2) *
+              (amplitude * 0.4);
+      if (x == 0) {
+        bottomEdge.moveTo(x, midY + height * 0.22 + wave);
+      } else {
+        bottomEdge.lineTo(x, midY + height * 0.22 + wave);
+      }
+    }
+    canvas.drawPath(
+      bottomEdge,
+      linePaint..color = _baseGreen.withValues(alpha: 0.45),
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 

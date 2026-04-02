@@ -154,6 +154,7 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const SizedBox(height: AppSpacing.lg),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               child: Text(
@@ -200,19 +201,20 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
-          vertical: AppSpacing.md,
+          vertical: AppSpacing.lg,
         ),
         backgroundColor: isSelected
-            ? const Color(0xFF6B9B6E)
-            : Theme.of(context)
-                .colorScheme
-                .secondary
-                .withValues(alpha: 0.15),
+            ? const Color(0xFF6B9B6E).withValues(alpha: 0.85)
+            : const Color(0xFF6B9B6E).withValues(alpha: 0.25),
         foregroundColor: isSelected ? Colors.white : const Color(0xFF6B9B6E),
-        elevation: isSelected ? 2 : 1,
+        elevation: isSelected ? 3 : 1,
+        shadowColor: const Color(0xFF6B9B6E).withValues(alpha: 0.25),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: const Color(0xFF6B9B6E), width: 1.5),
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: const Color(0xFF6B9B6E),
+            width: isSelected ? 2 : 1.5,
+          ),
         ),
       ),
       child: Text(
@@ -220,7 +222,7 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
         textAlign: TextAlign.center,
         style: GoogleFonts.quicksand(
           fontSize: 16,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
           color: isSelected ? Colors.white : const Color(0xFF6B9B6E),
         ),
       ),
