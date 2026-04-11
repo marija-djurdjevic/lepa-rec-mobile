@@ -42,7 +42,7 @@ class _DashboardPageState extends State<DashboardPage> {
         (plan.distancedJournalChoices.isNotEmpty &&
             !plan.isDistancedJournalCompleted) ||
         (plan.shouldShowPerspectiveScenario &&
-            plan.perspectiveScenarioPrompt != null &&
+            plan.perspectiveScenarioChoices.isNotEmpty &&
             !plan.isPerspectiveScenarioCompleted);
   }
 
@@ -278,8 +278,7 @@ class _DashboardPageState extends State<DashboardPage> {
     return SafeArea(
       child: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(child: _buildGreetingSection()),
-          SliverToBoxAdapter(child: _buildTasksHeader()),
+          SliverToBoxAdapter(child: const SizedBox(height: AppSpacing.lg)),
           if (plan.reflectionPrompt != null && !plan.isReflectionCompleted)
             SliverToBoxAdapter(
               child: _buildReflectionTaskCard(plan.reflectionPrompt!),
@@ -296,74 +295,17 @@ class _DashboardPageState extends State<DashboardPage> {
           else if (plan.isDistancedJournalCompleted)
             SliverToBoxAdapter(child: _buildDistancedJournalCompletedCard()),
           if (plan.shouldShowPerspectiveScenario &&
-              plan.perspectiveScenarioPrompt != null &&
+              plan.perspectiveScenarioChoices.isNotEmpty &&
               !plan.isPerspectiveScenarioCompleted)
             SliverToBoxAdapter(
-              child: _buildPerspectiveScenarioCard(
-                plan.perspectiveScenarioPrompt!,
+              child: _buildPerspectiveScenarioSection(
+                plan.perspectiveScenarioChoices,
               ),
             )
           else if (plan.isPerspectiveScenarioCompleted)
             SliverToBoxAdapter(child: _buildPerspectiveScenarioCompletedCard()),
           SliverToBoxAdapter(child: const SizedBox(height: 32)),
         ],
-      ),
-    );
-  }
-
-  Widget _buildGreetingSection() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.lg,
-        AppSpacing.lg,
-        AppSpacing.xs,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            context.l10n.todaysPractice,
-            style: GoogleFonts.quicksand(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF6B9B6E),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTasksHeader() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.md,
-        AppSpacing.lg,
-        AppSpacing.xs,
-      ),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: Theme.of(context)
-                .colorScheme
-                .secondary
-                .withValues(alpha: 0.35),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Text(
-            context.l10n.yourTasks,
-            style: GoogleFonts.quicksand(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF6B9B6E),
-            ),
-          ),
-        ),
       ),
     );
   }
@@ -376,7 +318,7 @@ class _DashboardPageState extends State<DashboardPage> {
       child: GestureDetector(
         onTap: _handleReflectionTap,
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
@@ -389,111 +331,134 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ],
           ),
-          child: Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .secondary
-                      .withValues(alpha: 0.25),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Center(
-                  child: Icon(
-                    Icons.lightbulb_outline,
-                    color: Color(0xFF6B9B6E),
-                    size: 24,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      context.l10n.reflection,
-                      style: GoogleFonts.quicksand(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF6B9B6E),
+                    SizedBox(
+                      width: 36,
+                      height: 36,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withValues(alpha: 0.25),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Center(
+                          child: Icon(
+                            Icons.lightbulb_outline,
+                            color: Color(0xFF6B9B6E),
+                            size: 20,
+                          ),
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      reflection.challengeContent,
-                      style: GoogleFonts.quicksand(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.grey[600],
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: SizedBox(
+                        height: 36,
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            context.l10n.reflection,
+                            style: GoogleFonts.quicksand(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF6B9B6E),
+                            ),
+                          ),
+                        ),
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(
+                      height: 36,
+                      child: Center(
+                        child: Icon(
+                          Icons.arrow_forward_ios,
+                          color: const Color(0xFF6B9B6E),
+                          size: 16,
+                        ),
+                      ),
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(width: 12),
-              Icon(
-                Icons.arrow_forward_ios,
-                color: const Color(0xFF6B9B6E),
-                size: 16,
-              ),
-            ],
-          ),
+                const SizedBox(height: 10),
+                Text(
+                  context.l10n.reflectionFreshEyes,
+                  style: GoogleFonts.quicksand(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF6B9B6E),
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  reflection.challengeContent,
+                  style: GoogleFonts.quicksand(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[600],
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
         ),
       ),
     );
   }
 
-  Widget _buildPerspectiveScenarioCard(PerspectiveScenarioPromptDto prompt) {
+  Widget _buildPerspectiveScenarioSection(
+    List<PerspectiveScenarioPromptDto> prompts,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      child: GestureDetector(
-        onTap: () => _handlePerspectiveScenarioTap(prompt),
-        child: Container(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFF6B9B6E), width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Padding(
           padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFF6B9B6E), width: 1.5),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .secondary
-                      .withValues(alpha: 0.25),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Center(
-                  child: Icon(
-                    Icons.psychology_outlined,
-                    color: Color(0xFF6B9B6E),
-                    size: 24,
+              Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withValues(alpha: 0.25),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.psychology_outlined,
+                        color: Color(0xFF6B9B6E),
+                        size: 20,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
                       context.l10n.perspectiveScenario,
                       style: GoogleFonts.quicksand(
                         fontSize: 16,
@@ -501,16 +466,63 @@ class _DashboardPageState extends State<DashboardPage> {
                         color: const Color(0xFF6B9B6E),
                       ),
                     ),
-                    const SizedBox(height: 4),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              const SizedBox(height: 8),
+              ...prompts.map((prompt) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: _buildPerspectiveScenarioChoiceOption(prompt),
+                );
+              }),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPerspectiveScenarioChoiceOption(
+    PerspectiveScenarioPromptDto prompt,
+  ) {
+    return Material(
+      color: Colors.white,
+      child: InkWell(
+        onTap: () => _handlePerspectiveScenarioTap(prompt),
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Theme.of(context)
+                .colorScheme
+                .secondary
+                .withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: Theme.of(context)
+                  .colorScheme
+                  .secondary
+                  .withValues(alpha: 0.45),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Text(
                       prompt.scenarioText,
                       style: GoogleFonts.quicksand(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
                         color: Colors.grey[600],
+                        height: 1.4,
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 8),
                     Container(
@@ -523,7 +535,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         borderRadius: BorderRadius.circular(3),
                       ),
                       child: Text(
-                        prompt.challengeLevel,
+                        _getLevelLabel(prompt.challengeLevel, context),
                         style: GoogleFonts.quicksand(
                           fontSize: 9,
                           fontWeight: FontWeight.w600,
@@ -535,10 +547,15 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ),
               const SizedBox(width: 12),
-              const Icon(
-                Icons.arrow_forward_ios,
-                color: Color(0xFF6B9B6E),
-                size: 16,
+              SizedBox(
+                height: 36,
+                child: Center(
+                  child: Icon(
+                    Icons.arrow_forward_ios,
+                    color: const Color(0xFF6B9B6E),
+                    size: 16,
+                  ),
+                ),
               ),
             ],
           ),
@@ -604,25 +621,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 ],
               ),
               const SizedBox(height: 12),
-              Text(
-                context.l10n.chooseJournalChallenge,
-                style: GoogleFonts.quicksand(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: const Color(0xFF6B9B6E),
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                context.l10n.selectAvailablePrompts,
-                style: GoogleFonts.quicksand(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.grey[600],
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
               ...challenges.map((challenge) {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12),
@@ -661,27 +660,6 @@ class _DashboardPageState extends State<DashboardPage> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: _getLevelColor(
-                    challenge.challengeLevel,
-                  ).withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Center(
-                  child: Text(
-                    challenge.challengeLevel[0].toUpperCase(),
-                    style: GoogleFonts.quicksand(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: _getLevelColor(challenge.challengeLevel),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -691,11 +669,9 @@ class _DashboardPageState extends State<DashboardPage> {
                       style: GoogleFonts.quicksand(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
-                        color: Colors.black87,
+                        color: Colors.grey[600],
                         height: 1.4,
                       ),
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 8),
                     Container(
@@ -708,7 +684,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         borderRadius: BorderRadius.circular(3),
                       ),
                       child: Text(
-                        challenge.challengeLevel,
+                        _getLevelLabel(challenge.challengeLevel, context),
                         style: GoogleFonts.quicksand(
                           fontSize: 9,
                           fontWeight: FontWeight.w600,
@@ -719,13 +695,15 @@ class _DashboardPageState extends State<DashboardPage> {
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
-              Padding(
-                padding: const EdgeInsets.only(top: 6),
-                child: Icon(
-                  Icons.arrow_forward_ios,
-                  color: Colors.grey[400],
-                  size: 14,
+              const SizedBox(width: 12),
+              SizedBox(
+                height: 36,
+                child: Center(
+                  child: Icon(
+                    Icons.arrow_forward_ios,
+                    color: const Color(0xFF6B9B6E),
+                    size: 16,
+                  ),
                 ),
               ),
             ],
@@ -939,13 +917,34 @@ class _DashboardPageState extends State<DashboardPage> {
   Color _getLevelColor(String level) {
     switch (level.toLowerCase()) {
       case 'easy':
-        return Colors.green[600]!;
+      case 'lako':
+        return const Color(0xFF8BBF8F);
       case 'medium':
-        return Colors.orange[600]!;
+      case 'srednje':
+        return const Color(0xFF5C9A6B);
       case 'hard':
-        return Colors.red[600]!;
+      case 'tesko':
+      case 'teško':
+        return const Color(0xFF3E7A52);
       default:
         return const Color(0xFF6B9B6E);
+    }
+  }
+
+  String _getLevelLabel(String level, BuildContext context) {
+    switch (level.toLowerCase()) {
+      case 'easy':
+      case 'lako':
+        return context.l10n.levelEasy;
+      case 'medium':
+      case 'srednje':
+        return context.l10n.levelMedium;
+      case 'hard':
+      case 'tesko':
+      case 'teško':
+        return context.l10n.levelHard;
+      default:
+        return level;
     }
   }
 }

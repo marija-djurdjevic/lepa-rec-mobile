@@ -18,6 +18,7 @@ class PerspectiveScenarioRevealPage extends StatelessWidget {
         elevation: 0,
         automaticallyImplyLeading: false,
         centerTitle: true,
+        toolbarHeight: 72,
         title: Text(
           context.l10n.perspectiveRevealTitle,
           style: GoogleFonts.quicksand(
@@ -25,6 +26,9 @@ class PerspectiveScenarioRevealPage extends StatelessWidget {
             fontWeight: FontWeight.w600,
             color: const Color(0xFF6B9B6E),
           ),
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
         ),
       ),
       body: SafeArea(
@@ -62,16 +66,6 @@ class PerspectiveScenarioRevealPage extends StatelessWidget {
                       color: const Color(0xFF6B9B6E),
                     ),
                     const SizedBox(height: AppSpacing.md),
-                    Text(
-                      context.l10n.perspectiveRevealSubtitle,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.quicksand(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF6B9B6E),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
                     Text(
                       reveal,
                       textAlign: TextAlign.center,

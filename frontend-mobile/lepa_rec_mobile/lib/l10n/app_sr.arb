@@ -84,11 +84,15 @@
   "@continueToNext": {
     "description": "Labela dugmeta za nastavak na sledeci korak"
   },
+  "wrapUp": "Zaokruži",
+  "@wrapUp": {
+    "description": "Dugme za završavanje scenarija perspektive"
+  },
   "home": "Početna",
   "@home": {
     "description": "Labela za pocetnu stranicu"
   },
-  "dashboard": "Pregled",
+  "dashboard": "Današnja vežba",
   "@dashboard": {
     "description": "Labela za kontrolnu tablu"
   },
@@ -193,6 +197,10 @@
   "@reflection": {
     "description": "Labela za vežbu razmišljanja"
   },
+  "reflectionFreshEyes": "O ovome si već nešto pisao. Hajde da vidimo kako gledaš na to svežim očima.",
+  "@reflectionFreshEyes": {
+    "description": "Pomocni tekst prikazan na kartici refleksije pre pocetka zadatka"
+  },
   "perspectiveScenario": "Scenario perspektive",
   "@perspectiveScenario": {
     "description": "Labela za vežbu scenarija perspektive"
@@ -200,6 +208,18 @@
   "perspectiveScenarioPromptLabel": "Scenario",
   "@perspectiveScenarioPromptLabel": {
     "description": "Labela iznad teksta scenarija perspektive"
+  },
+  "levelEasy": "Lako",
+  "@levelEasy": {
+    "description": "Labela za lak nivo tezine"
+  },
+  "levelMedium": "Srednje",
+  "@levelMedium": {
+    "description": "Labela za srednji nivo tezine"
+  },
+  "levelHard": "Teško",
+  "@levelHard": {
+    "description": "Labela za tezak nivo tezine"
   },
   "answerEachScenarioQuestion": "Odgovori na svako pitanje pre nego što otkriješ završnu perspektivu.",
   "@answerEachScenarioQuestion": {
@@ -214,7 +234,7 @@
       }
     }
   },
-  "perspectiveRevealTitle": "Otkrivanje perspektive",
+  "perspectiveRevealTitle": "Pogled iza kulisa ove priče",
   "@perspectiveRevealTitle": {
     "description": "Naslov za ekran otkrivanja perspektive"
   },
@@ -308,13 +328,21 @@
   "sessionFlowPageError": "Greška tokom sesije",
   "@sessionFlowPageError": {
     "description": "Naslov greške u orcestratoru toka sesije"  },
-  "reflectionTitle": "Tvoj Osvrt",
+  "reflectionTitle": "Refleksija",
   "@reflectionTitle": {
     "description": "Naslov za ekran osvrtanja"
   },
   "reflectionPrompt": "Da li imaš neki novi uvid na ovu temu?",
   "@reflectionPrompt": {
     "description": "Glavna poruka za vežbu osvrtanja"
+  },
+  "reflectionGuidance": "Pogledaj šta si juče razmatrao. To je početna tačka, sada joj prilaziš svežim očima.",
+  "@reflectionGuidance": {
+    "description": "Uvodni tekst pre jučerašnjeg sadržaja i odgovora"
+  },
+  "reflectionFreshQuestion": "Da li se pojavljuje još neka misao koju juče nisi imao?",
+  "@reflectionFreshQuestion": {
+    "description": "Glavno pitanje za novu refleksiju"
   },
   "yesterdaysTopic": "Jučerašnja tema",
   "@yesterdaysTopic": {
@@ -372,7 +400,7 @@
 "@startBreathing": {
   "description": "Tekst prikazan unutar kruga prije početka vježbe disanja"
 },
-"beginWhenReady": "Započni kada budeš spreman/na",
+"beginWhenReady": "Spremi se i počni",
 "@beginWhenReady": {
   "description": "Uputstvo prikazano prije početka vježbe disanja"
 },

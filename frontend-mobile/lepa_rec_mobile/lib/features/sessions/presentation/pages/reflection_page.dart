@@ -18,6 +18,8 @@ class ReflectionPage extends StatefulWidget {
 }
 
 class _ReflectionPageState extends State<ReflectionPage> {
+  static const double _reflectionBoxHeight = 380;
+
   late final TextEditingController _reflectionController;
   late final SessionRepository _sessionRepository;
 
@@ -150,7 +152,92 @@ class _ReflectionPageState extends State<ReflectionPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  context.l10n.reflectionGuidance,
+                  style: GoogleFonts.quicksand(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF6B9B6E),
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.md),
+
                 Container(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF2F4F0).withValues(alpha: 0.75),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: const Color(0xFF6B9B6E).withValues(alpha: 0.18),
+                      width: 1.2,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.reflectionPrompt.challengeContent,
+                        style: GoogleFonts.quicksand(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey[600],
+                          height: 1.4,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      Text(
+                        widget.reflectionPrompt.challengeFollowUpQuestion,
+                        style: GoogleFonts.quicksand(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey[600],
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Container(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF2F4F0).withValues(alpha: 0.75),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: const Color(0xFF6B9B6E).withValues(alpha: 0.18),
+                      width: 1.2,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.reflectionPrompt.previousMainAnswer ?? '',
+                        style: GoogleFonts.quicksand(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey[600],
+                          height: 1.4,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      Text(
+                        widget.reflectionPrompt.previousFollowUpAnswer ?? '',
+                        style: GoogleFonts.quicksand(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey[600],
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xl),
+
+                Container(
+                  width: double.infinity,
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.lg,
                     vertical: AppSpacing.lg,
@@ -163,207 +250,38 @@ class _ReflectionPageState extends State<ReflectionPage> {
                       width: 1.2,
                     ),
                   ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Icon(
-                        Icons.edit_note_rounded,
-                        color: Color(0xFF6B9B6E),
-                        size: 22,
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Expanded(
-                        child: Text(
-                          context.l10n.reflectionPrompt,
-                          style: GoogleFonts.quicksand(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF2F3A2F),
-                            height: 1.4,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.xl),
-
-                Text(
-                  context.l10n.yesterdaysTopic,
-                  style: GoogleFonts.quicksand(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF3E4A3E),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF2F4F0),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: const Color(0xFF6B9B6E).withValues(alpha: 0.25),
-                      width: 1.2,
-                    ),
-                  ),
                   child: Text(
-                    widget.reflectionPrompt.challengeContent,
+                    context.l10n.reflectionFreshQuestion,
                     style: GoogleFonts.quicksand(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: const Color(0xFF2F3A2F),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[600],
                       height: 1.4,
                     ),
                   ),
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                Divider(
-                  color: const Color(0xFF6B9B6E).withValues(alpha: 0.2),
-                  thickness: 1,
-                  height: 1,
-                ),
-                const SizedBox(height: AppSpacing.lg),
-
-                Text(
-                  context.l10n.yourPreviousAnswer,
-                  style: GoogleFonts.quicksand(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF3E4A3E),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF2F4F0),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: const Color(0xFF6B9B6E).withValues(alpha: 0.25),
-                      width: 1.2,
-                    ),
-                  ),
-                  child: Text(
-                    widget.reflectionPrompt.previousMainAnswer ?? '',
-                    style: GoogleFonts.quicksand(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: const Color(0xFF2F3A2F),
-                      height: 1.4,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                Divider(
-                  color: const Color(0xFF6B9B6E).withValues(alpha: 0.2),
-                  thickness: 1,
-                  height: 1,
-                ),
-                const SizedBox(height: AppSpacing.lg),
-
-                Text(
-                  context.l10n.previousFollowUpQuestion,
-                  style: GoogleFonts.quicksand(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF2F3A2F),
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF2F4F0),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: const Color(0xFF6B9B6E).withValues(alpha: 0.25),
-                      width: 1.2,
-                    ),
-                  ),
-                  child: Text(
-                    widget.reflectionPrompt.challengeFollowUpQuestion,
-                    style: GoogleFonts.quicksand(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: const Color(0xFF2F3A2F),
-                      height: 1.4,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                Divider(
-                  color: const Color(0xFF6B9B6E).withValues(alpha: 0.2),
-                  thickness: 1,
-                  height: 1,
-                ),
-                const SizedBox(height: AppSpacing.lg),
-
-                Text(
-                  context.l10n.yourPreviousFollowUpAnswer,
-                  style: GoogleFonts.quicksand(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF3E4A3E),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF2F4F0),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: const Color(0xFF6B9B6E).withValues(alpha: 0.25),
-                      width: 1.2,
-                    ),
-                  ),
-                  child: Text(
-                    widget.reflectionPrompt.previousFollowUpAnswer ?? '',
-                    style: GoogleFonts.quicksand(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: const Color(0xFF2F3A2F),
-                      height: 1.4,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.xl),
-                Divider(
-                  color: const Color(0xFF6B9B6E).withValues(alpha: 0.2),
-                  thickness: 1,
-                  height: 1,
-                ),
-                const SizedBox(height: AppSpacing.lg),
-
-                Text(
-                  context.l10n.todayReflection,
-                  style: GoogleFonts.quicksand(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF3E4A3E),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.xs),
-
                 DecoratedBox(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
+                        color: Colors.black.withValues(alpha: 0.08),
+                        blurRadius: 16,
+                        offset: const Offset(0, 6),
                       ),
                     ],
                   ),
-                  child: _buildTextInputField(
-                    controller: _reflectionController,
-                    hintText: context.l10n.shareYourThoughts,
-                    isError:
-                        _showValidationErrors &&
-                        _reflectionController.text.trim().isEmpty,
+                  child: SizedBox(
+                    height: _reflectionBoxHeight,
+                    child: _buildTextInputField(
+                      controller: _reflectionController,
+                      hintText: context.l10n.shareYourThoughts,
+                      isError:
+                          _showValidationErrors &&
+                          _reflectionController.text.trim().isEmpty,
+                      expands: true,
+                    ),
                   ),
                 ),
 
@@ -404,7 +322,7 @@ class _ReflectionPageState extends State<ReflectionPage> {
                             ),
                           )
                         : Text(
-                            context.l10n.submit,
+                            context.l10n.wrapUp,
                             style: GoogleFonts.quicksand(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -427,11 +345,13 @@ class _ReflectionPageState extends State<ReflectionPage> {
     required TextEditingController controller,
     required String hintText,
     required bool isError,
+    bool expands = false,
   }) {
     return TextField(
       controller: controller,
-      maxLines: 7,
-      minLines: 7,
+      maxLines: expands ? null : 7,
+      minLines: expands ? null : 7,
+      expands: expands,
       enabled: !_isSubmitting,
       decoration: InputDecoration(
         hintText: hintText,

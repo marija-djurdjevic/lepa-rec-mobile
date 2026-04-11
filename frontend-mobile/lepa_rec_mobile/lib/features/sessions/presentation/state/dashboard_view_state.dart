@@ -27,7 +27,7 @@ class DashboardViewState {
       todayPlan == null ||
       (todayPlan!.reflectionPrompt == null &&
           todayPlan!.distancedJournalChoices.isEmpty &&
-          todayPlan!.perspectiveScenarioPrompt == null &&
+          todayPlan!.perspectiveScenarioChoices.isEmpty &&
           !todayPlan!.isDistancedJournalCompleted &&
           !todayPlan!.isReflectionCompleted &&
           !todayPlan!.isPerspectiveScenarioCompleted);
@@ -45,7 +45,7 @@ class DashboardViewState {
       count++;
     }
     if (todayPlan!.shouldShowPerspectiveScenario &&
-        todayPlan!.perspectiveScenarioPrompt != null &&
+        todayPlan!.perspectiveScenarioChoices.isNotEmpty &&
         !todayPlan!.isPerspectiveScenarioCompleted) {
       count++;
     }

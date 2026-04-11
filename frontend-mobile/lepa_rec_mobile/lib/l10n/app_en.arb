@@ -84,6 +84,10 @@
   "@continueToNext": {
     "description": "Continue button label to proceed to the next step"
   },
+  "wrapUp": "Wrap up",
+  "@wrapUp": {
+    "description": "Button label to wrap up the perspective scenario"
+  },
   "home": "Home",
   "@home": {
     "description": "Home page label"
@@ -193,6 +197,10 @@
   "@reflection": {
     "description": "Label for reflection exercise"
   },
+  "reflectionFreshEyes": "You have already written about this. Let’s see how you view it with fresh eyes.",
+  "@reflectionFreshEyes": {
+    "description": "Helper text shown on the reflection card before starting the task"
+  },
   "perspectiveScenario": "Perspective Scenario",
   "@perspectiveScenario": {
     "description": "Label for perspective scenario exercise"
@@ -200,6 +208,18 @@
   "perspectiveScenarioPromptLabel": "Scenario",
   "@perspectiveScenarioPromptLabel": {
     "description": "Label shown above the perspective scenario text"
+  },
+  "levelEasy": "Easy",
+  "@levelEasy": {
+    "description": "Label for easy difficulty level"
+  },
+  "levelMedium": "Medium",
+  "@levelMedium": {
+    "description": "Label for medium difficulty level"
+  },
+  "levelHard": "Hard",
+  "@levelHard": {
+    "description": "Label for hard difficulty level"
   },
   "answerEachScenarioQuestion": "Answer each question before you reveal the final perspective.",
   "@answerEachScenarioQuestion": {
@@ -214,7 +234,7 @@
       }
     }
   },
-  "perspectiveRevealTitle": "Perspective Reveal",
+  "perspectiveRevealTitle": "Behind the Scenes",
   "@perspectiveRevealTitle": {
     "description": "Title for the perspective scenario reveal screen"
   },
@@ -316,6 +336,14 @@
   "reflectionPrompt": "Do you have any new insights on this topic?",
   "@reflectionPrompt": {
     "description": "Main prompt for the reflection exercise"
+  },
+  "reflectionGuidance": "Look back at what you considered yesterday, this is your starting point.",
+  "@reflectionGuidance": {
+    "description": "Guidance text shown before yesterday's prompt and answers"
+  },
+  "reflectionFreshQuestion": "Are there any new thoughts arriving with fresh eyes?",
+  "@reflectionFreshQuestion": {
+    "description": "Main question prompting the new reflection"
   },
   "yesterdaysTopic": "Yesterday's Topic",
   "@yesterdaysTopic": {

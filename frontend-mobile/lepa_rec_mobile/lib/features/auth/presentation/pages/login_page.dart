@@ -50,7 +50,8 @@ class _LoginPageState extends State<LoginPage> {
 
       if (!mounted) return;
 
-      Navigator.of(context).pushNamedAndRemoveUntil('/home', (_) => false);
+      // Route through SplashRouter so it evaluates the new user's daily session.
+      Navigator.of(context).pushNamedAndRemoveUntil('/', (_) => false);
     } catch (e) {
       setState(() {
         _error = 'Login failed. Please try again.';

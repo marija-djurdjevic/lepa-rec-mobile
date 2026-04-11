@@ -73,10 +73,13 @@ class AppLocalizationsSr extends AppLocalizations {
   String get continueToNext => 'Nastavi';
 
   @override
+  String get wrapUp => 'Zaokruži';
+
+  @override
   String get home => 'Početna';
 
   @override
-  String get dashboard => 'Pregled';
+  String get dashboard => 'Današnja vežba';
 
   @override
   String get loadingSession => 'Učitavanje...';
@@ -159,10 +162,23 @@ class AppLocalizationsSr extends AppLocalizations {
   String get reflection => 'Refleksija';
 
   @override
+  String get reflectionFreshEyes =>
+      'O ovome si već nešto pisao. Hajde da vidimo kako gledaš na to svežim očima.';
+
+  @override
   String get perspectiveScenario => 'Scenario perspektive';
 
   @override
   String get perspectiveScenarioPromptLabel => 'Scenario';
+
+  @override
+  String get levelEasy => 'Lako';
+
+  @override
+  String get levelMedium => 'Srednje';
+
+  @override
+  String get levelHard => 'Teško';
 
   @override
   String get answerEachScenarioQuestion => 'Odgovori na svako pitanje pre nego što otkriješ završnu perspektivu.';
@@ -173,7 +189,7 @@ class AppLocalizationsSr extends AppLocalizations {
   }
 
   @override
-  String get perspectiveRevealTitle => 'Otkrivanje perspektive';
+  String get perspectiveRevealTitle => 'Pogled iza kulisa ove priče';
 
   @override
   String get perspectiveRevealSubtitle => 'Evo perspektive koja se otkriva nakon ovog scenarija.';
@@ -239,10 +255,18 @@ class AppLocalizationsSr extends AppLocalizations {
   String get sessionFlowPageError => 'Greška tokom sesije';
 
   @override
-  String get reflectionTitle => 'Tvoj Osvrt';
+  String get reflectionTitle => 'Refleksija';
 
   @override
   String get reflectionPrompt => 'Da li imaš neki novi uvid na ovu temu?';
+
+  @override
+  String get reflectionGuidance =>
+      'Pogledaj šta si juče razmatrao. To je početna tačka, sada joj prilaziš svežim očima.';
+
+  @override
+  String get reflectionFreshQuestion =>
+      'Da li se pojavljuje još neka misao koju juče nisi imao?';
 
   @override
   String get yesterdaysTopic => 'Jučerašnja tema';
@@ -287,7 +311,7 @@ class AppLocalizationsSr extends AppLocalizations {
   String get startBreathing => 'Dodirni za početak';
 
   @override
-  String get beginWhenReady => 'Započni kada budeš spreman/na';
+  String get beginWhenReady => 'Spremi se i počni';
 
   @override
   String get getReady => 'Pripremi se';

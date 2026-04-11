@@ -10,7 +10,6 @@ import '../../data/dtos/perspective_scenario_prompt_dto.dart';
 import '../../data/dtos/start_perspective_scenario_dto.dart';
 import '../../data/dtos/submit_perspective_scenario_answer_dto.dart';
 import '../../data/repositories/session_repository.dart';
-import 'perspective_scenario_reveal_page.dart';
 
 class PerspectiveScenarioPage extends StatefulWidget {
   final PerspectiveScenarioPromptDto prompt;
@@ -23,14 +22,18 @@ class PerspectiveScenarioPage extends StatefulWidget {
 }
 
 class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
+  static const double _answerBoxHeight = 360;
   late final SessionRepository _sessionRepository;
   late final List<TextEditingController> _answerControllers;
+  late final ScrollController _scrollController;
 
   PerspectiveScenarioExerciseDto? _exercise;
+  int _visibleQuestionCount = 0;
   bool _isStarting = true;
   bool _isSubmitting = false;
   bool _showValidationErrors = false;
   String? _loadingError;
+  String? _revealText;
 
   @override
   void initState() {
@@ -39,6 +42,8 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
     _answerControllers = widget.prompt.questions
         .map((_) => TextEditingController())
         .toList();
+    _scrollController = ScrollController();
+    _visibleQuestionCount = widget.prompt.questions.isEmpty ? 0 : 1;
     _startScenario();
   }
 
@@ -47,6 +52,7 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
     for (final controller in _answerControllers) {
       controller.dispose();
     }
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -74,6 +80,8 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
         }
         _answerControllers[i].text = existingAnswer?.answerText ?? '';
       }
+
+      _visibleQuestionCount = _calculateVisibleQuestionCount();
 
       setState(() {
         _exercise = startedExercise;
@@ -151,23 +159,11 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
 
       if (!mounted) return;
 
-      final revealSeen = await Navigator.push<bool>(
-        context,
-        MaterialPageRoute(
-          builder: (context) =>
-              PerspectiveScenarioRevealPage(reveal: result.reveal),
-        ),
-      );
-
-      if (!mounted) return;
-
-      if (revealSeen != false) {
-        Navigator.pop(context, true);
-      } else {
-        setState(() {
-          _isSubmitting = false;
-        });
-      }
+      setState(() {
+        _revealText = result.reveal;
+        _isSubmitting = false;
+      });
+      _scrollToBottom();
     } on DioException catch (e) {
       if (!mounted) return;
 
@@ -298,6 +294,7 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
 
     return SingleChildScrollView(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      controller: _scrollController,
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.lg,
@@ -323,106 +320,90 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.psychology_outlined,
-                        color: Color(0xFF6B9B6E),
-                        size: 22,
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color:
-                              _getLevelColor(widget.prompt.challengeLevel),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          widget.prompt.challengeLevel,
-                          style: GoogleFonts.quicksand(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
                   Text(
                     widget.prompt.scenarioText,
                     style: GoogleFonts.quicksand(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF2F3A2F),
-                      height: 1.5,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey[600],
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _getLevelColor(widget.prompt.challengeLevel),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      _getLevelLabel(
+                        widget.prompt.challengeLevel,
+                        context,
+                      ),
+                      style: GoogleFonts.quicksand(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text(
-              context.l10n.answerEachScenarioQuestion,
-              style: GoogleFonts.quicksand(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF3E4A3E),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            for (var i = 0; i < widget.prompt.questions.length; i++) ...[
+            for (var i = 0; i < _visibleQuestionCount; i++) ...[
               _buildQuestionCard(i),
-              if (i != widget.prompt.questions.length - 1) ...[
-                const SizedBox(height: AppSpacing.lg),
-                Divider(
-                  color: const Color(0xFF6B9B6E).withValues(alpha: 0.2),
-                  thickness: 1,
-                  height: 1,
-                ),
-                const SizedBox(height: AppSpacing.lg),
-              ] else
-                const SizedBox(height: AppSpacing.lg),
-            ],
-            const SizedBox(height: AppSpacing.md),
-            SizedBox(
-              width: double.infinity,
-              height: 56,
-              child: ElevatedButton(
-                onPressed: _isSubmitting ? null : _handleSubmit,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF6B9B6E),
-                  disabledBackgroundColor: Colors.grey[300],
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: _isSubmitting
-                    ? SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.grey[300]!,
-                          ),
-                        ),
-                      )
-                    : Text(
-                        context.l10n.submit,
-                        style: GoogleFonts.quicksand(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
+              if (_shouldShowContinueButton(i))
+                Padding(
+                  padding: const EdgeInsets.only(top: AppSpacing.md),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: ElevatedButton(
+                      onPressed: _isSubmitting
+                          ? null
+                          : () => _handleContinue(i),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF6B9B6E),
+                        disabledBackgroundColor: Colors.grey[300],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.lg),
+                      child: _isSubmitting && _isLastQuestion(i)
+                          ? SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.grey[300]!,
+                                ),
+                              ),
+                            )
+                          : Text(
+                              _isLastQuestion(i)
+                                  ? context.l10n.wrapUp
+                                  : context.l10n.continueToNext,
+                              style: GoogleFonts.quicksand(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: AppSpacing.lg),
+            ],
+            if (_revealText != null) ...[
+              _buildRevealCard(_revealText!),
+              const SizedBox(height: AppSpacing.lg),
+            ],
           ],
         ),
       ),
@@ -433,25 +414,17 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
     final question = widget.prompt.questions[index];
     final controller = _answerControllers[index];
     final hasError = _showValidationErrors && controller.text.trim().isEmpty;
+    final isReadOnly = _revealText != null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          context.l10n.scenarioQuestionNumber(index + 1),
-          style: GoogleFonts.quicksand(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            color: const Color(0xFF6B9B6E),
-          ),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        Text(
           question.questionText,
           style: GoogleFonts.quicksand(
             fontSize: 15,
             fontWeight: FontWeight.w600,
-            color: const Color(0xFF2F3A2F),
+            color: Colors.grey[600],
             height: 1.4,
           ),
         ),
@@ -467,62 +440,67 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
               ),
             ],
           ),
-          child: TextField(
-            controller: controller,
-            maxLines: 5,
-            minLines: 5,
-            enabled: !_isSubmitting,
-            onChanged: (_) {
-              if (_showValidationErrors) {
-                setState(() {});
-              }
-            },
-            decoration: InputDecoration(
-              hintText: context.l10n.shareYourThoughts,
-              hintStyle: TextStyle(
-                color: Colors.grey[500],
-                fontSize: 14,
+          child: SizedBox(
+            height: _answerBoxHeight,
+            child: TextField(
+              controller: controller,
+              maxLines: null,
+              minLines: null,
+              expands: true,
+              enabled: !_isSubmitting && !isReadOnly,
+              onChanged: (_) {
+                if (_showValidationErrors ||
+                    index == _visibleQuestionCount - 1) {
+                  setState(() {});
+                }
+              },
+              decoration: InputDecoration(
+                hintText: context.l10n.shareYourThoughts,
+                hintStyle: TextStyle(
+                  color: Colors.grey[500],
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(18),
+                  borderSide: BorderSide(
+                    color: hasError ? Colors.red : Colors.grey[300]!,
+                    width: 1.2,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(18),
+                  borderSide: BorderSide(
+                    color: hasError ? Colors.red : Colors.grey[300]!,
+                    width: 1.2,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(18),
+                  borderSide: BorderSide(
+                    color: hasError ? Colors.red : const Color(0xFF6B9B6E),
+                    width: 2,
+                  ),
+                ),
+                disabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(18),
+                  borderSide: BorderSide(color: Colors.grey[200]!, width: 1.2),
+                ),
+                filled: true,
+                fillColor: const Color(0xFFF2F4F0),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.lg,
+                  vertical: AppSpacing.lg,
+                ),
+              ),
+              cursorColor: const Color(0xFF6B9B6E),
+              style: GoogleFonts.quicksand(
+                fontSize: 15,
                 fontWeight: FontWeight.w400,
+                color: const Color(0xFF2F3A2F),
               ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: BorderSide(
-                  color: hasError ? Colors.red : Colors.grey[300]!,
-                  width: 1.2,
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: BorderSide(
-                  color: hasError ? Colors.red : Colors.grey[300]!,
-                  width: 1.2,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: BorderSide(
-                  color: hasError ? Colors.red : const Color(0xFF6B9B6E),
-                  width: 2,
-                ),
-              ),
-              disabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: BorderSide(color: Colors.grey[200]!, width: 1.2),
-              ),
-              filled: true,
-              fillColor: const Color(0xFFF2F4F0),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.lg,
-                vertical: AppSpacing.lg,
-              ),
+              textAlignVertical: TextAlignVertical.top,
             ),
-            cursorColor: const Color(0xFF6B9B6E),
-            style: GoogleFonts.quicksand(
-              fontSize: 15,
-              fontWeight: FontWeight.w400,
-              color: const Color(0xFF2F3A2F),
-            ),
-            textAlignVertical: TextAlignVertical.top,
           ),
         ),
         if (hasError)
@@ -537,16 +515,163 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
     );
   }
 
+  int _calculateVisibleQuestionCount() {
+    if (widget.prompt.questions.isEmpty) {
+      return 0;
+    }
+
+    for (var i = 0; i < _answerControllers.length; i++) {
+      if (_answerControllers[i].text.trim().isEmpty) {
+        return i + 1;
+      }
+    }
+
+    return _answerControllers.length;
+  }
+
+  bool _hasText(int index) {
+    return _answerControllers[index].text.trim().isNotEmpty;
+  }
+
+  bool _isLastQuestion(int index) {
+    return index == widget.prompt.questions.length - 1;
+  }
+
+  bool _shouldShowContinueButton(int index) {
+    if (_revealText != null) {
+      return false;
+    }
+
+    if (index != _visibleQuestionCount - 1) {
+      return false;
+    }
+
+    return _hasText(index);
+  }
+
+  void _handleContinue(int index) async {
+    if (!_hasText(index)) {
+      setState(() {
+        _showValidationErrors = true;
+      });
+      return;
+    }
+
+    if (_isLastQuestion(index)) {
+      _handleSubmit();
+      return;
+    }
+
+    if (_visibleQuestionCount < widget.prompt.questions.length) {
+      await Future<void>.delayed(const Duration(milliseconds: 450));
+      if (!mounted) return;
+      setState(() {
+        _visibleQuestionCount += 1;
+      });
+      _scrollToBottom();
+    }
+  }
+
+  Widget _buildRevealCard(String reveal) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: const Color(0xFF6B9B6E).withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFF6B9B6E),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                Icons.visibility_outlined,
+                size: 22,
+                color: Color(0xFF6B9B6E),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text(
+                  context.l10n.perspectiveRevealTitle,
+                  style: GoogleFonts.quicksand(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF6B9B6E),
+                  ),
+                  softWrap: true,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            reveal,
+            style: GoogleFonts.quicksand(
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFF2F3A2F),
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_scrollController.hasClients) {
+        return;
+      }
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeOutCubic,
+      );
+    });
+  }
+
   Color _getLevelColor(String level) {
     switch (level.toLowerCase()) {
       case 'easy':
-        return Colors.green[600]!;
+      case 'lako':
+        return const Color(0xFF8BBF8F);
       case 'medium':
-        return Colors.orange[600]!;
+      case 'srednje':
+        return const Color(0xFF5C9A6B);
       case 'hard':
-        return Colors.red[600]!;
+      case 'tesko':
+        return const Color(0xFF3E7A52);
       default:
         return const Color(0xFF6B9B6E);
+    }
+  }
+
+  String _getLevelLabel(String level, BuildContext context) {
+    switch (level.toLowerCase()) {
+      case 'easy':
+      case 'lako':
+        return context.l10n.levelEasy;
+      case 'medium':
+      case 'srednje':
+        return context.l10n.levelMedium;
+      case 'hard':
+      case 'tesko':
+        return context.l10n.levelHard;
+      default:
+        return level;
     }
   }
 }

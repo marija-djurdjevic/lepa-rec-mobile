@@ -203,6 +203,12 @@ abstract class AppLocalizations {
   /// **'Continue'**
   String get continueToNext;
 
+  /// Button label to wrap up the perspective scenario
+  ///
+  /// In en, this message translates to:
+  /// **'Wrap up'**
+  String get wrapUp;
+
   /// Home page label
   ///
   /// In en, this message translates to:
@@ -359,6 +365,12 @@ abstract class AppLocalizations {
   /// **'Reflection'**
   String get reflection;
 
+  /// Helper text shown on the reflection card before starting the task
+  ///
+  /// In en, this message translates to:
+  /// **'You have already written about this. Let’s see how you view it with fresh eyes.'**
+  String get reflectionFreshEyes;
+
   /// Label for perspective scenario exercise
   ///
   /// In en, this message translates to:
@@ -370,6 +382,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Scenario'**
   String get perspectiveScenarioPromptLabel;
+
+  /// Label for easy difficulty level
+  ///
+  /// In en, this message translates to:
+  /// **'Easy'**
+  String get levelEasy;
+
+  /// Label for medium difficulty level
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get levelMedium;
+
+  /// Label for hard difficulty level
+  ///
+  /// In en, this message translates to:
+  /// **'Hard'**
+  String get levelHard;
 
   /// Helper text for the perspective scenario questionnaire
   ///
@@ -386,7 +416,7 @@ abstract class AppLocalizations {
   /// Title for the perspective scenario reveal screen
   ///
   /// In en, this message translates to:
-  /// **'Perspective Reveal'**
+  /// **'Behind the Scenes'**
   String get perspectiveRevealTitle;
 
   /// Subtitle for the perspective scenario reveal screen
@@ -514,6 +544,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Do you have any new insights on this topic?'**
   String get reflectionPrompt;
+
+  /// Guidance text shown before yesterday's prompt and answers
+  ///
+  /// In en, this message translates to:
+  /// **'Look back at what you considered yesterday, this is your starting point.'**
+  String get reflectionGuidance;
+
+  /// Main question prompting the new reflection
+  ///
+  /// In en, this message translates to:
+  /// **'Are there any new thoughts arriving with fresh eyes?'**
+  String get reflectionFreshQuestion;
 
   /// Label for yesterday's journal topic
   ///

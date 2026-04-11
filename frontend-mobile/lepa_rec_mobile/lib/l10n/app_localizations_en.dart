@@ -73,6 +73,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get continueToNext => 'Continue';
 
   @override
+  String get wrapUp => 'Wrap up';
+
+  @override
   String get home => 'Home';
 
   @override
@@ -159,10 +162,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reflection => 'Reflection';
 
   @override
+  String get reflectionFreshEyes =>
+      'You have already written about this. Let’s see how you view it with fresh eyes.';
+
+  @override
   String get perspectiveScenario => 'Perspective Scenario';
 
   @override
   String get perspectiveScenarioPromptLabel => 'Scenario';
+
+  @override
+  String get levelEasy => 'Easy';
+
+  @override
+  String get levelMedium => 'Medium';
+
+  @override
+  String get levelHard => 'Hard';
 
   @override
   String get answerEachScenarioQuestion => 'Answer each question before you reveal the final perspective.';
@@ -173,7 +189,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get perspectiveRevealTitle => 'Perspective Reveal';
+  String get perspectiveRevealTitle => 'Behind the Scenes';
 
   @override
   String get perspectiveRevealSubtitle => 'Here is the revealed perspective from this scenario.';
@@ -243,6 +259,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reflectionPrompt => 'Do you have any new insights on this topic?';
+
+  @override
+  String get reflectionGuidance =>
+      'Look back at what you considered yesterday, this is your starting point.';
+
+  @override
+  String get reflectionFreshQuestion =>
+      'Are there any new thoughts arriving with fresh eyes?';
 
   @override
   String get yesterdaysTopic => 'Yesterday\'s Topic';

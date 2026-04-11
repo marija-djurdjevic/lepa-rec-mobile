@@ -5,7 +5,7 @@ import 'today_practice_task_dto.dart';
 class TodayPracticePlanDto {
   final DistancedJournalReflectionPromptDto? reflectionPrompt;
   final List<DistancedJournalChallengeDto> distancedJournalChoices;
-  final PerspectiveScenarioPromptDto? perspectiveScenarioPrompt;
+  final List<PerspectiveScenarioPromptDto> perspectiveScenarioChoices;
   final bool shouldShowPerspectiveScenario;
   final bool isDistancedJournalCompleted;
   final bool isReflectionCompleted;
@@ -14,7 +14,7 @@ class TodayPracticePlanDto {
   TodayPracticePlanDto({
     this.reflectionPrompt,
     required this.distancedJournalChoices,
-    this.perspectiveScenarioPrompt,
+    required this.perspectiveScenarioChoices,
     required this.shouldShowPerspectiveScenario,
     this.isDistancedJournalCompleted = false,
     this.isReflectionCompleted = false,
@@ -37,16 +37,20 @@ class TodayPracticePlanDto {
     final reflectionPrompt = reflectionPromptJson != null
         ? DistancedJournalReflectionPromptDto.fromJson(reflectionPromptJson)
         : null;
-    final perspectiveScenarioPromptJson =
-        json['perspectiveScenarioPrompt'] as Map<String, dynamic>?;
-    final perspectiveScenarioPrompt = perspectiveScenarioPromptJson != null
-        ? PerspectiveScenarioPromptDto.fromJson(perspectiveScenarioPromptJson)
-        : null;
+    final perspectiveScenarioChoicesList =
+        json['perspectiveScenarioChoices'] as List<dynamic>? ?? [];
+    final perspectiveScenarioChoices = perspectiveScenarioChoicesList
+        .map(
+          (item) => PerspectiveScenarioPromptDto.fromJson(
+            item as Map<String, dynamic>,
+          ),
+        )
+        .toList();
 
     return TodayPracticePlanDto(
       reflectionPrompt: reflectionPrompt,
       distancedJournalChoices: distancedJournalChoices,
-      perspectiveScenarioPrompt: perspectiveScenarioPrompt,
+      perspectiveScenarioChoices: perspectiveScenarioChoices,
       shouldShowPerspectiveScenario:
           json['shouldShowPerspectiveScenario'] as bool? ?? false,
       isDistancedJournalCompleted:
@@ -62,7 +66,9 @@ class TodayPracticePlanDto {
     'distancedJournalChoices': distancedJournalChoices
         .map((c) => c.toJson())
         .toList(),
-    'perspectiveScenarioPrompt': perspectiveScenarioPrompt?.toJson(),
+    'perspectiveScenarioChoices': perspectiveScenarioChoices
+        .map((choice) => choice.toJson())
+        .toList(),
     'shouldShowPerspectiveScenario': shouldShowPerspectiveScenario,
     'isDistancedJournalCompleted': isDistancedJournalCompleted,
     'isReflectionCompleted': isReflectionCompleted,
@@ -73,7 +79,7 @@ class TodayPracticePlanDto {
   String toString() =>
       'TodayPracticePlanDto(reflectionPrompt: $reflectionPrompt, '
       'distancedJournalChoices: ${distancedJournalChoices.length}, '
-      'perspectiveScenarioPrompt: $perspectiveScenarioPrompt, '
+      'perspectiveScenarioChoices: ${perspectiveScenarioChoices.length}, '
       'shouldShowPerspectiveScenario: $shouldShowPerspectiveScenario, '
       'isDistancedJournalCompleted: $isDistancedJournalCompleted, '
       'isReflectionCompleted: $isReflectionCompleted, '
