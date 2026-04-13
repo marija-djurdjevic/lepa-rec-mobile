@@ -1,0 +1,469 @@
+{
+  "@@locale": "en",
+  "appTitle": "Sagledaj",
+  "@appTitle": {
+    "description": "Application title"
+  },
+  "login": "Login",
+  "@login": {
+    "description": "Login button label"
+  },
+  "loginWithGoogle": "Sign in with Google",
+  "@loginWithGoogle": {
+    "description": "Button label for signing in with Google"
+  },
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout button label"
+  },
+  "welcome": "Welcome",
+  "@welcome": {
+    "description": "Welcome message"
+  },
+  "primerWelcomeTitle": "Peace, practice, growth",
+  "@primerWelcomeTitle": {
+    "description": "Title for the primer welcome screen"
+  },
+  "primerWelcomeDescription": "Settle somewhere comfortable where no one will interrupt you. This is your time, you deserve it.",
+  "@primerWelcomeDescription": {
+    "description": "Description text for the primer welcome screen"
+  },
+  "proceed": "Begin preparation",
+  "@proceed": {
+    "description": "Proceed button label"
+  },
+  "breathingExercise": "Breathing into Calm",
+  "@breathingExercise": {
+    "description": "Title for the breathing exercise screen"
+  },
+  "breathIn": "Inhale",
+  "@breathIn": {
+    "description": "Instruction to breathe in"
+  },
+  "breathOut": "Exhale",
+  "@breathOut": {
+    "description": "Instruction to breathe out"
+  },
+  "pauseBreathing": "Pause",
+  "@pauseBreathing": {
+    "description": "Instruction to pause after exhaling"
+  },
+  "breatheInForSeconds": "Breathe in for {seconds} seconds",
+  "@breatheInForSeconds": {
+    "description": "Instruction to breathe in for a specific number of seconds",
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "breatheOutForSeconds": "Breathe out for {seconds} seconds",
+  "@breatheOutForSeconds": {
+    "description": "Instruction to breathe out for a specific number of seconds",
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "holdYourBreath": "Hold your breath",
+  "@holdYourBreath": {
+    "description": "Instruction to hold breath"
+  },
+  "rounds": "Rounds",
+  "@rounds": {
+    "description": "Label for breathing rounds"
+  },
+  "complete": "Complete",
+  "@complete": {
+    "description": "Complete button label"
+  },
+  "sessionComplete": "Great job!",
+  "@sessionComplete": {
+    "description": "Congratulatory message after session completion"
+  },
+  "sessionCompleteMessage": "You have completed your breathing exercise. You are doing amazing!",
+  "@sessionCompleteMessage": {
+    "description": "Detailed message after successfully completing a breathing session"
+  },
+  "continueToNext": "Continue",
+  "@continueToNext": {
+    "description": "Continue button label to proceed to the next step"
+  },
+  "conclude": "Conclude",
+  "@conclude": {
+    "description": "Button label to conclude a flow"
+  },
+  "wrapUp": "Wrap up",
+  "@wrapUp": {
+    "description": "Button label to wrap up the perspective scenario"
+  },
+  "home": "Home",
+  "@home": {
+    "description": "Home page label"
+  },
+  "dashboard": "Today's Challenge",
+  "@dashboard": {
+    "description": "Dashboard page label"
+  },
+  "loadingSession": "Loading...",
+  "@loadingSession": {
+    "description": "Loading indicator text for session data"
+  },
+  "valueStatementTitle": "What resonates with you most today?",
+  "@valueStatementTitle": {
+    "description": "Title for the value statement selection screen"
+  },
+  "growthMessageTitle": "Message for You",
+  "@growthMessageTitle": {
+    "description": "Title for the growth message screen"
+  },
+  "completePrimer": "Complete Primer",
+  "@completePrimer": {
+    "description": "Button label to complete the primer"
+  },
+  "errorLoadingStatements": "Error Loading Statements",
+  "@errorLoadingStatements": {
+    "description": "Error title when statements fail to load"
+  },
+  "failedLoadValueStatements": "Failed to load value statements",
+  "@failedLoadValueStatements": {
+    "description": "Error message when value statements fail to load"
+  },
+  "errorLoadingMessage": "Error Loading Message",
+  "@errorLoadingMessage": {
+    "description": "Error title when growth message fails to load"
+  },
+  "failedLoadGrowthMessage": "Failed to load growth message",
+  "@failedLoadGrowthMessage": {
+    "description": "Error message when growth message fails to load"
+  },
+  "retry": "Retry",
+  "@retry": {
+    "description": "Retry button label to retry a failed operation"
+  },
+  "errorRenderingGrowthMessage": "Error rendering Growth Message page",
+  "@errorRenderingGrowthMessage": {
+    "description": "Error message when growth message page rendering fails"
+  },
+  "errorInSessionFlowPage": "Error in SessionFlowPage",
+  "@errorInSessionFlowPage": {
+    "description": "Error message in the session flow orchestrator page"
+  },
+  "distancedJournal": "Seeing Yourself",
+  "@distancedJournal": {
+    "description": "Title for the distanced journal exercise screen"
+  },
+  "yourAnswer": "Your Answer",
+  "@yourAnswer": {
+    "description": "Label for the main answer text field in distanced journal"
+  },
+  "followUpAnswer": "Follow-up Answer",
+  "@followUpAnswer": {
+    "description": "Label for the follow-up answer text field in distanced journal"
+  },
+  "answerRequired": "This field is required",
+  "@answerRequired": {
+    "description": "Validation error message when an answer field is empty"
+  },
+  "photoLimitMessage": "You can add up to 3 photos.",
+  "@photoLimitMessage": {
+    "description": "Message shown when the user exceeds the photo upload limit"
+  },
+  "submit": "Submit",
+  "@submit": {
+    "description": "Submit button label for distanced journal"
+  },
+  "errorLoadingPlan": "Error Loading Today's Plan",
+  "@errorLoadingPlan": {
+    "description": "Error title when today's practice plan fails to load"
+  },
+  "unknownError": "Unknown error",
+  "@unknownError": {
+    "description": "Generic error message"
+  },
+  "noTasksToday": "No Tasks Today",
+  "@noTasksToday": {
+    "description": "Message when there are no tasks to complete today"
+  },
+  "completedAllTasks": "Great job! You've completed all available tasks.",
+  "@completedAllTasks": {
+    "description": "Congratulatory message when all tasks are completed"
+  },
+  "todaysPractice": "Today's Challenge",
+  "@todaysPractice": {
+    "description": "Header for today's practice tasks"
+  },
+  "tasksToComplete": "{count, plural, one{task} other{tasks}} to complete",
+  "@tasksToComplete": {
+    "description": "Label showing number of tasks to complete",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "yourTasks": "Your Tasks",
+  "@yourTasks": {
+    "description": "Section header for task list"
+  },
+  "reflection": "Journal Review",
+  "@reflection": {
+    "description": "Label for reflection exercise"
+  },
+  "reflectionFreshEyes": "Review your journal entries with fresh eyes.",
+  "@reflectionFreshEyes": {
+    "description": "Helper text shown on the reflection card before starting the task"
+  },
+  "perspectiveScenario": "Seeing Others",
+  "@perspectiveScenario": {
+    "description": "Label for perspective scenario exercise"
+  },
+  "perspectiveScenarioPromptLabel": "Scenario",
+  "@perspectiveScenarioPromptLabel": {
+    "description": "Label shown above the perspective scenario text"
+  },
+  "levelEasy": "Easy",
+  "@levelEasy": {
+    "description": "Label for easy difficulty level"
+  },
+  "levelMedium": "Moderate",
+  "@levelMedium": {
+    "description": "Label for medium difficulty level"
+  },
+  "levelHard": "Hard",
+  "@levelHard": {
+    "description": "Label for hard difficulty level"
+  },
+  "answerEachScenarioQuestion": "Answer each question before you reveal the final perspective.",
+  "@answerEachScenarioQuestion": {
+    "description": "Helper text for the perspective scenario questionnaire"
+  },
+  "scenarioQuestionNumber": "Question {number}",
+  "@scenarioQuestionNumber": {
+    "description": "Label for a numbered perspective scenario question",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "perspectiveRevealTitle": "What’s Behind the Scenes?",
+  "@perspectiveRevealTitle": {
+    "description": "Title for the perspective scenario reveal screen"
+  },
+  "perspectiveRevealHint": "Reflect on your answers and the assumptions you made.",
+  "@perspectiveRevealHint": {
+    "description": "Helper text shown below the reveal content"
+  },
+  "perspectiveRevealSubtitle": "Here is the revealed perspective from this scenario.",
+  "@perspectiveRevealSubtitle": {
+    "description": "Subtitle for the perspective scenario reveal screen"
+  },
+  "errorSubmittingPerspectiveScenario": "Error submitting perspective scenario: {error}",
+  "@errorSubmittingPerspectiveScenario": {
+    "description": "Error message when submitting a perspective scenario fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "comingSoon": "Coming soon",
+  "@comingSoon": {
+    "description": "Text indicating a feature is not yet available"
+  },
+  "chooseJournalChallenge": "Choose one journal challenge for today",
+  "@chooseJournalChallenge": {
+    "description": "Instruction to select a journal challenge"
+  },
+  "selectAvailablePrompts": "Select one of the available prompts that resonates with you. The difficulty levels help you find the right challenge.",
+  "@selectAvailablePrompts": {
+    "description": "Helper text explaining how to choose a journal challenge"
+  },
+  "journalCompletedToday": "Journal completed for today",
+  "@journalCompletedToday": {
+    "description": "Message indicating distanced journal is completed for the day"
+  },
+  "reflectionCompletedToday": "Journal review completed for today",
+  "@reflectionCompletedToday": {
+    "description": "Message indicating reflection is completed for the day"
+  },
+  "scenarioCompletedToday": "Scenario completed for today",
+  "@scenarioCompletedToday": {
+    "description": "Message indicating perspective scenario is completed for the day"
+  },
+  "exerciseNotInitialized": "Error: Exercise not initialized",
+  "@exerciseNotInitialized": {
+    "description": "Error message when exercise fails to initialize"
+  },
+  "exerciseNotFoundOrOwned": "This exercise isn't available or doesn't belong to you.",
+  "@exerciseNotFoundOrOwned": {
+    "description": "Shown when an exercise is missing or the user does not own it"
+  },
+  "missingPrimerData": "Missing required primer data. Please restart the session.",
+  "@missingPrimerData": {
+    "description": "Shown when primer completion is missing required data"
+  },
+  "responseSubmittedSuccessfully": "Response submitted successfully!",
+  "@responseSubmittedSuccessfully": {
+    "description": "Success message after submitting distanced journal response"
+  },
+  "errorSubmittingResponse": "Error submitting response: {error}",
+  "@errorSubmittingResponse": {
+    "description": "Error message when submitting distanced journal response fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "shareYourThoughts": "Share your thoughts...",
+  "@shareYourThoughts": {
+    "description": "Placeholder text for answer input fields"
+  },
+  "startingExercise": "Starting exercise...",
+  "@startingExercise": {
+    "description": "Loading message when initializing exercise"
+  },
+  "errorStartingExercise": "Error Starting Exercise",
+  "@errorStartingExercise": {
+    "description": "Error title when exercise initialization fails"
+  },
+  "loadingPersonalizedMessage": "Loading your personalized message...",
+  "@loadingPersonalizedMessage": {
+    "description": "Placeholder text while loading growth message"
+  },
+  "errorCompletingPrimer": "Error completing primer: {error}",
+  "@errorCompletingPrimer": {
+    "description": "Error message when primer completion fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "sessionFlowPageError": "Error in SessionFlowPage",
+  "@sessionFlowPageError": {
+    "description": "Error title in session flow orchestrator"
+  },
+  "reflectionTitle": "Journal Review",
+  "@reflectionTitle": {
+    "description": "Title for the reflection screen"
+  },
+  "reflectionPrompt": "Do you have any new insights on this topic?",
+  "@reflectionPrompt": {
+    "description": "Main prompt for the reflection exercise"
+  },
+  "reflectionGuidance": "Revisit your journal entry with fresh eyes.",
+  "@reflectionGuidance": {
+    "description": "Guidance text shown before yesterday's prompt and answers"
+  },
+  "reflectionFreshQuestion": "How do you feel about what you wrote? What are the new insights?",
+  "@reflectionFreshQuestion": {
+    "description": "Main question prompting the new reflection"
+  },
+  "reflectionAfterTimeLabel": "After some time, you reflected like this:",
+  "@reflectionAfterTimeLabel": {
+    "description": "Label shown before a later reflection entry in history"
+  },
+  "yesterdaysTopic": "Yesterday's Topic",
+  "@yesterdaysTopic": {
+    "description": "Label for yesterday's journal topic"
+  },
+  "yourPreviousAnswer": "Your Answer",
+  "@yourPreviousAnswer": {
+    "description": "Label for the user's previous main answer"
+  },
+  "previousFollowUpQuestion": "Follow-up Question",
+  "@previousFollowUpQuestion": {
+    "description": "Label for the previous follow-up question"
+  },
+  "yourPreviousFollowUpAnswer": "Your Follow-up Answer",
+  "@yourPreviousFollowUpAnswer": {
+    "description": "Label for the user's previous follow-up answer"
+  },
+  "todayReflection": "Today's Journal Review",
+  "@todayReflection": {
+    "description": "Label for today's reflection input field"
+  },
+  "distancedJournalHint": "Use “he”, “she”, or your name instead of “I”.",
+  "@distancedJournalHint": {
+    "description": "Helper text for distanced journal prompt"
+  },
+  "journalFeedbackTitle": "Reflection Feedback",
+"@journalFeedbackTitle": {
+  "description": "Title for the journal feedback screen"
+},
+"journalFeedbackSubtitle": "Here is a gentle reflection on your journaling style",
+"@journalFeedbackSubtitle": {
+  "description": "Subtitle on the feedback screen"
+},
+"continueToDashboard": "Continue",
+"@continueToDashboard": {
+  "description": "Button text to continue back to dashboard"
+},
+"goodDistancingFeedback": "You described the situation with a good sense of distance. This can help you look at the experience more calmly.",
+"@goodDistancingFeedback": {
+  "description": "Feedback shown when distancing was good"
+},
+"mixedDistancingFeedback": "You already show some distance in the way you wrote. You can go even further by talking about yourself more from the outside.",
+"@mixedDistancingFeedback": {
+  "description": "Feedback shown when distancing is mixed"
+},
+"needsMoreDistancingFeedback": "Your response stayed quite close to the immediate experience. Next time, try describing the event more as if you were observing someone from the outside.",
+"@needsMoreDistancingFeedback": {
+  "description": "Feedback shown when more distancing is needed"
+},
+  "reflectionRequired": "Please share your reflection",
+  "@reflectionRequired": {
+    "description": "Validation error message when reflection field is empty"
+  },
+  "reflectionSubmittedSuccessfully": "Reflection submitted successfully!",
+  "@reflectionSubmittedSuccessfully": {
+    "description": "Success message after submitting reflection"
+  },
+
+  "startBreathing": "Tap to begin the exercise",
+"@startBreathing": {
+  "description": "Text shown inside the breathing circle before the exercise starts"
+},
+"beginWhenReady": "",
+"@beginWhenReady": {
+  "description": "Instruction shown before the breathing exercise starts"
+},
+"getReady": "Get ready",
+"@getReady": {
+  "description": "Text shown during the short countdown before the breathing exercise starts"
+},
+  
+  "errorSubmittingReflection": "Error submitting reflection: {error}",
+  "@errorSubmittingReflection": {
+    "description": "Error message when reflection submission fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
+,
+  "progress": "History",
+  "@progress": {
+    "description": "Progress page label"
+  },
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile page label"
+  }
+,
+  "dailySession": "Daily Practice",
+  "@dailySession": {
+    "description": "Title for daily session flow"
+  },
+  "close": "Close",
+  "@close": {
+    "description": "Close button label"
+  }
+}

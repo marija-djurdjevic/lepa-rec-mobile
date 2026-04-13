@@ -14,7 +14,7 @@ class ApiClient {
     ),
   );
 
-   static Dio get dio => _dio;
+  static Dio get dio => _dio;
 
   static void configure() {
     if (_dio.interceptors.whereType<AuthInterceptor>().isNotEmpty) return;

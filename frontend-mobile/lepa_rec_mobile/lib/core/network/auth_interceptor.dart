@@ -26,6 +26,7 @@ class AuthInterceptor extends Interceptor {
     final token = await _local.readAccessToken();
     if (token != null && token.isNotEmpty) {
       options.headers['Authorization'] = 'Bearer $token';
+    } else {
     }
     handler.next(options);
   }
@@ -85,7 +86,7 @@ class AuthInterceptor extends Interceptor {
       await _local.saveSession(auth);
       _refreshCompleter?.complete(auth.accessToken);
       return auth.accessToken;
-    } catch (_) {
+    } catch (e) {
       await _local.clearSession();
       _refreshCompleter?.complete(null);
       return null;

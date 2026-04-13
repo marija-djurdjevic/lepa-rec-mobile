@@ -1,0 +1,465 @@
+{
+  "@@locale": "sr",
+  "appTitle": "Sagledaj",
+  "@appTitle": {
+    "description": "Naslov aplikacije"
+  },
+  "login": "Prijava",
+  "@login": {
+    "description": "Labela dugmeta za prijavu"
+  },
+  "loginWithGoogle": "Prijavite se preko Google-a",
+  "@loginWithGoogle": {
+    "description": "Labela dugmeta za prijavu preko Google naloga"
+  },
+  "logout": "Odjava",
+  "@logout": {
+    "description": "Labela dugmeta za odjavu"
+  },
+  "welcome": "Dobro došli",
+  "@welcome": {
+    "description": "Poruka dobrodoslice"
+  },
+  "primerWelcomeTitle": "Mir, vežba, rast",
+  "@primerWelcomeTitle": {
+    "description": "Naslov za primerski ekran dobrodoslice"
+  },
+  "primerWelcomeDescription": "Smestite se negde gde vam je prijatno i gde vas niko neće prekidati. Ovo je vaše vreme, zaslužujete ga.",
+  "@primerWelcomeDescription": {
+    "description": "Opis teksta za primerski ekran dobrodoslice"
+  },
+  "proceed": "Započnite pripremu",
+  "@proceed": {
+    "description": "Labela dugmeta za nastavak"
+  },
+  "breathingExercise": "Disanjem do mira",
+  "@breathingExercise": {
+    "description": "Naslov za ekran sa vezbom disanja"
+  },
+  "breathIn": "Udahnite",
+  "@breathIn": {
+    "description": "Uputstvo za udisanje"
+  },
+  "breathOut": "Izdahnite",
+  "@breathOut": {
+    "description": "Uputstvo za izdisanje"
+  },
+  "pauseBreathing": "Pauza",
+  "@pauseBreathing": {
+    "description": "Uputstvo za pauzu nakon izdisaja"
+  },
+  "breatheInForSeconds": "Udiši {seconds} sekundi",
+  "@breatheInForSeconds": {
+    "description": "Uputstvo da udahnes u toku odredjenog broja sekundi",
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "breatheOutForSeconds": "Izdiši {seconds} sekundi",
+  "@breatheOutForSeconds": {
+    "description": "Uputstvo da izdahnes u toku odredjenog broja sekundi",
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "holdYourBreath": "Zadržite dah",
+  "@holdYourBreath": {
+    "description": "Uputstvo da zadrzis dah"
+  },
+  "rounds": "Krugovi",
+  "@rounds": {
+    "description": "Labela za krugove disanja"
+  },
+  "complete": "Završi",
+  "@complete": {
+    "description": "Labela dugmeta za zavrsavanje"
+  },
+  "sessionComplete": "Svaka čast, učinio/la si nešto divno za sebe!",
+  "@sessionComplete": {
+    "description": "Pohvalna poruka nakon zavrsavanja sesije"
+  },
+  "sessionCompleteMessage": "Završio/la si vežbu disanja. Idemo dalje!",
+  "@sessionCompleteMessage": {
+    "description": "Detaljni tekst pohvale nakon uspesnog zavrsavanja sesije disanja"
+  },
+  "continueToNext": "Nastavi",
+  "@continueToNext": {
+    "description": "Labela dugmeta za nastavak na sledeci korak"
+  },
+  "conclude": "Zaključi",
+  "@conclude": {
+    "description": "Labela dugmeta za zakljucivanje"
+  },
+  "wrapUp": "Zaokruži",
+  "@wrapUp": {
+    "description": "Dugme za završavanje scenarija perspektive"
+  },
+  "home": "Početna",
+  "@home": {
+    "description": "Labela za pocetnu stranicu"
+  },
+  "dashboard": "Današnji izazov",
+  "@dashboard": {
+    "description": "Labela za kontrolnu tablu"
+  },
+  "loadingSession": "Učitavanje...",
+  "@loadingSession": {
+    "description": "Tekst indikatora ucitavanja podataka sesije"
+  },
+  "valueStatementTitle": "Šta najviše rezonuje\nsa vama danas?",
+  "@valueStatementTitle": {
+    "description": "Naslov za ekran izbora vrednosnih iskaza"
+  },
+  "growthMessageTitle": "Poruka za vas",
+  "@growthMessageTitle": {
+    "description": "Naslov za ekran poruke rasta"
+  },
+  "completePrimer": "Završi pripremu",
+  "@completePrimer": {
+    "description": "Labela dugmeta za završavanje primerske faze"
+  },
+  "errorLoadingStatements": "Greška pri učitavanju iskaza",
+  "@errorLoadingStatements": {
+    "description": "Naslov greške kada iskazi ne mogu biti učitani"
+  },
+  "failedLoadValueStatements": "Neuspešno učitavanje iskaza",
+  "@failedLoadValueStatements": {
+    "description": "Poruka greške kada vrednosni iskazi ne mogu biti učitani"
+  },
+  "errorLoadingMessage": "Greška pri učitavanju poruke",
+  "@errorLoadingMessage": {
+    "description": "Naslov greške kada poruka rasta ne može biti učitana"
+  },
+  "failedLoadGrowthMessage": "Neuspešno učitavanje poruke rasta",
+  "@failedLoadGrowthMessage": {
+    "description": "Poruka greške kada poruka rasta ne može biti učitana"
+  },
+  "retry": "Pokušaj ponovo",
+  "@retry": {
+    "description": "Labela dugmeta za ponovljeni pokušaj neuspešne operacije"
+  },
+  "errorRenderingGrowthMessage": "Greška pri prikazivanju ekrana poruke rasta",
+  "@errorRenderingGrowthMessage": {
+    "description": "Poruka greške kada crtanje ekrana poruke rasta ne uspije"
+  },
+  "errorInSessionFlowPage": "Greška pri prikazivanju ekrana toka sesije",
+  "@errorInSessionFlowPage": {
+    "description": "Poruka greške u orcestratoru ekrana toka sesije"
+  },
+  "distancedJournal": "Sagledavanje sebe",
+  "@distancedJournal": {
+    "description": "Naslov za ekran vežbe distanciranog dnevnika"
+  },
+  "yourAnswer": "Tvoj odgovor",
+  "@yourAnswer": {
+    "description": "Labela za polje tekstualnog unosa glavnog odgovora u dnevniku"
+  },
+  "followUpAnswer": "Tvoj odgovor",
+  "@followUpAnswer": {
+    "description": "Labela za polje tekstualnog unosa odgovora na nastavno pitanje u distanciranom dnevniku"
+  },
+  "answerRequired": "Ovo polje je obavezno",
+  "@answerRequired": {
+    "description": "Poruka greške pri validaciji kada je polje odgovora prazno"
+  },
+  "photoLimitMessage": "Možete dodati najviše 3 fotografije.",
+  "@photoLimitMessage": {
+    "description": "Poruka prikazana kada korisnik pređe limit fotografija"
+  },
+  "submit": "Pošalji",
+  "@submit": {
+    "description": "Labela dugmeta za slanje distanciranog dnevnika"
+  },
+  "errorLoadingPlan": "Greška pri učitavanju današnjeg plana",
+  "@errorLoadingPlan": {
+    "description": "Naslov greške kada plan vežbanja za danasnnji dan ne može biti učitan"
+  },
+  "unknownError": "Nepoznata greška",
+  "@unknownError": {
+    "description": "Generička poruka greške"
+  },
+  "noTasksToday": "Nema zadataka danas",
+  "@noTasksToday": {
+    "description": "Poruka kada nema zadataka za dovršavanje danas"
+  },
+  "completedAllTasks": "Odličan posao! Završio/la si sve dostupne zadatke.",
+  "@completedAllTasks": {
+    "description": "Pohvalna poruka kada su svi zadaci završeni"
+  },
+  "todaysPractice": "Današnji izazov",
+  "@todaysPractice": {
+    "description": "Zaglavlje za danasnje vežbe"
+  },
+  "tasksToComplete": "{count, plural, one{zadatak} other{zadataka}} za rad",
+  "@tasksToComplete": {
+    "description": "Labela koja pokazuje broj zadataka za dovršavanje",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "yourTasks": "Tvoji zadaci",
+  "@yourTasks": {
+    "description": "Zaglavlje sekcije za listu zadataka"
+  },
+  "reflection": "Sagledavanje dnevnika",
+  "@reflection": {
+    "description": "Labela za vežbu razmišljanja"
+  },
+  "reflectionFreshEyes": "Ispitaj sa svežim očima zapise iz svog dnevnika",
+  "@reflectionFreshEyes": {
+    "description": "Pomocni tekst prikazan na kartici refleksije pre pocetka zadatka"
+  },
+  "perspectiveScenario": "Sagledavanje drugih",
+  "@perspectiveScenario": {
+    "description": "Labela za vežbu scenarija perspektive"
+  },
+  "perspectiveScenarioPromptLabel": "Scenario",
+  "@perspectiveScenarioPromptLabel": {
+    "description": "Labela iznad teksta scenarija perspektive"
+  },
+  "levelEasy": "Lako",
+  "@levelEasy": {
+    "description": "Labela za lak nivo tezine"
+  },
+  "levelMedium": "Umereno",
+  "@levelMedium": {
+    "description": "Labela za srednji nivo tezine"
+  },
+  "levelHard": "Teško",
+  "@levelHard": {
+    "description": "Labela za tezak nivo tezine"
+  },
+  "answerEachScenarioQuestion": "Odgovori na svako pitanje pre nego što otkriješ završnu perspektivu.",
+  "@answerEachScenarioQuestion": {
+    "description": "Pomoćni tekst za pitanja u scenariju perspektive"
+  },
+  "scenarioQuestionNumber": "Pitanje {number}",
+  "@scenarioQuestionNumber": {
+    "description": "Labela za numerisano pitanje scenarija perspektive",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "perspectiveRevealTitle": "Šta je iza kulisa ove priče?",
+  "@perspectiveRevealTitle": {
+    "description": "Naslov za ekran otkrivanja perspektive"
+  },
+  "perspectiveRevealHint": "Zamislite se nad vašim odgovorima i pretpostavkama koje ste pravili.",
+  "@perspectiveRevealHint": {
+    "description": "Pomocni tekst ispod otkrivanja perspektive"
+  },
+  "perspectiveRevealSubtitle": "Evo perspektive koja se otkriva nakon ovog scenarija.",
+  "@perspectiveRevealSubtitle": {
+    "description": "Podnaslov za ekran otkrivanja perspektive"
+  },
+  "errorSubmittingPerspectiveScenario": "Greška pri slanju scenarija perspektive: {error}",
+  "@errorSubmittingPerspectiveScenario": {
+    "description": "Poruka greške pri slanju scenarija perspektive",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "comingSoon": "Uskoro dostupno",
+  "@comingSoon": {
+    "description": "Tekst koji označava da funkcija još nije dostupna"
+  },
+  "chooseJournalChallenge": "Izaberi temu o kojoj ćeš pisati danas",
+  "@chooseJournalChallenge": {
+    "description": "Uputstvo za izbor izazova dnevnika"
+  },
+  "selectAvailablePrompts": "Izaberi jedno od dostupnih pitanja koja te privlači. Nivoi težine ti pomažu da pronađeš pravi izazov.",
+  "@selectAvailablePrompts": {
+    "description": "Tekst za pomoć koji objašnjava kako da izabere izazov dnevnika"
+  },
+  "journalCompletedToday": "Dnevnik završen za danas",
+  "@journalCompletedToday": {
+    "description": "Poruka koja označava da je distancirani dnevnik završen za dan"
+  },
+  "reflectionCompletedToday": "Sagledavanje dnevnika završeno za danas",
+  "@reflectionCompletedToday": {
+    "description": "Poruka koja označava da je osvrt završen za dan"
+  },
+  "scenarioCompletedToday": "Scenario završen za danas",
+  "@scenarioCompletedToday": {
+    "description": "Poruka koja označava da je scenario perspektive završen za dan"
+  },
+  "exerciseNotInitialized": "Greška: Vežba nije inicijalizovana",
+  "@exerciseNotInitialized": {
+    "description": "Poruka greške kada vežba ne uspije da se inicijalizuje"
+  },
+  "exerciseNotFoundOrOwned": "Ova vežba nije dostupna ili nije povezana sa tvojim nalogom.",
+  "@exerciseNotFoundOrOwned": {
+    "description": "Poruka kada vežba ne postoji ili nije u vlasništvu korisnika"
+  },
+  "missingPrimerData": "Nedostaju podaci za pripremu. Pokušaj ponovo.",
+  "@missingPrimerData": {
+    "description": "Poruka kada nedostaju podaci za završetak pripreme"
+  },
+  "responseSubmittedSuccessfully": "Odgovor je uspešno poslat!",
+  "@responseSubmittedSuccessfully": {
+    "description": "Poruka uspeha nakon slanja odgovora na distancirani dnevnik"
+  },
+  "errorSubmittingResponse": "Greška pri slanju odgovora: {error}",
+  "@errorSubmittingResponse": {
+    "description": "Poruka greške ako slanje odgovora na distancirani dnevnik ne uspije",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "shareYourThoughts": "Podeli svoje misli...",
+  "@shareYourThoughts": {
+    "description": "Tekst čuvara mesta za polja unosa odgovora"
+  },
+  "startingExercise": "Pokretanje vežbe...",
+  "@startingExercise": {
+    "description": "Poruka učitavanja pri inicijalizaciji vežbe"
+  },
+  "errorStartingExercise": "Greška pri pokretanju vežbe",
+  "@errorStartingExercise": {
+    "description": "Naslov greške ako inicijalizacija vežbe ne uspije"
+  },
+  "loadingPersonalizedMessage": "Učitavanje poruke...",
+  "@loadingPersonalizedMessage": {
+    "description": "Tekst čuvara mesta tokom učitavanja poruke rasta"
+  },
+  "errorCompletingPrimer": "Greška pri završavanju primerske faze: {error}",
+  "@errorCompletingPrimer": {
+    "description": "Poruka greške ako završetak primerske faze ne uspije",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "sessionFlowPageError": "Greška tokom sesije",
+  "@sessionFlowPageError": {
+    "description": "Naslov greške u orcestratoru toka sesije"  },
+  "reflectionTitle": "Sagledavanje dnevnika",
+  "@reflectionTitle": {
+    "description": "Naslov za ekran osvrtanja"
+  },
+  "reflectionPrompt": "Da li imaš neki novi uvid na ovu temu?",
+  "@reflectionPrompt": {
+    "description": "Glavna poruka za vežbu osvrtanja"
+  },
+  "reflectionGuidance": "Ispitajte sa svežim očima zapis iz svog dnevnika.",
+  "@reflectionGuidance": {
+    "description": "Uvodni tekst pre jučerašnjeg sadržaja i odgovora"
+  },
+  "reflectionFreshQuestion": "Kako se osećate povodom napisanog? Šta su novi uvidi?",
+  "@reflectionFreshQuestion": {
+    "description": "Glavno pitanje za novu refleksiju"
+  },
+  "reflectionAfterTimeLabel": "Posle nekog vremena, ovako ste razmišljali:",
+  "@reflectionAfterTimeLabel": {
+    "description": "Label shown before a later reflection entry in history"
+  },
+  "yesterdaysTopic": "Jučerašnja tema",
+  "@yesterdaysTopic": {
+    "description": "Labela za jučerašnju temu dnevnika"
+  },
+  "yourPreviousAnswer": "Tvoj odgovor",
+  "@yourPreviousAnswer": {
+    "description": "Labela za korisnički prethodni glavni odgovor"
+  },
+  "previousFollowUpQuestion": "Dodatno pitanje",
+  "@previousFollowUpQuestion": {
+    "description": "Labela za prethodno nastavno pitanje"
+  },
+  "yourPreviousFollowUpAnswer": "Tvoj odgovor na pitanje",
+  "@yourPreviousFollowUpAnswer": {
+    "description": "Labela za korisnički prethodni odgovor na nastavno pitanje"
+  },
+  "todayReflection": "Današnje sagledavanje dnevnika",
+  "@todayReflection": {
+    "description": "Labela za danasnje polje unosa osvrtanja"
+  },
+  "distancedJournalHint": "Koristite „on“, „ona“ ili svoje ime umesto „ja“",
+  "@distancedJournalHint": {
+    "description": "Pomocni tekst za distancirani dnevnik"
+  },
+  "reflectionRequired": "Molim te podeli tvoj osvrt",
+  "@reflectionRequired": {
+    "description": "Poruka greške pri validaciji kada je polje osvrtanja prazno"
+  },
+  "reflectionSubmittedSuccessfully": "Osvrt je uspešno poslat!",
+  "@reflectionSubmittedSuccessfully": {
+    "description": "Poruka uspeha nakon slanja osvrtanja"
+  },
+  "journalFeedbackTitle": "Povratna poruka",
+"@journalFeedbackTitle": {
+  "description": "Naslov za ekran povratne poruke nakon dnevnika"
+},
+"journalFeedbackSubtitle": "Evo kratkog osvrta na način na koji si pisao/la",
+"@journalFeedbackSubtitle": {
+  "description": "Podnaslov na ekranu povratne poruke"
+},
+"continueToDashboard": "Nastavi",
+"@continueToDashboard": {
+  "description": "Tekst dugmeta za povratak na pregled"
+},
+"goodDistancingFeedback": "Situaciju si opisao/la sa dobrom dozom distance. To može pomoći da je sagledaš mirnije i jasnije.",
+"@goodDistancingFeedback": {
+  "description": "Poruka kada je distanciranje dobro"
+},
+"mixedDistancingFeedback": "U pisanju se već vidi određena distanca. Sledeći put možeš još više govoriti o sebi kao o nekome sa strane.",
+"@mixedDistancingFeedback": {
+  "description": "Poruka kada je distanciranje djelimično prisutno"
+},
+"needsMoreDistancingFeedback": "Odgovor je ostao dosta blizu neposrednom doživljaju. Sledeći put pokušaj da događaj opišeš više kao da posmatraš nekoga sa strane.",
+"@needsMoreDistancingFeedback": {
+  "description": "Poruka kada je potrebno više distanciranja"
+},
+"startBreathing": "Dodirnite da započnete vežbu",
+"@startBreathing": {
+  "description": "Tekst prikazan unutar kruga prije početka vježbe disanja"
+},
+"beginWhenReady": "",
+"@beginWhenReady": {
+  "description": "Uputstvo prikazano prije početka vježbe disanja"
+},
+"getReady": "Pripremi se",
+"@getReady": {
+  "description": "Tekst prikazan tokom kratkog odbrojavanja prije početka vježbe disanja"
+},
+  "errorSubmittingReflection": "Greška pri slanju osvrtanja: {error}",
+  "@errorSubmittingReflection": {
+    "description": "Poruka greške ako slanje osvrtanja ne uspije",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }  }
+,
+  "progress": "Istorija",
+  "@progress": {
+    "description": "Labela za napredak"
+  },
+  "profile": "Profil",
+  "@profile": {
+    "description": "Labela za profil"
+  }
+,
+  "dailySession": "Dnevna vežba",
+  "@dailySession": {
+    "description": "Naslov za dnevni tok sesije"
+  },
+  "close": "Zatvori",
+  "@close": {
+    "description": "Labela za zatvaranje"
+  }
+}

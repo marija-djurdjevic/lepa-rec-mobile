@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import '../../../../core/network/api_client.dart';
-import '../models/auth_response.dart';
-import '../models/google_login_request.dart';
+import '../dtos/auth_response.dart';
+import '../dtos/google_login_request.dart';
 
 class AuthRemoteDataSource {
   final Dio _dio;
@@ -10,9 +10,10 @@ class AuthRemoteDataSource {
 
   Future<AuthResponse> googleLogin(String idToken) async {
     final request = GoogleLoginRequest(idToken: idToken);
+    const endpoint = '/auth/google-login';
 
     final response = await _dio.post(
-      '/auth/google-login',
+      endpoint,
       data: request.toJson(),
     );
 
@@ -20,8 +21,10 @@ class AuthRemoteDataSource {
   }
 
   Future<AuthResponse> refresh(String refreshToken) async {
+  const endpoint = '/auth/refresh';
+
   final response = await _dio.post(
-    '/auth/refresh',
+    endpoint,
     data: {'refreshToken': refreshToken},
   );
 
