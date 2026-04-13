@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
+import '../../../../core/widgets/app_top_bar.dart';
 import '../widgets/breathing_circle.dart';
 
 class BreathingExercisePage extends StatefulWidget {
@@ -22,18 +25,23 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
     with TickerProviderStateMixin {
   late final AnimationController _breathingController;
   late final AnimationController _timerController;
+  late final AnimationController _phaseBlendController;
 
   Timer? _countdownTimer;
   Timer? _preStartTimer;
+  Timer? _completionTimer;
 
   static const int _totalRounds = 3;
   static const int _breathInDuration = 4;
   static const int _holdDuration = 4;
   static const int _breathOutDuration = 4;
+  static const int _pauseDuration = 4;
   static const int _preStartCountdownDuration = 3;
+  static const double _centerContentHeight = 120;
 
   int _currentRound = 0;
   BreathingPhase _currentPhase = BreathingPhase.breathIn;
+  BreathingPhase _previousPhase = BreathingPhase.breathIn;
   int _secondsLeft = _breathInDuration;
   int _preStartCountdown = _preStartCountdownDuration;
 
@@ -41,6 +49,7 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
   bool _exerciseCompleted = false;
   bool _hasStarted = false;
   bool _isPreStartCountdownActive = false;
+  bool _showCompletion = false;
 
   @override
   void initState() {
@@ -49,6 +58,10 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
     _breathingController = AnimationController(vsync: this);
     _timerController = AnimationController(vsync: this)
       ..addStatusListener(_onAnimationStatusChanged);
+    _phaseBlendController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 450),
+    )..value = 1.0;
   }
 
   int _getPhaseDuration(BreathingPhase phase) {
@@ -56,6 +69,7 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
       BreathingPhase.breathIn => _breathInDuration,
       BreathingPhase.hold => _holdDuration,
       BreathingPhase.breathOut => _breathOutDuration,
+      BreathingPhase.pause => _pauseDuration,
     };
   }
 
@@ -87,6 +101,7 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
           _isPreStartCountdownActive = false;
           _hasStarted = true;
           _currentRound = 0;
+          _previousPhase = BreathingPhase.breathIn;
           _currentPhase = BreathingPhase.breathIn;
         });
 
@@ -153,23 +168,24 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
   void _moveToNextPhase() {
     if (!mounted || _isCompleted) return;
 
-    if (_currentPhase == BreathingPhase.breathOut) {
+    if (_currentPhase == BreathingPhase.pause) {
       _currentRound++;
-    }
-
-    if (_currentPhase == BreathingPhase.breathOut &&
-        _currentRound >= _totalRounds) {
-      _completeExercise();
-      return;
+      if (_currentRound >= _totalRounds) {
+        _completeExercise();
+        return;
+      }
     }
 
     setState(() {
+      _previousPhase = _currentPhase;
       _currentPhase = switch (_currentPhase) {
         BreathingPhase.breathIn => BreathingPhase.hold,
         BreathingPhase.hold => BreathingPhase.breathOut,
-        BreathingPhase.breathOut => BreathingPhase.breathIn,
+        BreathingPhase.breathOut => BreathingPhase.pause,
+        BreathingPhase.pause => BreathingPhase.breathIn,
       };
     });
+    _phaseBlendController.forward(from: 0);
 
     _startPhase();
   }
@@ -188,74 +204,26 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
     _timerController.stop();
 
     if (!mounted) return;
-    _showCompletionDialog();
-  }
+    setState(() {
+      _showCompletion = true;
+    });
 
-  void _showCompletionDialog() {
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          backgroundColor: const Color(0xFFF5F9F3),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Text(
-            dialogContext.l10n.sessionComplete,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.quicksand(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF6B9B6E),
-            ),
-          ),
-          content: Text(
-            dialogContext.l10n.sessionCompleteMessage,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.quicksand(
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              color: const Color(0xFF666666),
-              height: 1.5,
-            ),
-          ),
-          actions: [
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(dialogContext).pop();
-                  widget.onComplete();
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  backgroundColor: const Color(0xFF6B9B6E),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: Text(
-                  dialogContext.l10n.continueToNext,
-                  style: GoogleFonts.quicksand(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
+    _completionTimer?.cancel();
+    _completionTimer = Timer(const Duration(milliseconds: 900), () {
+      if (!mounted) return;
+      widget.onComplete();
+    });
   }
 
   @override
   void dispose() {
     _countdownTimer?.cancel();
     _preStartTimer?.cancel();
+    _completionTimer?.cancel();
     _timerController.removeStatusListener(_onAnimationStatusChanged);
     _breathingController.dispose();
     _timerController.dispose();
+    _phaseBlendController.dispose();
     super.dispose();
   }
 
@@ -265,15 +233,14 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F9F3),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF5F9F3),
-        elevation: 0,
-        leading: null,
+      appBar: AppTopBar(
+        title: context.l10n.dailySession,
       ),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const SizedBox(height: AppSpacing.lg),
             Text(
               context.l10n.breathingExercise,
               textAlign: TextAlign.center,
@@ -283,42 +250,89 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
                 color: const Color(0xFF6B9B6E),
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: AppSpacing.xl),
             Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  BreathingCircle(
-                    animation: _breathingController,
-                    phase: _currentPhase,
-                    isIdle: _isIdle,
-                    onTap: _isIdle ? _onStartPressed : null,
-                    idleText: context.l10n.startBreathing,
+                  Transform.translate(
+                    offset: const Offset(0, -8),
+                    child: AnimatedScale(
+                    duration: const Duration(milliseconds: 2000),
+                    curve: Curves.easeInOutCubic,
+                    scale: _isIdle ? 1.0 : 1.28,
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 2000),
+                      curve: Curves.easeInOutCubic,
+                      opacity: _isIdle ? 1 : 0,
+                      child: CustomPaint(
+                        size: const Size(280, 280),
+                        painter: _BreathingLinesPainter(),
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 48),
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 400),
-                    child: _buildCenterContent(),
+                  ),
+                  Transform.translate(
+                    offset: const Offset(0, -12),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                      SizedBox(
+                        width: 280,
+                        height: 280,
+                        child: Center(
+                          child: Transform.translate(
+                            offset: Offset(0, _isIdle ? 0 : 20),
+                            child: BreathingCircle(
+                              animation: _breathingController,
+                              phase: _currentPhase,
+                              previousPhase: _previousPhase,
+                              phaseBlend: _phaseBlendController,
+                              isIdle: _isIdle,
+                              onTap: _isIdle ? _onStartPressed : null,
+                              idleText: context.l10n.startBreathing,
+                            ),
+                          ),
+                        ),
+                      ),
+                        const SizedBox(height: AppSpacing.xxl + AppSpacing.md),
+                        Transform.translate(
+                          offset: const Offset(0, 24),
+                          child: SizedBox(
+                            height: _centerContentHeight,
+                            child: Center(
+                              child: AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 400),
+                                child: _buildCenterContent(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
             if (_hasStarted || _isPreStartCountdownActive)
               Padding(
-                padding: const EdgeInsets.only(bottom: 32),
+                padding: const EdgeInsets.only(bottom: AppSpacing.xl),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(
                     _totalRounds,
                     (index) => Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.xs,
+                      ),
                       child: CircleAvatar(
                         radius: 12,
                         backgroundColor: index < _currentRound
                             ? const Color(0xFF6B9B6E)
                             : index == _currentRound
-                                ? const Color(0x996B9B6E)
-                                : const Color(0xFFD0D0D0),
+                            ? const Color(0x996B9B6E)
+                            : const Color(0xFFD0D0D0),
                         child: index < _currentRound
                             ? const Icon(
                                 Icons.check,
@@ -332,7 +346,7 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
                 ),
               )
             else
-              const SizedBox(height: 32),
+              const SizedBox(height: AppSpacing.xl),
           ],
         ),
       ),
@@ -341,19 +355,8 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
 
   Widget _buildCenterContent() {
     if (_isIdle) {
-      return Column(
-        key: const ValueKey('idle'),
-        children: [
-          Text(
-            context.l10n.beginWhenReady,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.quicksand(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF666666),
-            ),
-          ),
-        ],
+      return const SizedBox(
+        key: ValueKey('idle'),
       );
     }
 
@@ -369,7 +372,7 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
               color: const Color(0xFF6B9B6E),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSpacing.lg),
           Text(
             context.l10n.getReady,
             textAlign: TextAlign.center,
@@ -380,6 +383,12 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
             ),
           ),
         ],
+      );
+    }
+
+    if (_showCompletion) {
+      return const SizedBox(
+        key: ValueKey('complete'),
       );
     }
 
@@ -394,7 +403,7 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
             color: const Color(0xFF6B9B6E),
           ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: AppSpacing.lg),
         Text(
           _getPhaseText(context, _currentPhase),
           textAlign: TextAlign.center,
@@ -413,8 +422,53 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
       BreathingPhase.breathIn => context.l10n.breathIn,
       BreathingPhase.hold => context.l10n.holdYourBreath,
       BreathingPhase.breathOut => context.l10n.breathOut,
+      BreathingPhase.pause => context.l10n.holdYourBreath,
     };
   }
 }
 
-enum BreathingPhase { breathIn, hold, breathOut }
+enum BreathingPhase { breathIn, hold, breathOut, pause }
+
+class _BreathingLinesPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint linePaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.4
+      ..color = const Color(0xFF6B9B6E).withValues(alpha: 0.5);
+
+    final Offset center = Offset(size.width / 2, size.height / 2 - 60);
+    final double baseRadius = size.width * 0.42;
+
+    void drawWavyRing(
+      double radius,
+      double amplitude,
+      double phaseShift,
+      int waves,
+    ) {
+      final Path path = Path();
+      const int steps = 220;
+      for (int i = 0; i <= steps; i++) {
+        final double t = (i / steps) * math.pi * 2;
+        final double wave = math.sin((t * waves) + phaseShift) * amplitude;
+        final double r = radius + wave;
+        final double x = center.dx + math.cos(t) * r;
+        final double y = center.dy + math.sin(t) * r;
+        if (i == 0) {
+          path.moveTo(x, y);
+        } else {
+          path.lineTo(x, y);
+        }
+      }
+      path.close();
+      canvas.drawPath(path, linePaint);
+    }
+
+    drawWavyRing(baseRadius, size.width * 0.02, 0.0, 6);
+    drawWavyRing(baseRadius + size.width * 0.06, size.width * 0.018, 1.2, 7);
+    drawWavyRing(baseRadius + size.width * 0.12, size.width * 0.016, 2.3, 8);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}

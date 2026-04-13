@@ -4,6 +4,7 @@ class DistancedJournalReflectionPromptDto {
   final String challengeFollowUpQuestion;
   final String? previousMainAnswer;
   final String? previousFollowUpAnswer;
+  final List<String> previousPhotoUrls;
 
   DistancedJournalReflectionPromptDto({
     required this.exerciseId,
@@ -11,6 +12,7 @@ class DistancedJournalReflectionPromptDto {
     required this.challengeFollowUpQuestion,
     this.previousMainAnswer,
     this.previousFollowUpAnswer,
+    this.previousPhotoUrls = const [],
   });
 
   factory DistancedJournalReflectionPromptDto.fromJson(
@@ -23,6 +25,10 @@ class DistancedJournalReflectionPromptDto {
           json['challengeFollowUpQuestion'] as String? ?? '',
       previousMainAnswer: json['previousMainAnswer'] as String?,
       previousFollowUpAnswer: json['previousFollowUpAnswer'] as String?,
+      previousPhotoUrls:
+          (json['previousPhotoUrls'] as List<dynamic>? ?? const [])
+              .map((value) => value.toString())
+              .toList(),
     );
   }
 
@@ -34,16 +40,16 @@ class DistancedJournalReflectionPromptDto {
   }
 
   Map<String, dynamic> toJson() => {
-        'exerciseId': exerciseId,
-        'challengeContent': challengeContent,
-        'challengeFollowUpQuestion': challengeFollowUpQuestion,
-        'previousMainAnswer': previousMainAnswer,
-        'previousFollowUpAnswer': previousFollowUpAnswer,
-      };
+    'exerciseId': exerciseId,
+    'challengeContent': challengeContent,
+    'challengeFollowUpQuestion': challengeFollowUpQuestion,
+    'previousMainAnswer': previousMainAnswer,
+    'previousFollowUpAnswer': previousFollowUpAnswer,
+    'previousPhotoUrls': previousPhotoUrls,
+  };
 
   @override
   String toString() =>
       'DistancedJournalReflectionPromptDto(exerciseId: $exerciseId, '
       'challengeContent: $challengeContent)';
 }
-

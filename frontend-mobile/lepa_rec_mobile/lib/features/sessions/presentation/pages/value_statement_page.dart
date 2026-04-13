@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lepa_rec_mobile/features/sessions/presentation/state/primer_flow_state.dart';
+
+import '../../../../core/constants/app_spacing.dart';
 
 import '../../../../core/localization/localization_extension.dart';
-import '../../data/models/primer_statement_dto.dart';
+import '../../../../core/widgets/app_top_bar.dart';
+import '../../data/dtos/primer_statement_dto.dart';
 import '../../data/repositories/session_repository.dart';
-import '../models/primer_flow_state.dart';
 
 class ValueStatementPage extends StatefulWidget {
   final VoidCallback onComplete;
@@ -73,15 +76,14 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
 
     widget.onComplete();
   }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Scaffold(
         backgroundColor: const Color(0xFFF5F9F3),
-        appBar: AppBar(
-          backgroundColor: const Color(0xFFF5F9F3),
-          elevation: 0,
-          leading: null,
+        appBar: AppTopBar(
+          title: context.l10n.dailySession,
         ),
         body: const Center(
           child: CircularProgressIndicator(
@@ -94,10 +96,8 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
     if (_errorMessage != null) {
       return Scaffold(
         backgroundColor: const Color(0xFFF5F9F3),
-        appBar: AppBar(
-          backgroundColor: const Color(0xFFF5F9F3),
-          elevation: 0,
-          leading: null,
+        appBar: AppTopBar(
+          title: context.l10n.dailySession,
         ),
         body: Center(
           child: Column(
@@ -111,13 +111,13 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
                   color: Color(0xFF6B9B6E),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
               Text(
                 '$_errorMessage',
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: Colors.red),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.lg),
               ElevatedButton(
                 onPressed: () {
                   setState(() {
@@ -136,17 +136,16 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F9F3),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF5F9F3),
-        elevation: 0,
-        leading: null,
+      appBar: AppTopBar(
+        title: context.l10n.dailySession,
       ),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const SizedBox(height: AppSpacing.lg),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               child: Text(
                 context.l10n.valueStatementTitle,
                 textAlign: TextAlign.center,
@@ -157,26 +156,26 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: AppSpacing.xl),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: _statements
                       .map((statement) => _buildStatementButton(statement))
                       .toList()
                       .fold<List<Widget>>([], (acc, widget) {
-                    acc.add(widget);
-                    if (acc.length < _statements.length * 2) {
-                      acc.add(const SizedBox(height: 16));
-                    }
-                    return acc;
-                  }),
+                        acc.add(widget);
+                        if (acc.length < _statements.length * 2) {
+                          acc.add(const SizedBox(height: AppSpacing.md));
+                        }
+                        return acc;
+                      }),
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.lg),
           ],
         ),
       ),
@@ -189,16 +188,21 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
     return ElevatedButton(
       onPressed: () => _selectValue(statement),
       style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        backgroundColor: isSelected ? const Color(0xFF6B9B6E) : Colors.white,
-        foregroundColor:
-            isSelected ? Colors.white : const Color(0xFF6B9B6E),
-        elevation: isSelected ? 2 : 1,
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.lg,
+        ),
+        backgroundColor: isSelected
+            ? const Color(0xFF6B9B6E).withValues(alpha: 0.85)
+            : const Color(0xFF6B9B6E).withValues(alpha: 0.25),
+        foregroundColor: isSelected ? Colors.white : const Color(0xFF6B9B6E),
+        elevation: isSelected ? 3 : 1,
+        shadowColor: const Color(0xFF6B9B6E).withValues(alpha: 0.25),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           side: BorderSide(
             color: const Color(0xFF6B9B6E),
-            width: 1.5,
+            width: isSelected ? 2 : 1.5,
           ),
         ),
       ),
@@ -207,7 +211,7 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
         textAlign: TextAlign.center,
         style: GoogleFonts.quicksand(
           fontSize: 16,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
           color: isSelected ? Colors.white : const Color(0xFF6B9B6E),
         ),
       ),

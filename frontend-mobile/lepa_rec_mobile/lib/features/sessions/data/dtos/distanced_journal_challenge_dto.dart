@@ -21,17 +21,18 @@ class DistancedJournalChallengeDto {
   }
 
   static String _mapChallengeLevel(dynamic value) {
-  switch (value) {
-    case 0:
-      return 'Easy';
-    case 1:
-      return 'Medium';
-    case 2:
-      return 'Hard';
-    default:
-      return value.toString();
+    switch (value) {
+      case 0:
+        return 'Easy';
+      case 1:
+        return 'Medium';
+      case 2:
+        return 'Hard';
+      default:
+        return value.toString();
+    }
   }
-}
+
   static String? _toString(dynamic value) {
     if (value == null) return null;
     if (value is String) return value;
@@ -40,11 +41,11 @@ class DistancedJournalChallengeDto {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'content': content,
-        'followUpQuestion': followUpQuestion,
-        'challengeLevel': challengeLevel,
-      };
+    'id': id,
+    'content': content,
+    'followUpQuestion': followUpQuestion,
+    'challengeLevel': challengeLevel,
+  };
 
   @override
   String toString() =>

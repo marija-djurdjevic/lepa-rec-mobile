@@ -1,5 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '../models/auth_response.dart';
+import '../dtos/auth_response.dart';
 
 class AuthLocalDataSource {
   static const _accessTokenKey = 'access_token';

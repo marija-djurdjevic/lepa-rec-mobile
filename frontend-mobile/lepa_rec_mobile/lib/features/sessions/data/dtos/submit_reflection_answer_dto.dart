@@ -1,5 +1,6 @@
 class SubmitReflectionAnswerDto {
   final String exerciseId;
+  /// Informational only; the backend ignores this field.
   final DateTime sessionDate;
   final String reflection;
 
@@ -10,10 +11,10 @@ class SubmitReflectionAnswerDto {
   });
 
   Map<String, dynamic> toJson() => {
-        'exerciseId': exerciseId,
-        'sessionDate': sessionDate.toIso8601String(),
-        'reflection': reflection,
-      };
+    'exerciseId': exerciseId,
+    'sessionDate': sessionDate.toIso8601String(),
+    'reflection': reflection,
+  };
 
   @override
   String toString() =>

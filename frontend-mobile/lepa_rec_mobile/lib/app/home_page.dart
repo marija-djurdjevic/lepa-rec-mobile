@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '../../features/auth/data/datasources/auth_local_datasource.dart';
-import '../../features/sessions/presentation/pages/dashboard_page.dart';
+import '../features/auth/data/datasources/auth_local_datasource.dart';
+import 'home_shell.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return DashboardPage(
+    return HomeShell(
       onLogout: () async {
         final local = AuthLocalDataSource();
         await local.clearSession();

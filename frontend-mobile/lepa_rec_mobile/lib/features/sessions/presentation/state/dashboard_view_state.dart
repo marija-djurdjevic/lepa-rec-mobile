@@ -1,4 +1,4 @@
-import '../../data/models/today_practice_plan_dto.dart';
+import '../../data/dtos/today_practice_plan_dto.dart';
 
 class DashboardViewState {
   final bool isLoading;
@@ -27,7 +27,7 @@ class DashboardViewState {
       todayPlan == null ||
       (todayPlan!.reflectionPrompt == null &&
           todayPlan!.distancedJournalChoices.isEmpty &&
-          !todayPlan!.shouldShowPerspectiveScenario &&
+          todayPlan!.perspectiveScenarioChoices.isEmpty &&
           !todayPlan!.isDistancedJournalCompleted &&
           !todayPlan!.isReflectionCompleted &&
           !todayPlan!.isPerspectiveScenarioCompleted);
@@ -35,13 +35,20 @@ class DashboardViewState {
   int get taskCount {
     if (todayPlan == null) return 0;
     int count = 0;
-    
+
     if (todayPlan!.reflectionPrompt != null &&
-        !todayPlan!.isReflectionCompleted) {count++;}
+        !todayPlan!.isReflectionCompleted) {
+      count++;
+    }
     if (todayPlan!.distancedJournalChoices.isNotEmpty &&
-        !todayPlan!.isDistancedJournalCompleted) {count++;}
+        !todayPlan!.isDistancedJournalCompleted) {
+      count++;
+    }
     if (todayPlan!.shouldShowPerspectiveScenario &&
-        !todayPlan!.isPerspectiveScenarioCompleted) {count++;}
+        todayPlan!.perspectiveScenarioChoices.isNotEmpty &&
+        !todayPlan!.isPerspectiveScenarioCompleted) {
+      count++;
+    }
     return count;
   }
 

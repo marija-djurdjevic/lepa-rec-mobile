@@ -14,17 +14,18 @@ class CompletePrimerDto {
   factory CompletePrimerDto.fromJson(Map<String, dynamic> json) {
     return CompletePrimerDto(
       isSkipped: json['isSkipped'] as bool? ?? false,
-      presentedStatementIds:
-          List<String>.from(json['presentedStatementIds'] as List? ?? []),
+      presentedStatementIds: List<String>.from(
+        json['presentedStatementIds'] as List? ?? [],
+      ),
       selectedStatementId: json['selectedStatementId'] as String?,
       growthMessageId: json['growthMessageId'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'isSkipped': isSkipped,
-        'presentedStatementIds': presentedStatementIds,
-        'selectedStatementId': selectedStatementId,
-        'growthMessageId': growthMessageId,
-      };
+    'isSkipped': isSkipped,
+    'presentedStatementIds': presentedStatementIds,
+    'selectedStatementId': selectedStatementId,
+    'growthMessageId': growthMessageId,
+  };
 }

@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 // This widget is currently unused. Dashboard builds task cards inline.
 // Kept for potential future reuse.
-@deprecated
+@Deprecated('Dashboard builds task cards inline; keep only for future reuse.')
 class DashboardTaskCard extends StatelessWidget {
   final String title;
   final String? description;
@@ -27,10 +27,7 @@ class DashboardTaskCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: const Color(0xFF6B9B6E),
-            width: 1.5,
-          ),
+          border: Border.all(color: const Color(0xFF6B9B6E), width: 1.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
@@ -48,9 +45,7 @@ class DashboardTaskCard extends StatelessWidget {
                 color: const Color(0xFFF5F9F3),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Center(
-                child: _buildTaskIcon(),
-              ),
+              child: Center(child: _buildTaskIcon()),
             ),
             const SizedBox(width: 16),
             Expanded(

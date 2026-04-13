@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
+
 import '../../data/datasources/auth_local_datasource.dart';
 import '../../data/datasources/auth_remote_datasource.dart';
 
@@ -20,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   String? _error;
 
   final Color bgColor = const Color(0xFFF5F9F3);
-  final Color titleColor = const Color(0xFF6B9B6E); 
+  final Color titleColor = const Color(0xFF6B9B6E);
   final Color sageGreen = const Color(0xFF6B9B6E);
 
   Future<void> _signInWithGoogle() async {
@@ -48,7 +51,8 @@ class _LoginPageState extends State<LoginPage> {
 
       if (!mounted) return;
 
-      Navigator.of(context).pushNamedAndRemoveUntil('/home', (_) => false);
+      // Route through SplashRouter so it evaluates the new user's daily session.
+      Navigator.of(context).pushNamedAndRemoveUntil('/', (_) => false);
     } catch (e) {
       setState(() {
         _error = 'Login failed. Please try again.';
@@ -79,9 +83,9 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: 85),
+            const SizedBox(height: AppSpacing.xxl + AppSpacing.lg + AppSpacing.sm),
             Text(
-              'Lepa reč',
+              context.l10n.appTitle,
               textAlign: TextAlign.center,
               style: GoogleFonts.quicksand(
                 fontSize: 52,
@@ -90,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
                 letterSpacing: -1.0,
               ),
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: AppSpacing.xl + AppSpacing.xs),
             SizedBox(
               height: 360,
               width: double.infinity,
@@ -99,19 +103,19 @@ class _LoginPageState extends State<LoginPage> {
                 fit: BoxFit.cover,
               ),
             ),
-            const SizedBox(height: 25),
+            const SizedBox(height: AppSpacing.md + AppSpacing.sm),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               child: _buildGoogleButton(),
             ),
             if (_error != null) ...[
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                 child: _buildErrorBox(),
               ),
             ],
-            const SizedBox(height: 40),
+            const SizedBox(height: AppSpacing.xl + AppSpacing.xs),
           ],
         ),
       ),
@@ -127,7 +131,7 @@ class _LoginPageState extends State<LoginPage> {
           backgroundColor: sageGreen,
           foregroundColor: Colors.white,
           elevation: 2,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
           shadowColor: Colors.black12,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
@@ -148,10 +152,10 @@ class _LoginPageState extends State<LoginPage> {
                 height: 20,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AppSpacing.sm),
             Flexible(
               child: Text(
-                'Prijavi se preko Google-a',
+                context.l10n.loginWithGoogle,
                 overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.quicksand(
                   fontSize: 18,
@@ -182,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildLoadingOverlay() {
     return Container(
-      color: Colors.black.withOpacity(0.3),
+      color: Colors.black.withValues(alpha: 0.3),
       child: const Center(
         child: CircularProgressIndicator(
           color: Colors.white,
@@ -191,3 +195,4 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+

@@ -1,13 +1,9 @@
 class StartDistancedJournalExerciseDto {
   final String challengeId;
 
-  StartDistancedJournalExerciseDto({
-    required this.challengeId,
-  });
+  StartDistancedJournalExerciseDto({required this.challengeId});
 
-  Map<String, dynamic> toJson() => {
-        'challengeId': challengeId,
-      };
+  Map<String, dynamic> toJson() => {'challengeId': challengeId};
 
   @override
   String toString() =>
