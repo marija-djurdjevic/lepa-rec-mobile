@@ -88,6 +88,9 @@ class BreathingCircle extends StatelessWidget {
           case BreathingPhase.breathOut:
             scale = maxScale - (t * (maxScale - minScale));
             break;
+          case BreathingPhase.pause:
+            scale = minScale;
+            break;
         }
 
         final double previousScale =
@@ -182,6 +185,7 @@ class BreathingCircle extends StatelessWidget {
       BreathingPhase.breathIn => minScale + (t * (maxScale - minScale)),
       BreathingPhase.hold => maxScale,
       BreathingPhase.breathOut => maxScale - (t * (maxScale - minScale)),
+      BreathingPhase.pause => minScale,
     };
   }
 

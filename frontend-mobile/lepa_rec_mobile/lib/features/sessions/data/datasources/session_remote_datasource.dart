@@ -1,3 +1,6 @@
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+
 import '../../../../core/network/api_client.dart';
 import '../dtos/complete_primer_dto.dart';
 import '../dtos/daily_session_state_dto.dart';
@@ -16,7 +19,7 @@ import '../dtos/today_practice_plan_dto.dart';
 
 class SubmitDistancedJournalResultDto {
   final DistancedJournalExerciseDto exercise;
-  final String feedbackType;
+  final String? feedbackType;
 
   SubmitDistancedJournalResultDto({
     required this.exercise,
@@ -32,7 +35,8 @@ class SubmitDistancedJournalResultDto {
     );
   }
 
-  static String _mapFeedbackType(dynamic value) {
+  static String? _mapFeedbackType(dynamic value) {
+    if (value == null) return null;
     switch (value) {
       case 0:
         return 'GoodDistancing';
@@ -195,6 +199,7 @@ class SessionRemoteDataSource {
     const path = '/DistancedJournals/start';
 
     try {
+      debugPrint('[DistancedJournal][Remote] POST $path');
       final response = await ApiClient.dio.post(
         path,
         data: startRequest.toJson(),
@@ -204,8 +209,12 @@ class SessionRemoteDataSource {
         response.data as Map<String, dynamic>,
       );
 
+      debugPrint(
+        '[DistancedJournal][Remote] START OK id=${dto.id}',
+      );
       return dto;
     } catch (e) {
+      debugPrint('[DistancedJournal][Remote] START ERROR $e');
       rethrow;
     }
   }
@@ -213,14 +222,92 @@ class SessionRemoteDataSource {
   Future<SubmitDistancedJournalResultDto> submitDistancedJournalAnswer(
     SubmitDistancedJournalAnswerDto submitRequest,
   ) async {
-    final response = await ApiClient.dio.post(
-      '/DistancedJournals/submit',
-      data: submitRequest.toJson(),
-    );
+    debugPrint('[DistancedJournal][Remote] POST /DistancedJournals/submit');
+    try {
+      final response = await ApiClient.dio.post(
+        '/DistancedJournals/submit',
+        data: submitRequest.toJson(),
+      );
 
-    return SubmitDistancedJournalResultDto.fromJson(
-      response.data as Map<String, dynamic>,
+      final dto = SubmitDistancedJournalResultDto.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+      debugPrint('[DistancedJournal][Remote] SUBMIT OK');
+      return dto;
+    } on DioException catch (e) {
+      debugPrint(
+        '[DistancedJournal][Remote] SUBMIT ERROR '
+        'status=${e.response?.statusCode} message=${e.message} '
+        'data=${e.response?.data}',
+      );
+      rethrow;
+    } catch (e) {
+      debugPrint('[DistancedJournal][Remote] SUBMIT ERROR $e');
+      rethrow;
+    }
+  }
+
+  Future<SubmitDistancedJournalResultDto>
+      submitDistancedJournalAnswerWithPhotos({
+        required String exerciseId,
+        required DateTime sessionDate,
+        String? mainAnswer,
+        String? followUpAnswer,
+        String? reflection,
+        required List<String> photoPaths,
+      }) async {
+    debugPrint(
+      '[DistancedJournal][Remote] POST /DistancedJournals/submit-with-photos '
+      'photos=${photoPaths.length}',
     );
+    debugPrint(
+      '[DistancedJournal][Remote] submit-with-photos payload '
+      'exerciseId=$exerciseId '
+      'sessionDate=${sessionDate.toIso8601String()} '
+      'mainAnswer=${mainAnswer == null ? 'null' : mainAnswer.length} '
+      'followUpAnswer=${followUpAnswer == null ? 'null' : followUpAnswer.length} '
+      'reflection=${reflection == null ? 'null' : reflection.length} '
+      'photoFiles=${photoPaths.map((p) => p.split(RegExp(r'[\\\\/]+')).last).toList()}',
+    );
+    final formData = FormData.fromMap({
+      'exerciseId': exerciseId,
+      'sessionDate': sessionDate.toIso8601String(),
+      if (mainAnswer != null) 'mainAnswer': mainAnswer,
+      if (followUpAnswer != null) 'followUpAnswer': followUpAnswer,
+      if (reflection != null) 'reflection': reflection,
+      if (photoPaths.isNotEmpty)
+        'photos': [
+          for (final photoPath in photoPaths)
+            await MultipartFile.fromFile(
+              photoPath,
+              filename: photoPath.split(RegExp(r'[\\\\/]+')).last,
+            ),
+        ],
+    });
+
+    try {
+      final response = await ApiClient.dio.post(
+        '/DistancedJournals/submit-with-photos',
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
+
+      final dto = SubmitDistancedJournalResultDto.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+      debugPrint('[DistancedJournal][Remote] SUBMIT-WITH-PHOTOS OK');
+      return dto;
+    } on DioException catch (e) {
+      debugPrint(
+        '[DistancedJournal][Remote] SUBMIT-WITH-PHOTOS ERROR '
+        'status=${e.response?.statusCode} message=${e.message} '
+        'data=${e.response?.data}',
+      );
+      rethrow;
+    } catch (e) {
+      debugPrint('[DistancedJournal][Remote] SUBMIT-WITH-PHOTOS ERROR $e');
+      rethrow;
+    }
   }
 
   Future<void> submitReflectionAnswer(

@@ -50,6 +50,24 @@ class SessionRepository {
     SubmitDistancedJournalAnswerDto submitRequest,
   ) => _remote.submitDistancedJournalAnswer(submitRequest);
 
+  Future<SubmitDistancedJournalResultDto>
+      submitDistancedJournalAnswerWithPhotos({
+        required String exerciseId,
+        required DateTime sessionDate,
+        String? mainAnswer,
+        String? followUpAnswer,
+        String? reflection,
+        required List<String> photoPaths,
+      }) =>
+          _remote.submitDistancedJournalAnswerWithPhotos(
+            exerciseId: exerciseId,
+            sessionDate: sessionDate,
+            mainAnswer: mainAnswer,
+            followUpAnswer: followUpAnswer,
+            reflection: reflection,
+            photoPaths: photoPaths,
+          );
+
   Future<void> submitReflectionAnswer(
     SubmitReflectionAnswerDto submitRequest,
   ) => _remote.submitReflectionAnswer(submitRequest);

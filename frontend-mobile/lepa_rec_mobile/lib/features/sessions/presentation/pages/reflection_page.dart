@@ -252,6 +252,13 @@ class _ReflectionPageState extends State<ReflectionPage> {
                           height: 1.4,
                         ),
                       ),
+                      if (widget.reflectionPrompt.previousPhotoUrls.isNotEmpty)
+                        ...[
+                          const SizedBox(height: AppSpacing.md),
+                          _buildPhotoGallery(
+                            widget.reflectionPrompt.previousPhotoUrls,
+                          ),
+                        ],
                     ],
                   ),
                 ),
@@ -429,6 +436,27 @@ class _ReflectionPageState extends State<ReflectionPage> {
         content: Text(context.l10n.exerciseNotFoundOrOwned),
         backgroundColor: Colors.red[600],
       ),
+    );
+  }
+
+  Widget _buildPhotoGallery(List<String> urls) {
+    return Wrap(
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.sm,
+      children: [
+        for (final url in urls)
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: SizedBox(
+              width: 92,
+              height: 92,
+              child: Image.network(
+                url,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

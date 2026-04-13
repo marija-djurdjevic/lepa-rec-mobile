@@ -17,14 +17,12 @@ class GrowthMessagePage extends StatefulWidget {
   final VoidCallback onComplete;
   final Function(PrimerFlowState) onStateUpdate;
   final PrimerFlowState primerFlowState;
-  final VoidCallback onClose;
 
   const GrowthMessagePage({
     super.key,
     required this.onComplete,
     required this.onStateUpdate,
     required this.primerFlowState,
-    required this.onClose,
   });
 
   @override
@@ -140,9 +138,6 @@ class _GrowthMessagePageState extends State<GrowthMessagePage> {
         backgroundColor: const Color(0xFFF5F9F3),
         appBar: AppTopBar(
           title: context.l10n.dailySession,
-          showClose: true,
-          onClose: widget.onClose,
-          closeTooltip: context.l10n.close,
         ),
         body: const Center(
           child: CircularProgressIndicator(
@@ -157,9 +152,6 @@ class _GrowthMessagePageState extends State<GrowthMessagePage> {
         backgroundColor: const Color(0xFFF5F9F3),
         appBar: AppTopBar(
           title: context.l10n.dailySession,
-          showClose: true,
-          onClose: widget.onClose,
-          closeTooltip: context.l10n.close,
         ),
         body: Center(
           child: Column(
@@ -206,9 +198,6 @@ class _GrowthMessagePageState extends State<GrowthMessagePage> {
       backgroundColor: const Color(0xFFF5F9F3),
       appBar: AppTopBar(
         title: context.l10n.dailySession,
-        showClose: true,
-        onClose: widget.onClose,
-        closeTooltip: context.l10n.close,
       ),
       body: SafeArea(
         child: Stack(

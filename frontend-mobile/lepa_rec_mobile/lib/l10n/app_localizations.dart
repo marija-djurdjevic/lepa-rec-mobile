@@ -161,6 +161,12 @@ abstract class AppLocalizations {
   /// **'Exhale'**
   String get breathOut;
 
+  /// Instruction to pause after exhaling
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get pauseBreathing;
+
   /// Instruction to breathe in for a specific number of seconds
   ///
   /// In en, this message translates to:
@@ -322,6 +328,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This field is required'**
   String get answerRequired;
+
+  /// Message shown when the user exceeds the photo upload limit
+  ///
+  /// In en, this message translates to:
+  /// **'You can add up to 3 photos.'**
+  String get photoLimitMessage;
 
   /// Submit button label for distanced journal
   ///

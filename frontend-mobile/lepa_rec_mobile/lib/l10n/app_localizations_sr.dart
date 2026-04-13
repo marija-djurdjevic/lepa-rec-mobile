@@ -42,6 +42,9 @@ class AppLocalizationsSr extends AppLocalizations {
   String get breathOut => 'Izdahnite';
 
   @override
+  String get pauseBreathing => 'Pauza';
+
+  @override
   String breatheInForSeconds(int seconds) {
     final intl.NumberFormat secondsNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String secondsString = secondsNumberFormat.format(seconds);
@@ -131,6 +134,9 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String get answerRequired => 'Ovo polje je obavezno';
+
+  @override
+  String get photoLimitMessage => 'Možete dodati najviše 3 fotografije.';
 
   @override
   String get submit => 'Pošalji';

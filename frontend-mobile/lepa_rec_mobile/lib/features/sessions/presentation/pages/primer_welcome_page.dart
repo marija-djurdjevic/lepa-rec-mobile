@@ -8,12 +8,10 @@ import '../../../../core/widgets/app_top_bar.dart';
 
 class PrimerWelcomePage extends StatelessWidget {
   final VoidCallback onProceed;
-  final VoidCallback onClose;
 
   const PrimerWelcomePage({
     super.key,
     required this.onProceed,
-    required this.onClose,
   });
 
   @override
@@ -22,9 +20,6 @@ class PrimerWelcomePage extends StatelessWidget {
       backgroundColor: const Color(0xFFF5F9F3),
       appBar: AppTopBar(
         title: context.l10n.dailySession,
-        showClose: true,
-        onClose: onClose,
-        closeTooltip: context.l10n.close,
       ),
       body: SafeArea(
         child: Stack(

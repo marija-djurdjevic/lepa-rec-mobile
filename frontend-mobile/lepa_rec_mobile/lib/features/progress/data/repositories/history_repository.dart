@@ -99,6 +99,7 @@ class HistoryRepository {
               mainAnswer: exercise.mainAnswer,
               followUpAnswer: exercise.followUpAnswer,
               reflection: exercise.reflection,
+              photoUrls: exercise.photoUrls,
             );
           },
         )

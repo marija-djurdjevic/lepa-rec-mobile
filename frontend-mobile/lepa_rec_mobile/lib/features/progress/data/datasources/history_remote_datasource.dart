@@ -9,13 +9,14 @@ class HistoryRemoteDataSource {
     const path = '/DistancedJournals/mine';
     final response = await ApiClient.dio.get(path);
     final list = _asList(response.data);
-    return list
+    final exercises = list
         .map(
           (item) => DistancedJournalExerciseDto.fromJson(
             item as Map<String, dynamic>,
           ),
         )
         .toList();
+    return exercises;
   }
 
   Future<List<DistancedJournalChallengeDto>> getDistancedJournalChallenges() async {

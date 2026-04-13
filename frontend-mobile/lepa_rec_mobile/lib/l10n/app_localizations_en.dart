@@ -42,6 +42,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get breathOut => 'Exhale';
 
   @override
+  String get pauseBreathing => 'Pause';
+
+  @override
   String breatheInForSeconds(int seconds) {
     final intl.NumberFormat secondsNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String secondsString = secondsNumberFormat.format(seconds);
@@ -131,6 +134,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get answerRequired => 'This field is required';
+
+  @override
+  String get photoLimitMessage => 'You can add up to 3 photos.';
 
   @override
   String get submit => 'Submit';

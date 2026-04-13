@@ -11,12 +11,10 @@ import '../widgets/breathing_circle.dart';
 
 class BreathingExercisePage extends StatefulWidget {
   final VoidCallback onComplete;
-  final VoidCallback onClose;
 
   const BreathingExercisePage({
     super.key,
     required this.onComplete,
-    required this.onClose,
   });
 
   @override
@@ -34,10 +32,12 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
   Timer? _completionTimer;
 
   static const int _totalRounds = 3;
-  static const int _breathInDuration = 5;
-  static const int _holdDuration = 5;
-  static const int _breathOutDuration = 5;
+  static const int _breathInDuration = 4;
+  static const int _holdDuration = 4;
+  static const int _breathOutDuration = 4;
+  static const int _pauseDuration = 4;
   static const int _preStartCountdownDuration = 3;
+  static const double _centerContentHeight = 120;
 
   int _currentRound = 0;
   BreathingPhase _currentPhase = BreathingPhase.breathIn;
@@ -69,6 +69,7 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
       BreathingPhase.breathIn => _breathInDuration,
       BreathingPhase.hold => _holdDuration,
       BreathingPhase.breathOut => _breathOutDuration,
+      BreathingPhase.pause => _pauseDuration,
     };
   }
 
@@ -167,14 +168,12 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
   void _moveToNextPhase() {
     if (!mounted || _isCompleted) return;
 
-    if (_currentPhase == BreathingPhase.breathOut) {
+    if (_currentPhase == BreathingPhase.pause) {
       _currentRound++;
-    }
-
-    if (_currentPhase == BreathingPhase.breathOut &&
-        _currentRound >= _totalRounds) {
-      _completeExercise();
-      return;
+      if (_currentRound >= _totalRounds) {
+        _completeExercise();
+        return;
+      }
     }
 
     setState(() {
@@ -182,7 +181,8 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
       _currentPhase = switch (_currentPhase) {
         BreathingPhase.breathIn => BreathingPhase.hold,
         BreathingPhase.hold => BreathingPhase.breathOut,
-        BreathingPhase.breathOut => BreathingPhase.breathIn,
+        BreathingPhase.breathOut => BreathingPhase.pause,
+        BreathingPhase.pause => BreathingPhase.breathIn,
       };
     });
     _phaseBlendController.forward(from: 0);
@@ -235,9 +235,6 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
       backgroundColor: const Color(0xFFF5F9F3),
       appBar: AppTopBar(
         title: context.l10n.dailySession,
-        showClose: true,
-        onClose: widget.onClose,
-        closeTooltip: context.l10n.close,
       ),
       body: SafeArea(
         child: Column(
@@ -302,9 +299,14 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
                         const SizedBox(height: AppSpacing.xxl + AppSpacing.md),
                         Transform.translate(
                           offset: const Offset(0, 24),
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 400),
-                            child: _buildCenterContent(),
+                          child: SizedBox(
+                            height: _centerContentHeight,
+                            child: Center(
+                              child: AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 400),
+                                child: _buildCenterContent(),
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -420,11 +422,12 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
       BreathingPhase.breathIn => context.l10n.breathIn,
       BreathingPhase.hold => context.l10n.holdYourBreath,
       BreathingPhase.breathOut => context.l10n.breathOut,
+      BreathingPhase.pause => context.l10n.holdYourBreath,
     };
   }
 }
 
-enum BreathingPhase { breathIn, hold, breathOut }
+enum BreathingPhase { breathIn, hold, breathOut, pause }
 
 class _BreathingLinesPainter extends CustomPainter {
   @override

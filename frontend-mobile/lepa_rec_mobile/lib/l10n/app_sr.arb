@@ -44,6 +44,10 @@
   "@breathOut": {
     "description": "Uputstvo za izdisanje"
   },
+  "pauseBreathing": "Pauza",
+  "@pauseBreathing": {
+    "description": "Uputstvo za pauzu nakon izdisaja"
+  },
   "breatheInForSeconds": "Udiši {seconds} sekundi",
   "@breatheInForSeconds": {
     "description": "Uputstvo da udahnes u toku odredjenog broja sekundi",
@@ -163,6 +167,10 @@
   "answerRequired": "Ovo polje je obavezno",
   "@answerRequired": {
     "description": "Poruka greške pri validaciji kada je polje odgovora prazno"
+  },
+  "photoLimitMessage": "Možete dodati najviše 3 fotografije.",
+  "@photoLimitMessage": {
+    "description": "Poruka prikazana kada korisnik pređe limit fotografija"
   },
   "submit": "Pošalji",
   "@submit": {

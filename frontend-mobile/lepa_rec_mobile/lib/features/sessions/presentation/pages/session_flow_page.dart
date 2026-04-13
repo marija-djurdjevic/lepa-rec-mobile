@@ -51,10 +51,6 @@ class _SessionFlowPageState extends State<SessionFlowPage> {
     });
   }
 
-  void _handleClose() {
-    Navigator.of(context).pushNamedAndRemoveUntil('/home', (_) => false);
-  }
-
   @override
   Widget build(BuildContext context) {
     try {
@@ -65,13 +61,11 @@ class _SessionFlowPageState extends State<SessionFlowPage> {
           pageWidget = PrimerWelcomePage(
             key: const ValueKey(SessionFlowStep.primerWelcome),
             onProceed: _moveToNext,
-            onClose: _handleClose,
           );
         case SessionFlowStep.breathingExercise:
           pageWidget = BreathingExercisePage(
             key: const ValueKey(SessionFlowStep.breathingExercise),
             onComplete: _moveToNext,
-            onClose: _handleClose,
           );
         case SessionFlowStep.valueStatement:
           pageWidget = ValueStatementPage(
@@ -79,7 +73,6 @@ class _SessionFlowPageState extends State<SessionFlowPage> {
             onComplete: _moveToNext,
             onStateUpdate: _updatePrimerFlowState,
             primerFlowState: _primerFlowState,
-            onClose: _handleClose,
           );
         case SessionFlowStep.growthMessage:
           pageWidget = GrowthMessagePage(
@@ -87,7 +80,6 @@ class _SessionFlowPageState extends State<SessionFlowPage> {
             onComplete: _moveToNext,
             onStateUpdate: _updatePrimerFlowState,
             primerFlowState: _primerFlowState,
-            onClose: _handleClose,
           );
         case SessionFlowStep.complete:
           pageWidget = Scaffold(
@@ -97,10 +89,10 @@ class _SessionFlowPageState extends State<SessionFlowPage> {
       }
 
       return AnimatedSwitcher(
-        duration: const Duration(milliseconds: 950),
-        reverseDuration: const Duration(milliseconds: 800),
-        switchInCurve: Curves.easeInOutQuart,
-        switchOutCurve: Curves.easeInOutQuart,
+        duration: const Duration(milliseconds: 1200),
+        reverseDuration: const Duration(milliseconds: 1000),
+        switchInCurve: Curves.easeInOutCubic,
+        switchOutCurve: Curves.easeInOutCubic,
         layoutBuilder: (currentChild, previousChildren) {
           return Stack(
             children: <Widget>[
@@ -115,16 +107,16 @@ class _SessionFlowPageState extends State<SessionFlowPage> {
         transitionBuilder: (child, animation) {
           final curved = CurvedAnimation(
             parent: animation,
-            curve: const Interval(
-              200 / 950,
-              1.0,
-              curve: Curves.easeInOutQuart,
-            ),
-            reverseCurve: Curves.easeInOutQuart,
+            curve: Curves.easeInOutCubic,
+            reverseCurve: Curves.easeInOutCubic,
           );
+          final scale = Tween<double>(begin: 0.985, end: 1.0).animate(curved);
           return FadeTransition(
             opacity: curved,
-            child: child,
+            child: ScaleTransition(
+              scale: scale,
+              child: child,
+            ),
           );
         },
         child: pageWidget,

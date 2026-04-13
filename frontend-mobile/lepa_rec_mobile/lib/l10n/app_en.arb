@@ -44,6 +44,10 @@
   "@breathOut": {
     "description": "Instruction to breathe out"
   },
+  "pauseBreathing": "Pause",
+  "@pauseBreathing": {
+    "description": "Instruction to pause after exhaling"
+  },
   "breatheInForSeconds": "Breathe in for {seconds} seconds",
   "@breatheInForSeconds": {
     "description": "Instruction to breathe in for a specific number of seconds",
@@ -163,6 +167,10 @@
   "answerRequired": "This field is required",
   "@answerRequired": {
     "description": "Validation error message when an answer field is empty"
+  },
+  "photoLimitMessage": "You can add up to 3 photos.",
+  "@photoLimitMessage": {
+    "description": "Message shown when the user exceeds the photo upload limit"
   },
   "submit": "Submit",
   "@submit": {

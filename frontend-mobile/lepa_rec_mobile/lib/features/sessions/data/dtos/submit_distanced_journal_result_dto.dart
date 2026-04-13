@@ -2,7 +2,7 @@ import 'distanced_journal_exercise_dto.dart';
 
 class SubmitDistancedJournalResultDto {
   final DistancedJournalExerciseDto exercise;
-  final String feedbackType;
+  final String? feedbackType;
 
   SubmitDistancedJournalResultDto({
     required this.exercise,
@@ -14,7 +14,7 @@ class SubmitDistancedJournalResultDto {
       exercise: DistancedJournalExerciseDto.fromJson(
         json['exercise'] as Map<String, dynamic>,
       ),
-      feedbackType: json['feedbackType'] as String? ?? '',
+      feedbackType: json['feedbackType'] as String?,
     );
   }
 

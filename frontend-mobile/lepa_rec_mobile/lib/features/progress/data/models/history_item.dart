@@ -35,6 +35,7 @@ class HistoryItem {
   final String? mainAnswer;
   final String? followUpAnswer;
   final String? reflection;
+  final List<String> photoUrls;
   final List<HistoryAnswer> answers;
 
   const HistoryItem.distancedJournal({
@@ -46,6 +47,7 @@ class HistoryItem {
     this.mainAnswer,
     this.followUpAnswer,
     this.reflection,
+    this.photoUrls = const [],
   })  : type = HistoryItemType.distancedJournal,
         reveal = null,
         questions = const [],
@@ -63,7 +65,8 @@ class HistoryItem {
         followUpPrompt = null,
         mainAnswer = null,
         followUpAnswer = null,
-        reflection = null;
+        reflection = null,
+        photoUrls = const [];
 
   String get safePromptText => promptText.trim().isEmpty
       ? 'Prompt unavailable'
