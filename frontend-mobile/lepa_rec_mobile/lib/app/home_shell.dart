@@ -23,9 +23,9 @@ class _HomeShellState extends State<HomeShell> {
       body: IndexedStack(
         index: _currentIndex,
         children: [
-          DashboardPage(onLogout: widget.onLogout),
+          const DashboardPage(),
           const ProgressPage(),
-          const ProfilePage(),
+          ProfilePage(onLogout: widget.onLogout),
         ],
       ),
       bottomNavigationBar: Container(
@@ -53,13 +53,13 @@ class _HomeShellState extends State<HomeShell> {
           showSelectedLabels: true,
           items: [
             BottomNavigationBarItem(
-              icon: const Icon(Icons.home_outlined),
-              activeIcon: const Icon(Icons.home),
+              icon: const Icon(Icons.psychology_outlined),
+              activeIcon: const Icon(Icons.psychology),
               label: context.l10n.dashboard,
             ),
             BottomNavigationBarItem(
-              icon: const Icon(Icons.insights_outlined),
-              activeIcon: const Icon(Icons.insights),
+              icon: const Icon(Icons.history_outlined),
+              activeIcon: const Icon(Icons.history),
               label: context.l10n.progress,
             ),
             BottomNavigationBarItem(

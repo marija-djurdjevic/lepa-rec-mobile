@@ -1,12 +1,16 @@
 {
   "@@locale": "sr",
-  "appTitle": "Lepa reč",
+  "appTitle": "Sagledaj",
   "@appTitle": {
     "description": "Naslov aplikacije"
   },
   "login": "Prijava",
   "@login": {
     "description": "Labela dugmeta za prijavu"
+  },
+  "loginWithGoogle": "Prijavite se preko Google-a",
+  "@loginWithGoogle": {
+    "description": "Labela dugmeta za prijavu preko Google naloga"
   },
   "logout": "Odjava",
   "@logout": {
@@ -16,27 +20,27 @@
   "@welcome": {
     "description": "Poruka dobrodoslice"
   },
-  "primerWelcomeTitle": "Hajde da zajedno prodišemo",
+  "primerWelcomeTitle": "Mir, vežba, rast",
   "@primerWelcomeTitle": {
     "description": "Naslov za primerski ekran dobrodoslice"
   },
-  "primerWelcomeDescription": "Smesti se negde gde ti je prijatno i gde te niko neće prekidati. Ovo je tvoje vreme, zaslužuješ ga.",
+  "primerWelcomeDescription": "Smestite se negde gde vam je prijatno i gde vas niko neće prekidati. Ovo je vaše vreme, zaslužujete ga.",
   "@primerWelcomeDescription": {
     "description": "Opis teksta za primerski ekran dobrodoslice"
   },
-  "proceed": "Nastavi",
+  "proceed": "Započnite pripremu",
   "@proceed": {
     "description": "Labela dugmeta za nastavak"
   },
-  "breathingExercise": "Vežba disanja",
+  "breathingExercise": "Disanjem do mira",
   "@breathingExercise": {
     "description": "Naslov za ekran sa vezbom disanja"
   },
-  "breathIn": "Udahni",
+  "breathIn": "Udahnite",
   "@breathIn": {
     "description": "Uputstvo za udisanje"
   },
-  "breathOut": "Izdahni",
+  "breathOut": "Izdahnite",
   "@breathOut": {
     "description": "Uputstvo za izdisanje"
   },
@@ -60,7 +64,7 @@
       }
     }
   },
-  "holdYourBreath": "Zadrži dah",
+  "holdYourBreath": "Zadržite dah",
   "@holdYourBreath": {
     "description": "Uputstvo da zadrzis dah"
   },
@@ -84,6 +88,10 @@
   "@continueToNext": {
     "description": "Labela dugmeta za nastavak na sledeci korak"
   },
+  "conclude": "Zaključi",
+  "@conclude": {
+    "description": "Labela dugmeta za zakljucivanje"
+  },
   "wrapUp": "Zaokruži",
   "@wrapUp": {
     "description": "Dugme za završavanje scenarija perspektive"
@@ -92,7 +100,7 @@
   "@home": {
     "description": "Labela za pocetnu stranicu"
   },
-  "dashboard": "Današnja vežba",
+  "dashboard": "Današnji izazov",
   "@dashboard": {
     "description": "Labela za kontrolnu tablu"
   },
@@ -100,11 +108,11 @@
   "@loadingSession": {
     "description": "Tekst indikatora ucitavanja podataka sesije"
   },
-  "valueStatementTitle": "Koja izjava najviše rezonuje s tobom danas?",
+  "valueStatementTitle": "Šta najviše rezonuje\nsa vama danas?",
   "@valueStatementTitle": {
     "description": "Naslov za ekran izbora vrednosnih iskaza"
   },
-  "growthMessageTitle": "Poruka za tebe",
+  "growthMessageTitle": "Poruka za vas",
   "@growthMessageTitle": {
     "description": "Naslov za ekran poruke rasta"
   },
@@ -140,7 +148,7 @@
   "@errorInSessionFlowPage": {
     "description": "Poruka greške u orcestratoru ekrana toka sesije"
   },
-  "distancedJournal": "Dnevnik sa distance",
+  "distancedJournal": "Sagledavanje sebe",
   "@distancedJournal": {
     "description": "Naslov za ekran vežbe distanciranog dnevnika"
   },
@@ -176,7 +184,7 @@
   "@completedAllTasks": {
     "description": "Pohvalna poruka kada su svi zadaci završeni"
   },
-  "todaysPractice": "Današnja vežba",
+  "todaysPractice": "Današnji izazov",
   "@todaysPractice": {
     "description": "Zaglavlje za danasnje vežbe"
   },
@@ -193,15 +201,15 @@
   "@yourTasks": {
     "description": "Zaglavlje sekcije za listu zadataka"
   },
-  "reflection": "Refleksija",
+  "reflection": "Sagledavanje dnevnika",
   "@reflection": {
     "description": "Labela za vežbu razmišljanja"
   },
-  "reflectionFreshEyes": "O ovome si već nešto pisao. Hajde da vidimo kako gledaš na to svežim očima.",
+  "reflectionFreshEyes": "Ispitaj sa svežim očima zapise iz svog dnevnika",
   "@reflectionFreshEyes": {
     "description": "Pomocni tekst prikazan na kartici refleksije pre pocetka zadatka"
   },
-  "perspectiveScenario": "Scenario perspektive",
+  "perspectiveScenario": "Sagledavanje drugih",
   "@perspectiveScenario": {
     "description": "Labela za vežbu scenarija perspektive"
   },
@@ -213,7 +221,7 @@
   "@levelEasy": {
     "description": "Labela za lak nivo tezine"
   },
-  "levelMedium": "Srednje",
+  "levelMedium": "Umereno",
   "@levelMedium": {
     "description": "Labela za srednji nivo tezine"
   },
@@ -234,9 +242,13 @@
       }
     }
   },
-  "perspectiveRevealTitle": "Pogled iza kulisa ove priče",
+  "perspectiveRevealTitle": "Šta je iza kulisa ove priče?",
   "@perspectiveRevealTitle": {
     "description": "Naslov za ekran otkrivanja perspektive"
+  },
+  "perspectiveRevealHint": "Zamislite se nad vašim odgovorima i pretpostavkama koje ste pravili.",
+  "@perspectiveRevealHint": {
+    "description": "Pomocni tekst ispod otkrivanja perspektive"
   },
   "perspectiveRevealSubtitle": "Evo perspektive koja se otkriva nakon ovog scenarija.",
   "@perspectiveRevealSubtitle": {
@@ -267,7 +279,7 @@
   "@journalCompletedToday": {
     "description": "Poruka koja označava da je distancirani dnevnik završen za dan"
   },
-  "reflectionCompletedToday": "Refleksija završena za danas",
+  "reflectionCompletedToday": "Sagledavanje dnevnika završeno za danas",
   "@reflectionCompletedToday": {
     "description": "Poruka koja označava da je osvrt završen za dan"
   },
@@ -328,7 +340,7 @@
   "sessionFlowPageError": "Greška tokom sesije",
   "@sessionFlowPageError": {
     "description": "Naslov greške u orcestratoru toka sesije"  },
-  "reflectionTitle": "Refleksija",
+  "reflectionTitle": "Sagledavanje dnevnika",
   "@reflectionTitle": {
     "description": "Naslov za ekran osvrtanja"
   },
@@ -336,13 +348,17 @@
   "@reflectionPrompt": {
     "description": "Glavna poruka za vežbu osvrtanja"
   },
-  "reflectionGuidance": "Pogledaj šta si juče razmatrao. To je početna tačka, sada joj prilaziš svežim očima.",
+  "reflectionGuidance": "Ispitajte sa svežim očima zapis iz svog dnevnika.",
   "@reflectionGuidance": {
     "description": "Uvodni tekst pre jučerašnjeg sadržaja i odgovora"
   },
-  "reflectionFreshQuestion": "Da li se pojavljuje još neka misao koju juče nisi imao?",
+  "reflectionFreshQuestion": "Kako se osećate povodom napisanog? Šta su novi uvidi?",
   "@reflectionFreshQuestion": {
     "description": "Glavno pitanje za novu refleksiju"
+  },
+  "reflectionAfterTimeLabel": "Posle nekog vremena, ovako ste razmišljali:",
+  "@reflectionAfterTimeLabel": {
+    "description": "Label shown before a later reflection entry in history"
   },
   "yesterdaysTopic": "Jučerašnja tema",
   "@yesterdaysTopic": {
@@ -360,9 +376,13 @@
   "@yourPreviousFollowUpAnswer": {
     "description": "Labela za korisnički prethodni odgovor na nastavno pitanje"
   },
-  "todayReflection": "Današnja refleksija",
+  "todayReflection": "Današnje sagledavanje dnevnika",
   "@todayReflection": {
     "description": "Labela za danasnje polje unosa osvrtanja"
+  },
+  "distancedJournalHint": "Koristite „on“, „ona“ ili svoje ime umesto „ja“",
+  "@distancedJournalHint": {
+    "description": "Pomocni tekst za distancirani dnevnik"
   },
   "reflectionRequired": "Molim te podeli tvoj osvrt",
   "@reflectionRequired": {
@@ -396,11 +416,11 @@
 "@needsMoreDistancingFeedback": {
   "description": "Poruka kada je potrebno više distanciranja"
 },
-"startBreathing": "Dodirni za početak",
+"startBreathing": "Dodirnite da započnete vežbu",
 "@startBreathing": {
   "description": "Tekst prikazan unutar kruga prije početka vježbe disanja"
 },
-"beginWhenReady": "Spremi se i počni",
+"beginWhenReady": "",
 "@beginWhenReady": {
   "description": "Uputstvo prikazano prije početka vježbe disanja"
 },
@@ -417,7 +437,7 @@
       }
     }  }
 ,
-  "progress": "Napredak",
+  "progress": "Istorija",
   "@progress": {
     "description": "Labela za napredak"
   },
@@ -426,7 +446,7 @@
     "description": "Labela za profil"
   }
 ,
-  "dailySession": "Dnevna sesija",
+  "dailySession": "Dnevna vežba",
   "@dailySession": {
     "description": "Naslov za dnevni tok sesije"
   },

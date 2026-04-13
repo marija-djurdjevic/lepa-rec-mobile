@@ -21,6 +21,15 @@ class AppTheme {
       colorScheme: colorScheme,
       scaffoldBackgroundColor: background,
       textTheme: GoogleFonts.quicksandTextTheme(),
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: <TargetPlatform, PageTransitionsBuilder>{
+          TargetPlatform.android: _MeditativePageTransitionsBuilder(),
+          TargetPlatform.iOS: _MeditativePageTransitionsBuilder(),
+          TargetPlatform.linux: _MeditativePageTransitionsBuilder(),
+          TargetPlatform.macOS: _MeditativePageTransitionsBuilder(),
+          TargetPlatform.windows: _MeditativePageTransitionsBuilder(),
+        },
+      ),
       appBarTheme: const AppBarTheme(
         backgroundColor: background,
         foregroundColor: primaryGreen,
@@ -40,6 +49,44 @@ class AppTheme {
           foregroundColor: Colors.white,
         ),
       ),
+    );
+  }
+}
+
+class _MeditativePageTransitionsBuilder extends PageTransitionsBuilder {
+  const _MeditativePageTransitionsBuilder();
+
+  static const Curve _curve = Curves.easeInOutQuart;
+  static const Duration _duration = Duration(milliseconds: 950);
+  static const Duration _settleDelay = Duration(milliseconds: 200);
+  static const Color _fadeThroughColor = Color(0xFFF5F9F3);
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    final curved = CurvedAnimation(
+      parent: animation,
+      curve: Interval(
+        _settleDelay.inMilliseconds / _duration.inMilliseconds,
+        1.0,
+        curve: _curve,
+      ),
+      reverseCurve: _curve,
+    );
+
+    return Stack(
+      children: [
+        const ColoredBox(color: _fadeThroughColor),
+        FadeTransition(
+          opacity: curved,
+          child: child,
+        ),
+      ],
     );
   }
 }

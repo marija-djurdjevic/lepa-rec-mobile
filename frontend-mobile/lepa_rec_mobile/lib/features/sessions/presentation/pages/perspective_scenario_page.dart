@@ -10,6 +10,7 @@ import '../../data/dtos/perspective_scenario_prompt_dto.dart';
 import '../../data/dtos/start_perspective_scenario_dto.dart';
 import '../../data/dtos/submit_perspective_scenario_answer_dto.dart';
 import '../../data/repositories/session_repository.dart';
+import 'end_growth_message_page.dart';
 
 class PerspectiveScenarioPage extends StatefulWidget {
   final PerspectiveScenarioPromptDto prompt;
@@ -386,9 +387,7 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
                               ),
                             )
                           : Text(
-                              _isLastQuestion(i)
-                                  ? context.l10n.wrapUp
-                                  : context.l10n.continueToNext,
+                              context.l10n.wrapUp,
                               style: GoogleFonts.quicksand(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
@@ -402,6 +401,43 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
             ],
             if (_revealText != null) ...[
               _buildRevealCard(_revealText!),
+              const SizedBox(height: AppSpacing.lg),
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    final messageCompleted = await Navigator.push<bool>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EndGrowthMessagePage(
+                          onComplete: () => Navigator.pop(context, true),
+                        ),
+                      ),
+                    );
+
+                    if (!mounted) return;
+
+                    if (messageCompleted == true) {
+                      Navigator.pop(context, true);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6B9B6E),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    context.l10n.conclude,
+                    style: GoogleFonts.quicksand(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
               const SizedBox(height: AppSpacing.lg),
             ],
           ],
@@ -625,6 +661,17 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
               height: 1.5,
             ),
           ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            context.l10n.perspectiveRevealHint,
+            style: GoogleFonts.quicksand(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              fontStyle: FontStyle.italic,
+              color: const Color(0xFF6B9B6E),
+              height: 1.4,
+            ),
+          ),
         ],
       ),
     );
@@ -649,8 +696,8 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
       case 'lako':
         return const Color(0xFF8BBF8F);
       case 'medium':
-      case 'srednje':
-        return const Color(0xFF5C9A6B);
+        case 'umereno':
+          return const Color(0xFF5C9A6B);
       case 'hard':
       case 'tesko':
         return const Color(0xFF3E7A52);
@@ -665,8 +712,8 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
       case 'lako':
         return context.l10n.levelEasy;
       case 'medium':
-      case 'srednje':
-        return context.l10n.levelMedium;
+        case 'umereno':
+          return context.l10n.levelMedium;
       case 'hard':
       case 'tesko':
         return context.l10n.levelHard;

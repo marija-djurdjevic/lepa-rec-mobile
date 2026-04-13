@@ -98,7 +98,7 @@ abstract class AppLocalizations {
   /// Application title
   ///
   /// In en, this message translates to:
-  /// **'Lepa reč'**
+  /// **'Sagledaj'**
   String get appTitle;
 
   /// Login button label
@@ -106,6 +106,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Login'**
   String get login;
+
+  /// Button label for signing in with Google
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with Google'**
+  String get loginWithGoogle;
 
   /// Logout button label
   ///
@@ -122,37 +128,37 @@ abstract class AppLocalizations {
   /// Title for the primer welcome screen
   ///
   /// In en, this message translates to:
-  /// **'Welcome to Your Breathing Journey'**
+  /// **'Peace, practice, growth'**
   String get primerWelcomeTitle;
 
   /// Description text for the primer welcome screen
   ///
   /// In en, this message translates to:
-  /// **'Find a quiet place where you can be present with yourself. This is your time.'**
+  /// **'Settle somewhere comfortable where no one will interrupt you. This is your time, you deserve it.'**
   String get primerWelcomeDescription;
 
   /// Proceed button label
   ///
   /// In en, this message translates to:
-  /// **'Proceed'**
+  /// **'Begin preparation'**
   String get proceed;
 
   /// Title for the breathing exercise screen
   ///
   /// In en, this message translates to:
-  /// **'Breathing Exercise'**
+  /// **'Breathing into Calm'**
   String get breathingExercise;
 
   /// Instruction to breathe in
   ///
   /// In en, this message translates to:
-  /// **'Breathe In'**
+  /// **'Inhale'**
   String get breathIn;
 
   /// Instruction to breathe out
   ///
   /// In en, this message translates to:
-  /// **'Breathe Out'**
+  /// **'Exhale'**
   String get breathOut;
 
   /// Instruction to breathe in for a specific number of seconds
@@ -203,6 +209,12 @@ abstract class AppLocalizations {
   /// **'Continue'**
   String get continueToNext;
 
+  /// Button label to conclude a flow
+  ///
+  /// In en, this message translates to:
+  /// **'Conclude'**
+  String get conclude;
+
   /// Button label to wrap up the perspective scenario
   ///
   /// In en, this message translates to:
@@ -218,7 +230,7 @@ abstract class AppLocalizations {
   /// Dashboard page label
   ///
   /// In en, this message translates to:
-  /// **'Dashboard'**
+  /// **'Today\'s Challenge'**
   String get dashboard;
 
   /// Loading indicator text for session data
@@ -230,13 +242,13 @@ abstract class AppLocalizations {
   /// Title for the value statement selection screen
   ///
   /// In en, this message translates to:
-  /// **'What matters most to you?'**
+  /// **'What resonates with you most today?'**
   String get valueStatementTitle;
 
   /// Title for the growth message screen
   ///
   /// In en, this message translates to:
-  /// **'Your Growth Message'**
+  /// **'Message for You'**
   String get growthMessageTitle;
 
   /// Button label to complete the primer
@@ -290,7 +302,7 @@ abstract class AppLocalizations {
   /// Title for the distanced journal exercise screen
   ///
   /// In en, this message translates to:
-  /// **'Distanced Journal'**
+  /// **'Seeing Yourself'**
   String get distancedJournal;
 
   /// Label for the main answer text field in distanced journal
@@ -344,7 +356,7 @@ abstract class AppLocalizations {
   /// Header for today's practice tasks
   ///
   /// In en, this message translates to:
-  /// **'Today\'s Practice'**
+  /// **'Today\'s Challenge'**
   String get todaysPractice;
 
   /// Label showing number of tasks to complete
@@ -362,19 +374,19 @@ abstract class AppLocalizations {
   /// Label for reflection exercise
   ///
   /// In en, this message translates to:
-  /// **'Reflection'**
+  /// **'Journal Review'**
   String get reflection;
 
   /// Helper text shown on the reflection card before starting the task
   ///
   /// In en, this message translates to:
-  /// **'You have already written about this. Let’s see how you view it with fresh eyes.'**
+  /// **'Review your journal entries with fresh eyes.'**
   String get reflectionFreshEyes;
 
   /// Label for perspective scenario exercise
   ///
   /// In en, this message translates to:
-  /// **'Perspective Scenario'**
+  /// **'Seeing Others'**
   String get perspectiveScenario;
 
   /// Label shown above the perspective scenario text
@@ -392,7 +404,7 @@ abstract class AppLocalizations {
   /// Label for medium difficulty level
   ///
   /// In en, this message translates to:
-  /// **'Medium'**
+  /// **'Moderate'**
   String get levelMedium;
 
   /// Label for hard difficulty level
@@ -416,8 +428,14 @@ abstract class AppLocalizations {
   /// Title for the perspective scenario reveal screen
   ///
   /// In en, this message translates to:
-  /// **'Behind the Scenes'**
+  /// **'What’s Behind the Scenes?'**
   String get perspectiveRevealTitle;
+
+  /// Helper text shown below the reveal content
+  ///
+  /// In en, this message translates to:
+  /// **'Reflect on your answers and the assumptions you made.'**
+  String get perspectiveRevealHint;
 
   /// Subtitle for the perspective scenario reveal screen
   ///
@@ -458,7 +476,7 @@ abstract class AppLocalizations {
   /// Message indicating reflection is completed for the day
   ///
   /// In en, this message translates to:
-  /// **'Reflection completed for today'**
+  /// **'Journal review completed for today'**
   String get reflectionCompletedToday;
 
   /// Message indicating perspective scenario is completed for the day
@@ -536,7 +554,7 @@ abstract class AppLocalizations {
   /// Title for the reflection screen
   ///
   /// In en, this message translates to:
-  /// **'Your Reflection'**
+  /// **'Journal Review'**
   String get reflectionTitle;
 
   /// Main prompt for the reflection exercise
@@ -548,14 +566,20 @@ abstract class AppLocalizations {
   /// Guidance text shown before yesterday's prompt and answers
   ///
   /// In en, this message translates to:
-  /// **'Look back at what you considered yesterday, this is your starting point.'**
+  /// **'Revisit your journal entry with fresh eyes.'**
   String get reflectionGuidance;
 
   /// Main question prompting the new reflection
   ///
   /// In en, this message translates to:
-  /// **'Are there any new thoughts arriving with fresh eyes?'**
+  /// **'How do you feel about what you wrote? What are the new insights?'**
   String get reflectionFreshQuestion;
+
+  /// Label shown before a later reflection entry in history
+  ///
+  /// In en, this message translates to:
+  /// **'After some time, you reflected like this:'**
+  String get reflectionAfterTimeLabel;
 
   /// Label for yesterday's journal topic
   ///
@@ -584,8 +608,14 @@ abstract class AppLocalizations {
   /// Label for today's reflection input field
   ///
   /// In en, this message translates to:
-  /// **'Today\'s Reflection'**
+  /// **'Today\'s Journal Review'**
   String get todayReflection;
+
+  /// Helper text for distanced journal prompt
+  ///
+  /// In en, this message translates to:
+  /// **'Use “he”, “she”, or your name instead of “I”.'**
+  String get distancedJournalHint;
 
   /// Title for the journal feedback screen
   ///
@@ -638,13 +668,13 @@ abstract class AppLocalizations {
   /// Text shown inside the breathing circle before the exercise starts
   ///
   /// In en, this message translates to:
-  /// **'Tap to start'**
+  /// **'Tap to begin the exercise'**
   String get startBreathing;
 
   /// Instruction shown before the breathing exercise starts
   ///
   /// In en, this message translates to:
-  /// **'Begin when you are ready'**
+  /// **''**
   String get beginWhenReady;
 
   /// Text shown during the short countdown before the breathing exercise starts
@@ -662,7 +692,7 @@ abstract class AppLocalizations {
   /// Progress page label
   ///
   /// In en, this message translates to:
-  /// **'Progress'**
+  /// **'History'**
   String get progress;
 
   /// Profile page label
@@ -674,7 +704,7 @@ abstract class AppLocalizations {
   /// Title for daily session flow
   ///
   /// In en, this message translates to:
-  /// **'Daily Session'**
+  /// **'Daily Practice'**
   String get dailySession;
 
   /// Close button label

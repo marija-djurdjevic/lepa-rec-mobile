@@ -15,9 +15,7 @@ import 'perspective_scenario_page.dart';
 import 'reflection_page.dart';
 
 class DashboardPage extends StatefulWidget {
-  final VoidCallback? onLogout;
-
-  const DashboardPage({super.key, this.onLogout});
+  const DashboardPage({super.key});
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
@@ -155,29 +153,12 @@ class _DashboardPageState extends State<DashboardPage> {
     }
   }
 
-  void _handleLogout() {
-    widget.onLogout?.call();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F9F3),
       appBar: AppTopBar(
         title: context.l10n.dashboard,
-        actions: [
-          TextButton(
-            onPressed: _handleLogout,
-            child: Text(
-              context.l10n.logout,
-              style: GoogleFonts.quicksand(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
       ),
       body: _buildBody(),
     );
@@ -761,15 +742,6 @@ class _DashboardPageState extends State<DashboardPage> {
                         color: Colors.green[700],
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      context.l10n.journalCompletedToday,
-                      style: GoogleFonts.quicksand(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.green[600],
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -826,15 +798,6 @@ class _DashboardPageState extends State<DashboardPage> {
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: Colors.green[700],
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      context.l10n.reflectionCompletedToday,
-                      style: GoogleFonts.quicksand(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.green[600],
                       ),
                     ),
                   ],
@@ -895,15 +858,6 @@ class _DashboardPageState extends State<DashboardPage> {
                         color: Colors.green[700],
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      context.l10n.scenarioCompletedToday,
-                      style: GoogleFonts.quicksand(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.green[600],
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -920,8 +874,8 @@ class _DashboardPageState extends State<DashboardPage> {
       case 'lako':
         return const Color(0xFF8BBF8F);
       case 'medium':
-      case 'srednje':
-        return const Color(0xFF5C9A6B);
+        case 'umereno':
+          return const Color(0xFF5C9A6B);
       case 'hard':
       case 'tesko':
       case 'teško':
@@ -937,8 +891,8 @@ class _DashboardPageState extends State<DashboardPage> {
       case 'lako':
         return context.l10n.levelEasy;
       case 'medium':
-      case 'srednje':
-        return context.l10n.levelMedium;
+        case 'umereno':
+          return context.l10n.levelMedium;
       case 'hard':
       case 'tesko':
       case 'teško':

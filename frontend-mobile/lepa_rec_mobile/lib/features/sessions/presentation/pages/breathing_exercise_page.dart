@@ -27,18 +27,21 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
     with TickerProviderStateMixin {
   late final AnimationController _breathingController;
   late final AnimationController _timerController;
+  late final AnimationController _phaseBlendController;
 
   Timer? _countdownTimer;
   Timer? _preStartTimer;
+  Timer? _completionTimer;
 
   static const int _totalRounds = 3;
-  static const int _breathInDuration = 4;
-  static const int _holdDuration = 4;
-  static const int _breathOutDuration = 4;
+  static const int _breathInDuration = 5;
+  static const int _holdDuration = 5;
+  static const int _breathOutDuration = 5;
   static const int _preStartCountdownDuration = 3;
 
   int _currentRound = 0;
   BreathingPhase _currentPhase = BreathingPhase.breathIn;
+  BreathingPhase _previousPhase = BreathingPhase.breathIn;
   int _secondsLeft = _breathInDuration;
   int _preStartCountdown = _preStartCountdownDuration;
 
@@ -46,6 +49,7 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
   bool _exerciseCompleted = false;
   bool _hasStarted = false;
   bool _isPreStartCountdownActive = false;
+  bool _showCompletion = false;
 
   @override
   void initState() {
@@ -54,6 +58,10 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
     _breathingController = AnimationController(vsync: this);
     _timerController = AnimationController(vsync: this)
       ..addStatusListener(_onAnimationStatusChanged);
+    _phaseBlendController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 450),
+    )..value = 1.0;
   }
 
   int _getPhaseDuration(BreathingPhase phase) {
@@ -92,6 +100,7 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
           _isPreStartCountdownActive = false;
           _hasStarted = true;
           _currentRound = 0;
+          _previousPhase = BreathingPhase.breathIn;
           _currentPhase = BreathingPhase.breathIn;
         });
 
@@ -169,12 +178,14 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
     }
 
     setState(() {
+      _previousPhase = _currentPhase;
       _currentPhase = switch (_currentPhase) {
         BreathingPhase.breathIn => BreathingPhase.hold,
         BreathingPhase.hold => BreathingPhase.breathOut,
         BreathingPhase.breathOut => BreathingPhase.breathIn,
       };
     });
+    _phaseBlendController.forward(from: 0);
 
     _startPhase();
   }
@@ -193,78 +204,26 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
     _timerController.stop();
 
     if (!mounted) return;
-    _showCompletionDialog();
-  }
+    setState(() {
+      _showCompletion = true;
+    });
 
-  void _showCompletionDialog() {
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          backgroundColor: const Color(0xFFF5F9F3),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: Text(
-            dialogContext.l10n.sessionComplete,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.quicksand(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF6B9B6E),
-            ),
-          ),
-          content: Text(
-            dialogContext.l10n.sessionCompleteMessage,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.quicksand(
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              color: const Color(0xFF666666),
-              height: 1.5,
-            ),
-          ),
-          actions: [
-            SizedBox(
-              width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(dialogContext).pop();
-                    widget.onComplete();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.md,
-                    ),
-                    backgroundColor: const Color(0xFF6B9B6E),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                ),
-                child: Text(
-                  dialogContext.l10n.continueToNext,
-                  style: GoogleFonts.quicksand(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
+    _completionTimer?.cancel();
+    _completionTimer = Timer(const Duration(milliseconds: 900), () {
+      if (!mounted) return;
+      widget.onComplete();
+    });
   }
 
   @override
   void dispose() {
     _countdownTimer?.cancel();
     _preStartTimer?.cancel();
+    _completionTimer?.cancel();
     _timerController.removeStatusListener(_onAnimationStatusChanged);
     _breathingController.dispose();
     _timerController.dispose();
+    _phaseBlendController.dispose();
     super.dispose();
   }
 
@@ -331,6 +290,8 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
                             child: BreathingCircle(
                               animation: _breathingController,
                               phase: _currentPhase,
+                              previousPhase: _previousPhase,
+                              phaseBlend: _phaseBlendController,
                               isIdle: _isIdle,
                               onTap: _isIdle ? _onStartPressed : null,
                               idleText: context.l10n.startBreathing,
@@ -392,19 +353,8 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
 
   Widget _buildCenterContent() {
     if (_isIdle) {
-      return Column(
-        key: const ValueKey('idle'),
-        children: [
-          Text(
-            context.l10n.beginWhenReady,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.quicksand(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF666666),
-            ),
-          ),
-        ],
+      return const SizedBox(
+        key: ValueKey('idle'),
       );
     }
 
@@ -431,6 +381,12 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
             ),
           ),
         ],
+      );
+    }
+
+    if (_showCompletion) {
+      return const SizedBox(
+        key: ValueKey('complete'),
       );
     }
 

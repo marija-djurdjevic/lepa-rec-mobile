@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/localization/localization_extension.dart';
 
 import '../../data/datasources/auth_local_datasource.dart';
 import '../../data/datasources/auth_remote_datasource.dart';
@@ -84,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             const SizedBox(height: AppSpacing.xxl + AppSpacing.lg + AppSpacing.sm),
             Text(
-              'Lepa reč',
+              context.l10n.appTitle,
               textAlign: TextAlign.center,
               style: GoogleFonts.quicksand(
                 fontSize: 52,
@@ -154,7 +155,7 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(width: AppSpacing.sm),
             Flexible(
               child: Text(
-                'Prijavi se preko Google-a',
+                context.l10n.loginWithGoogle,
                 overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.quicksand(
                   fontSize: 18,

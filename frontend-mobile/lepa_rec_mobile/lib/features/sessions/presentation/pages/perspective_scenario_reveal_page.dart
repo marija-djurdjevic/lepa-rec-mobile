@@ -76,6 +76,18 @@ class PerspectiveScenarioRevealPage extends StatelessWidget {
                         height: 1.5,
                       ),
                     ),
+                    const SizedBox(height: AppSpacing.sm),
+                    Text(
+                      context.l10n.perspectiveRevealHint,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.quicksand(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        fontStyle: FontStyle.italic,
+                        color: const Color(0xFF6B9B6E),
+                        height: 1.4,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -92,7 +104,7 @@ class PerspectiveScenarioRevealPage extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    context.l10n.continueToDashboard,
+                    context.l10n.conclude,
                     style: GoogleFonts.quicksand(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,

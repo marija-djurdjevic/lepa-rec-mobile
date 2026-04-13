@@ -3,6 +3,7 @@ import '../dtos/complete_primer_dto.dart';
 import '../dtos/daily_session_state_dto.dart';
 import '../dtos/distanced_journal_exercise_dto.dart';
 import '../dtos/growth_message_dto.dart';
+import '../dtos/growth_message_type.dart';
 import '../dtos/perspective_scenario_exercise_dto.dart';
 import '../dtos/primer_statement_dto.dart';
 import '../dtos/start_perspective_scenario_dto.dart';
@@ -116,11 +117,16 @@ class SessionRemoteDataSource {
     }
   }
 
-  Future<GrowthMessageDto> getRandomGrowthMessage() async {
+  Future<GrowthMessageDto> getRandomGrowthMessage({
+    GrowthMessageType? type,
+  }) async {
     const path = '/practice/growth-messages/random';
 
     try {
-      final response = await ApiClient.dio.get(path);
+      final response = await ApiClient.dio.get(
+        path,
+        queryParameters: type == null ? null : {'type': type.apiValue},
+      );
 
       final message = GrowthMessageDto.fromJson(
         response.data as Map<String, dynamic>,

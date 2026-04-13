@@ -10,6 +10,7 @@ import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/widgets/app_top_bar.dart';
 import '../../data/dtos/complete_primer_dto.dart';
 import '../../data/dtos/growth_message_dto.dart';
+import '../../data/dtos/growth_message_type.dart';
 import '../../data/repositories/session_repository.dart';
 
 class GrowthMessagePage extends StatefulWidget {
@@ -57,7 +58,9 @@ class _GrowthMessagePageState extends State<GrowthMessagePage> {
 
   Future<void> _loadGrowthMessage() async {
     try {
-      final message = await _sessionRepository.getRandomGrowthMessage();
+      final message = await _sessionRepository.getRandomGrowthMessage(
+        type: GrowthMessageType.begin,
+      );
 
       if (!mounted) return;
 

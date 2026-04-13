@@ -63,16 +63,19 @@ class _SessionFlowPageState extends State<SessionFlowPage> {
       switch (_currentStep) {
         case SessionFlowStep.primerWelcome:
           pageWidget = PrimerWelcomePage(
+            key: const ValueKey(SessionFlowStep.primerWelcome),
             onProceed: _moveToNext,
             onClose: _handleClose,
           );
         case SessionFlowStep.breathingExercise:
           pageWidget = BreathingExercisePage(
+            key: const ValueKey(SessionFlowStep.breathingExercise),
             onComplete: _moveToNext,
             onClose: _handleClose,
           );
         case SessionFlowStep.valueStatement:
           pageWidget = ValueStatementPage(
+            key: const ValueKey(SessionFlowStep.valueStatement),
             onComplete: _moveToNext,
             onStateUpdate: _updatePrimerFlowState,
             primerFlowState: _primerFlowState,
@@ -80,6 +83,7 @@ class _SessionFlowPageState extends State<SessionFlowPage> {
           );
         case SessionFlowStep.growthMessage:
           pageWidget = GrowthMessagePage(
+            key: const ValueKey(SessionFlowStep.growthMessage),
             onComplete: _moveToNext,
             onStateUpdate: _updatePrimerFlowState,
             primerFlowState: _primerFlowState,
@@ -87,11 +91,44 @@ class _SessionFlowPageState extends State<SessionFlowPage> {
           );
         case SessionFlowStep.complete:
           pageWidget = Scaffold(
+            key: const ValueKey(SessionFlowStep.complete),
             body: Center(child: Text(context.l10n.complete)),
           );
       }
 
-      return pageWidget;
+      return AnimatedSwitcher(
+        duration: const Duration(milliseconds: 950),
+        reverseDuration: const Duration(milliseconds: 800),
+        switchInCurve: Curves.easeInOutQuart,
+        switchOutCurve: Curves.easeInOutQuart,
+        layoutBuilder: (currentChild, previousChildren) {
+          return Stack(
+            children: <Widget>[
+              const Positioned.fill(
+                child: ColoredBox(color: Color(0xFFF5F9F3)),
+              ),
+              ...previousChildren,
+              if (currentChild != null) currentChild,
+            ],
+          );
+        },
+        transitionBuilder: (child, animation) {
+          final curved = CurvedAnimation(
+            parent: animation,
+            curve: const Interval(
+              200 / 950,
+              1.0,
+              curve: Curves.easeInOutQuart,
+            ),
+            reverseCurve: Curves.easeInOutQuart,
+          );
+          return FadeTransition(
+            opacity: curved,
+            child: child,
+          );
+        },
+        child: pageWidget,
+      );
     } catch (e) {
       return Scaffold(
         backgroundColor: Colors.red,

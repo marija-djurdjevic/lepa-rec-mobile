@@ -9,10 +9,13 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'Lepa reč';
+  String get appTitle => 'Sagledaj';
 
   @override
   String get login => 'Login';
+
+  @override
+  String get loginWithGoogle => 'Sign in with Google';
 
   @override
   String get logout => 'Logout';
@@ -21,22 +24,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcome => 'Welcome';
 
   @override
-  String get primerWelcomeTitle => 'Welcome to Your Breathing Journey';
+  String get primerWelcomeTitle => 'Peace, practice, growth';
 
   @override
-  String get primerWelcomeDescription => 'Find a quiet place where you can be present with yourself. This is your time.';
+  String get primerWelcomeDescription => 'Settle somewhere comfortable where no one will interrupt you. This is your time, you deserve it.';
 
   @override
-  String get proceed => 'Proceed';
+  String get proceed => 'Begin preparation';
 
   @override
-  String get breathingExercise => 'Breathing Exercise';
+  String get breathingExercise => 'Breathing into Calm';
 
   @override
-  String get breathIn => 'Breathe In';
+  String get breathIn => 'Inhale';
 
   @override
-  String get breathOut => 'Breathe Out';
+  String get breathOut => 'Exhale';
 
   @override
   String breatheInForSeconds(int seconds) {
@@ -73,22 +76,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get continueToNext => 'Continue';
 
   @override
+  String get conclude => 'Conclude';
+
+  @override
   String get wrapUp => 'Wrap up';
 
   @override
   String get home => 'Home';
 
   @override
-  String get dashboard => 'Dashboard';
+  String get dashboard => 'Today\'s Challenge';
 
   @override
   String get loadingSession => 'Loading...';
 
   @override
-  String get valueStatementTitle => 'What matters most to you?';
+  String get valueStatementTitle => 'What resonates with you most today?';
 
   @override
-  String get growthMessageTitle => 'Your Growth Message';
+  String get growthMessageTitle => 'Message for You';
 
   @override
   String get completePrimer => 'Complete Primer';
@@ -115,7 +121,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorInSessionFlowPage => 'Error in SessionFlowPage';
 
   @override
-  String get distancedJournal => 'Distanced Journal';
+  String get distancedJournal => 'Seeing Yourself';
 
   @override
   String get yourAnswer => 'Your Answer';
@@ -142,7 +148,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get completedAllTasks => 'Great job! You\'ve completed all available tasks.';
 
   @override
-  String get todaysPractice => 'Today\'s Practice';
+  String get todaysPractice => 'Today\'s Challenge';
 
   @override
   String tasksToComplete(int count) {
@@ -159,14 +165,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get yourTasks => 'Your Tasks';
 
   @override
-  String get reflection => 'Reflection';
+  String get reflection => 'Journal Review';
 
   @override
-  String get reflectionFreshEyes =>
-      'You have already written about this. Let’s see how you view it with fresh eyes.';
+  String get reflectionFreshEyes => 'Review your journal entries with fresh eyes.';
 
   @override
-  String get perspectiveScenario => 'Perspective Scenario';
+  String get perspectiveScenario => 'Seeing Others';
 
   @override
   String get perspectiveScenarioPromptLabel => 'Scenario';
@@ -175,7 +180,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get levelEasy => 'Easy';
 
   @override
-  String get levelMedium => 'Medium';
+  String get levelMedium => 'Moderate';
 
   @override
   String get levelHard => 'Hard';
@@ -189,7 +194,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get perspectiveRevealTitle => 'Behind the Scenes';
+  String get perspectiveRevealTitle => 'What’s Behind the Scenes?';
+
+  @override
+  String get perspectiveRevealHint => 'Reflect on your answers and the assumptions you made.';
 
   @override
   String get perspectiveRevealSubtitle => 'Here is the revealed perspective from this scenario.';
@@ -212,7 +220,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get journalCompletedToday => 'Journal completed for today';
 
   @override
-  String get reflectionCompletedToday => 'Reflection completed for today';
+  String get reflectionCompletedToday => 'Journal review completed for today';
 
   @override
   String get scenarioCompletedToday => 'Scenario completed for today';
@@ -255,18 +263,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sessionFlowPageError => 'Error in SessionFlowPage';
 
   @override
-  String get reflectionTitle => 'Your Reflection';
+  String get reflectionTitle => 'Journal Review';
 
   @override
   String get reflectionPrompt => 'Do you have any new insights on this topic?';
 
   @override
-  String get reflectionGuidance =>
-      'Look back at what you considered yesterday, this is your starting point.';
+  String get reflectionGuidance => 'Revisit your journal entry with fresh eyes.';
 
   @override
-  String get reflectionFreshQuestion =>
-      'Are there any new thoughts arriving with fresh eyes?';
+  String get reflectionFreshQuestion => 'How do you feel about what you wrote? What are the new insights?';
+
+  @override
+  String get reflectionAfterTimeLabel => 'After some time, you reflected like this:';
 
   @override
   String get yesterdaysTopic => 'Yesterday\'s Topic';
@@ -281,7 +290,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get yourPreviousFollowUpAnswer => 'Your Follow-up Answer';
 
   @override
-  String get todayReflection => 'Today\'s Reflection';
+  String get todayReflection => 'Today\'s Journal Review';
+
+  @override
+  String get distancedJournalHint => 'Use “he”, “she”, or your name instead of “I”.';
 
   @override
   String get journalFeedbackTitle => 'Reflection Feedback';
@@ -308,10 +320,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reflectionSubmittedSuccessfully => 'Reflection submitted successfully!';
 
   @override
-  String get startBreathing => 'Tap to start';
+  String get startBreathing => 'Tap to begin the exercise';
 
   @override
-  String get beginWhenReady => 'Begin when you are ready';
+  String get beginWhenReady => '';
 
   @override
   String get getReady => 'Get ready';
@@ -322,13 +334,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get progress => 'Progress';
+  String get progress => 'History';
 
   @override
   String get profile => 'Profile';
 
   @override
-  String get dailySession => 'Daily Session';
+  String get dailySession => 'Daily Practice';
 
   @override
   String get close => 'Close';

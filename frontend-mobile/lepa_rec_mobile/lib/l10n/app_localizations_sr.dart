@@ -9,10 +9,13 @@ class AppLocalizationsSr extends AppLocalizations {
   AppLocalizationsSr([String locale = 'sr']) : super(locale);
 
   @override
-  String get appTitle => 'Lepa reč';
+  String get appTitle => 'Sagledaj';
 
   @override
   String get login => 'Prijava';
+
+  @override
+  String get loginWithGoogle => 'Prijavite se preko Google-a';
 
   @override
   String get logout => 'Odjava';
@@ -21,22 +24,22 @@ class AppLocalizationsSr extends AppLocalizations {
   String get welcome => 'Dobro došli';
 
   @override
-  String get primerWelcomeTitle => 'Hajde da zajedno prodišemo';
+  String get primerWelcomeTitle => 'Mir, vežba, rast';
 
   @override
-  String get primerWelcomeDescription => 'Smesti se negde gde ti je prijatno i gde te niko neće prekidati. Ovo je tvoje vreme, zaslužuješ ga.';
+  String get primerWelcomeDescription => 'Smestite se negde gde vam je prijatno i gde vas niko neće prekidati. Ovo je vaše vreme, zaslužujete ga.';
 
   @override
-  String get proceed => 'Nastavi';
+  String get proceed => 'Započnite pripremu';
 
   @override
-  String get breathingExercise => 'Vežba disanja';
+  String get breathingExercise => 'Disanjem do mira';
 
   @override
-  String get breathIn => 'Udahni';
+  String get breathIn => 'Udahnite';
 
   @override
-  String get breathOut => 'Izdahni';
+  String get breathOut => 'Izdahnite';
 
   @override
   String breatheInForSeconds(int seconds) {
@@ -55,7 +58,7 @@ class AppLocalizationsSr extends AppLocalizations {
   }
 
   @override
-  String get holdYourBreath => 'Zadrži dah';
+  String get holdYourBreath => 'Zadržite dah';
 
   @override
   String get rounds => 'Krugovi';
@@ -73,22 +76,25 @@ class AppLocalizationsSr extends AppLocalizations {
   String get continueToNext => 'Nastavi';
 
   @override
+  String get conclude => 'Zaključi';
+
+  @override
   String get wrapUp => 'Zaokruži';
 
   @override
   String get home => 'Početna';
 
   @override
-  String get dashboard => 'Današnja vežba';
+  String get dashboard => 'Današnji izazov';
 
   @override
   String get loadingSession => 'Učitavanje...';
 
   @override
-  String get valueStatementTitle => 'Koja izjava najviše rezonuje s tobom danas?';
+  String get valueStatementTitle => 'Šta najviše rezonuje\nsa vama danas?';
 
   @override
-  String get growthMessageTitle => 'Poruka za tebe';
+  String get growthMessageTitle => 'Poruka za vas';
 
   @override
   String get completePrimer => 'Završi pripremu';
@@ -115,7 +121,7 @@ class AppLocalizationsSr extends AppLocalizations {
   String get errorInSessionFlowPage => 'Greška pri prikazivanju ekrana toka sesije';
 
   @override
-  String get distancedJournal => 'Dnevnik sa distance';
+  String get distancedJournal => 'Sagledavanje sebe';
 
   @override
   String get yourAnswer => 'Tvoj odgovor';
@@ -142,7 +148,7 @@ class AppLocalizationsSr extends AppLocalizations {
   String get completedAllTasks => 'Odličan posao! Završio/la si sve dostupne zadatke.';
 
   @override
-  String get todaysPractice => 'Današnja vežba';
+  String get todaysPractice => 'Današnji izazov';
 
   @override
   String tasksToComplete(int count) {
@@ -159,14 +165,13 @@ class AppLocalizationsSr extends AppLocalizations {
   String get yourTasks => 'Tvoji zadaci';
 
   @override
-  String get reflection => 'Refleksija';
+  String get reflection => 'Sagledavanje dnevnika';
 
   @override
-  String get reflectionFreshEyes =>
-      'O ovome si već nešto pisao. Hajde da vidimo kako gledaš na to svežim očima.';
+  String get reflectionFreshEyes => 'Ispitaj sa svežim očima zapise iz svog dnevnika';
 
   @override
-  String get perspectiveScenario => 'Scenario perspektive';
+  String get perspectiveScenario => 'Sagledavanje drugih';
 
   @override
   String get perspectiveScenarioPromptLabel => 'Scenario';
@@ -175,7 +180,7 @@ class AppLocalizationsSr extends AppLocalizations {
   String get levelEasy => 'Lako';
 
   @override
-  String get levelMedium => 'Srednje';
+  String get levelMedium => 'Umereno';
 
   @override
   String get levelHard => 'Teško';
@@ -189,7 +194,10 @@ class AppLocalizationsSr extends AppLocalizations {
   }
 
   @override
-  String get perspectiveRevealTitle => 'Pogled iza kulisa ove priče';
+  String get perspectiveRevealTitle => 'Šta je iza kulisa ove priče?';
+
+  @override
+  String get perspectiveRevealHint => 'Zamislite se nad vašim odgovorima i pretpostavkama koje ste pravili.';
 
   @override
   String get perspectiveRevealSubtitle => 'Evo perspektive koja se otkriva nakon ovog scenarija.';
@@ -212,7 +220,7 @@ class AppLocalizationsSr extends AppLocalizations {
   String get journalCompletedToday => 'Dnevnik završen za danas';
 
   @override
-  String get reflectionCompletedToday => 'Refleksija završena za danas';
+  String get reflectionCompletedToday => 'Sagledavanje dnevnika završeno za danas';
 
   @override
   String get scenarioCompletedToday => 'Scenario završen za danas';
@@ -255,18 +263,19 @@ class AppLocalizationsSr extends AppLocalizations {
   String get sessionFlowPageError => 'Greška tokom sesije';
 
   @override
-  String get reflectionTitle => 'Refleksija';
+  String get reflectionTitle => 'Sagledavanje dnevnika';
 
   @override
   String get reflectionPrompt => 'Da li imaš neki novi uvid na ovu temu?';
 
   @override
-  String get reflectionGuidance =>
-      'Pogledaj šta si juče razmatrao. To je početna tačka, sada joj prilaziš svežim očima.';
+  String get reflectionGuidance => 'Ispitajte sa svežim očima zapis iz svog dnevnika.';
 
   @override
-  String get reflectionFreshQuestion =>
-      'Da li se pojavljuje još neka misao koju juče nisi imao?';
+  String get reflectionFreshQuestion => 'Kako se osećate povodom napisanog? Šta su novi uvidi?';
+
+  @override
+  String get reflectionAfterTimeLabel => 'Posle nekog vremena, ovako ste razmišljali:';
 
   @override
   String get yesterdaysTopic => 'Jučerašnja tema';
@@ -281,7 +290,10 @@ class AppLocalizationsSr extends AppLocalizations {
   String get yourPreviousFollowUpAnswer => 'Tvoj odgovor na pitanje';
 
   @override
-  String get todayReflection => 'Današnja refleksija';
+  String get todayReflection => 'Današnje sagledavanje dnevnika';
+
+  @override
+  String get distancedJournalHint => 'Koristite „on“, „ona“ ili svoje ime umesto „ja“';
 
   @override
   String get journalFeedbackTitle => 'Povratna poruka';
@@ -308,10 +320,10 @@ class AppLocalizationsSr extends AppLocalizations {
   String get reflectionSubmittedSuccessfully => 'Osvrt je uspešno poslat!';
 
   @override
-  String get startBreathing => 'Dodirni za početak';
+  String get startBreathing => 'Dodirnite da započnete vežbu';
 
   @override
-  String get beginWhenReady => 'Spremi se i počni';
+  String get beginWhenReady => '';
 
   @override
   String get getReady => 'Pripremi se';
@@ -322,13 +334,13 @@ class AppLocalizationsSr extends AppLocalizations {
   }
 
   @override
-  String get progress => 'Napredak';
+  String get progress => 'Istorija';
 
   @override
   String get profile => 'Profil';
 
   @override
-  String get dailySession => 'Dnevna sesija';
+  String get dailySession => 'Dnevna vežba';
 
   @override
   String get close => 'Zatvori';

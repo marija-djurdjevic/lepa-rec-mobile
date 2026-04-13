@@ -8,7 +8,7 @@ import '../../data/dtos/distanced_journal_challenge_dto.dart';
 import '../../data/dtos/start_distanced_journal_exercise_dto.dart';
 import '../../data/dtos/submit_distanced_journal_answer_dto.dart';
 import '../../data/repositories/session_repository.dart';
-import 'journal_feedback_page.dart';
+import 'end_growth_message_page.dart';
 
 class DistancedJournalPage extends StatefulWidget {
   final DistancedJournalChallengeDto challenge;
@@ -76,23 +76,25 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
         reflection: null,
       );
 
-      final result = await _sessionRepository.submitDistancedJournalAnswer(
+      await _sessionRepository.submitDistancedJournalAnswer(
         submitRequest,
       );
 
       if (!mounted) return;
 
-      final feedbackCompleted = await Navigator.push<bool>(
+      final messageCompleted = await Navigator.push<bool>(
         context,
         MaterialPageRoute(
           builder: (context) =>
-              JournalFeedbackPage(feedbackType: result.feedbackType),
+              EndGrowthMessagePage(
+                onComplete: () => Navigator.pop(context, true),
+              ),
         ),
       );
 
       if (!mounted) return;
 
-      if (feedbackCompleted == true) {
+      if (messageCompleted == true) {
         Navigator.pop(context, true);
       } else {
         setState(() {
@@ -192,6 +194,17 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                           height: 1.4,
                         ),
                       ),
+                      const SizedBox(height: AppSpacing.sm),
+                      Text(
+                        context.l10n.distancedJournalHint,
+                        style: GoogleFonts.quicksand(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          fontStyle: FontStyle.italic,
+                          color: Colors.grey[600],
+                          height: 1.4,
+                        ),
+                      ),
                       const SizedBox(height: AppSpacing.md),
                       Container(
                         padding: const EdgeInsets.symmetric(
@@ -269,7 +282,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                         elevation: 2,
                       ),
                       child: Text(
-                        context.l10n.continueToNext,
+                        context.l10n.wrapUp,
                         style: GoogleFonts.quicksand(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
@@ -349,7 +362,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                               ),
                             )
                           : Text(
-                              context.l10n.wrapUp,
+                              context.l10n.conclude,
                               style: GoogleFonts.quicksand(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -454,8 +467,8 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
       case 'lako':
         return const Color(0xFF8BBF8F);
       case 'medium':
-      case 'srednje':
-        return const Color(0xFF5C9A6B);
+        case 'umereno':
+          return const Color(0xFF5C9A6B);
       case 'hard':
       case 'tesko':
       case 'teško':
@@ -472,8 +485,8 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
       case 'lako':
         return context.l10n.levelEasy;
       case 'medium':
-      case 'srednje':
-        return context.l10n.levelMedium;
+        case 'umereno':
+          return context.l10n.levelMedium;
       case 'hard':
       case 'tesko':
       case 'teško':

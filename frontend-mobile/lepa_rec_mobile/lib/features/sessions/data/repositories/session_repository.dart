@@ -3,6 +3,7 @@ import '../dtos/complete_primer_dto.dart';
 import '../dtos/daily_session_state_dto.dart';
 import '../dtos/distanced_journal_exercise_dto.dart';
 import '../dtos/growth_message_dto.dart';
+import '../dtos/growth_message_type.dart';
 import '../dtos/perspective_scenario_exercise_dto.dart';
 import '../dtos/primer_statement_dto.dart';
 import '../dtos/start_perspective_scenario_dto.dart';
@@ -34,8 +35,9 @@ class SessionRepository {
   Future<List<PrimerStatementDto>> getRandomPrimerStatements() =>
       _remote.getRandomPrimerStatements();
 
-  Future<GrowthMessageDto> getRandomGrowthMessage() =>
-      _remote.getRandomGrowthMessage();
+  Future<GrowthMessageDto> getRandomGrowthMessage({
+    GrowthMessageType? type,
+  }) => _remote.getRandomGrowthMessage(type: type);
 
   Future<TodayPracticePlanDto> getTodaysPracticePlan() =>
       _remote.getTodaysPracticePlan();

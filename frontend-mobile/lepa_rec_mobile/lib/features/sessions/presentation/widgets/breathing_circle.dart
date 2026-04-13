@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,7 +8,9 @@ import '../pages/breathing_exercise_page.dart';
 
 class BreathingCircle extends StatelessWidget {
   final Animation<double> animation;
+  final Animation<double> phaseBlend;
   final BreathingPhase phase;
+  final BreathingPhase previousPhase;
   final bool isIdle;
   final VoidCallback? onTap;
   final String idleText;
@@ -15,7 +18,9 @@ class BreathingCircle extends StatelessWidget {
   const BreathingCircle({
     super.key,
     required this.animation,
+    required this.phaseBlend,
     required this.phase,
+    required this.previousPhase,
     required this.isIdle,
     required this.onTap,
     required this.idleText,
@@ -41,7 +46,7 @@ class BreathingCircle extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Transform.translate(
-                  offset: const Offset(0, -16),
+                  offset: const Offset(0, -20),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
@@ -64,28 +69,48 @@ class BreathingCircle extends StatelessWidget {
     }
 
     return AnimatedBuilder(
-      animation: animation,
+      animation: Listenable.merge([animation, phaseBlend]),
       builder: (context, child) {
-        double scale = 1.0;
+        final Animation<double> eased =
+            CurvedAnimation(parent: animation, curve: Curves.easeInOutSine);
+        final double t = eased.value;
+        const double minScale = 1.18;
+        const double maxScale = 1.32;
+        double scale = minScale;
 
         switch (phase) {
           case BreathingPhase.breathIn:
-            scale = 1.0 + (animation.value * 0.5);
+            scale = minScale + (t * (maxScale - minScale));
             break;
           case BreathingPhase.hold:
-            scale = 1.5;
+            scale = maxScale;
             break;
           case BreathingPhase.breathOut:
-            scale = 1.5 - (animation.value * 0.5);
+            scale = maxScale - (t * (maxScale - minScale));
             break;
         }
 
-        final double bloom = ((scale - 1.0) / 0.5).clamp(0.0, 1.0);
-        final double rotation = (animation.value - 0.5) * 0.5;
+        final double previousScale =
+            _scaleForPhase(previousPhase, 1.0, minScale, maxScale);
+        final double blendedScale = lerpDouble(
+              previousScale,
+              scale,
+              phaseBlend.value,
+            ) ??
+            scale;
+        final double bloom = ((blendedScale - minScale) /
+                (maxScale - minScale))
+            .clamp(0.0, 1.0);
+        final double rotation = lerpDouble(
+              _rotationForT(1.0),
+              _rotationForT(t),
+              phaseBlend.value,
+            ) ??
+            _rotationForT(t);
         const Color baseColor = Color(0xFF6B9B6E);
 
         return Transform.scale(
-          scale: scale,
+          scale: blendedScale,
           child: SizedBox(
             width: activeSize,
             height: activeSize,
@@ -146,6 +171,21 @@ class BreathingCircle extends StatelessWidget {
       },
     );
   }
+
+  double _scaleForPhase(
+    BreathingPhase phase,
+    double t,
+    double minScale,
+    double maxScale,
+  ) {
+    return switch (phase) {
+      BreathingPhase.breathIn => minScale + (t * (maxScale - minScale)),
+      BreathingPhase.hold => maxScale,
+      BreathingPhase.breathOut => maxScale - (t * (maxScale - minScale)),
+    };
+  }
+
+  double _rotationForT(double t) => 0.0;
 }
 
 class _BreathingFlowerPainter extends CustomPainter {

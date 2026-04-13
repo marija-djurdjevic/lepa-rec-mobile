@@ -7,6 +7,7 @@ import '../../../../core/constants/app_spacing.dart';
 import '../../data/dtos/today_practice_task_dto.dart';
 import '../../data/dtos/submit_reflection_answer_dto.dart';
 import '../../data/repositories/session_repository.dart';
+import 'end_growth_message_page.dart';
 
 class ReflectionPage extends StatefulWidget {
   final DistancedJournalReflectionPromptDto reflectionPrompt;
@@ -46,8 +47,23 @@ class _ReflectionPageState extends State<ReflectionPage> {
   Future<void> _handleSubmit() async {
     if (widget.reflectionPrompt.exerciseId.trim().isEmpty) {
       _showExerciseNotFound();
-      if (mounted) {
+      if (!mounted) return;
+
+      final messageCompleted = await Navigator.push<bool>(
+        context,
+        MaterialPageRoute(
+          builder: (context) => EndGrowthMessagePage(
+            onComplete: () => Navigator.pop(context, true),
+          ),
+        ),
+      );
+
+      if (!mounted) return;
+
+      if (messageCompleted == true) {
         Navigator.pop(context, true);
+      } else {
+        setState(() => _isSubmitting = false);
       }
       return;
     }
@@ -74,16 +90,21 @@ class _ReflectionPageState extends State<ReflectionPage> {
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.reflectionSubmittedSuccessfully),
-          backgroundColor: Colors.green[600],
-          duration: const Duration(seconds: 1),
+      final messageCompleted = await Navigator.push<bool>(
+        context,
+        MaterialPageRoute(
+          builder: (context) => EndGrowthMessagePage(
+            onComplete: () => Navigator.pop(context, true),
+          ),
         ),
       );
 
-      if (mounted) {
+      if (!mounted) return;
+
+      if (messageCompleted == true) {
         Navigator.pop(context, true);
+      } else {
+        setState(() => _isSubmitting = false);
       }
     } on DioException catch (e) {
       if (!mounted) return;
@@ -322,7 +343,7 @@ class _ReflectionPageState extends State<ReflectionPage> {
                             ),
                           )
                         : Text(
-                            context.l10n.wrapUp,
+                            context.l10n.conclude,
                             style: GoogleFonts.quicksand(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,

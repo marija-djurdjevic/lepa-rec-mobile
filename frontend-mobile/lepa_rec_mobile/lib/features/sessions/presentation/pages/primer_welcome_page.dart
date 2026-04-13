@@ -46,7 +46,7 @@ class PrimerWelcomePage extends StatelessWidget {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      SizedBox(height: height * 0.26),
+                      SizedBox(height: height * 0.3),
                       Text(
                         context.l10n.primerWelcomeTitle,
                         textAlign: TextAlign.center,
