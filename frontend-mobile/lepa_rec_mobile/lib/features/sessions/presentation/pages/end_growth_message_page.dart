@@ -23,11 +23,24 @@ class _EndGrowthMessagePageState extends State<EndGrowthMessagePage> {
   bool _isLoading = true;
   String? _errorMessage;
   GrowthMessageDto? _growthMessage;
+  String? _activePracticeLang;
 
   @override
   void initState() {
     super.initState();
     _sessionRepository = SessionRepository();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentLang = _currentPracticeLang();
+    if (_activePracticeLang == currentLang) return;
+    _activePracticeLang = currentLang;
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
     _loadGrowthMessage();
   }
 
@@ -35,6 +48,7 @@ class _EndGrowthMessagePageState extends State<EndGrowthMessagePage> {
     try {
       final message = await _sessionRepository.getRandomGrowthMessage(
         type: GrowthMessageType.end,
+        lang: _currentPracticeLang(),
       );
 
       if (!mounted) return;
@@ -255,6 +269,10 @@ class _EndGrowthMessagePageState extends State<EndGrowthMessagePage> {
         const SizedBox(height: AppSpacing.lg),
       ],
     );
+  }
+
+  String _currentPracticeLang() {
+    return Localizations.localeOf(context).languageCode == 'en' ? 'en' : 'sr';
   }
 }
 

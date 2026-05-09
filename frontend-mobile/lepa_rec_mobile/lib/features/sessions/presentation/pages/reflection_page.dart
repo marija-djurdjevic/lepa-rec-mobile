@@ -4,10 +4,12 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/constants/app_constants.dart';
 import '../../data/dtos/today_practice_task_dto.dart';
 import '../../data/dtos/submit_reflection_answer_dto.dart';
 import '../../data/repositories/session_repository.dart';
 import 'end_growth_message_page.dart';
+import '../../../auth/data/datasources/auth_local_datasource.dart';
 
 class ReflectionPage extends StatefulWidget {
   final DistancedJournalReflectionPromptDto reflectionPrompt;
@@ -86,7 +88,10 @@ class _ReflectionPageState extends State<ReflectionPage> {
         reflection: _reflectionController.text.trim(),
       );
 
-      await _sessionRepository.submitReflectionAnswer(submitRequest);
+      await _sessionRepository.submitReflectionAnswer(
+        submitRequest,
+        _currentPracticeLang(),
+      );
 
       if (!mounted) return;
 
@@ -184,82 +189,88 @@ class _ReflectionPageState extends State<ReflectionPage> {
                 ),
                 const SizedBox(height: AppSpacing.md),
 
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF2F4F0).withValues(alpha: 0.75),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: const Color(0xFF6B9B6E).withValues(alpha: 0.18),
-                      width: 1.2,
+                SizedBox(
+                  width: double.infinity,
+                  child: Container(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF2F4F0).withValues(alpha: 0.75),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: const Color(0xFF6B9B6E).withValues(alpha: 0.18),
+                        width: 1.2,
+                      ),
                     ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.reflectionPrompt.challengeContent,
-                        style: GoogleFonts.quicksand(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey[600],
-                          height: 1.4,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.reflectionPrompt.challengeContent,
+                          style: GoogleFonts.quicksand(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey[600],
+                            height: 1.4,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      Text(
-                        widget.reflectionPrompt.challengeFollowUpQuestion,
-                        style: GoogleFonts.quicksand(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey[600],
-                          height: 1.4,
+                        const SizedBox(height: AppSpacing.sm),
+                        Text(
+                          widget.reflectionPrompt.challengeFollowUpQuestion,
+                          style: GoogleFonts.quicksand(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey[600],
+                            height: 1.4,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF2F4F0).withValues(alpha: 0.75),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: const Color(0xFF6B9B6E).withValues(alpha: 0.18),
-                      width: 1.2,
+                SizedBox(
+                  width: double.infinity,
+                  child: Container(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF2F4F0).withValues(alpha: 0.75),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: const Color(0xFF6B9B6E).withValues(alpha: 0.18),
+                        width: 1.2,
+                      ),
                     ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.reflectionPrompt.previousMainAnswer ?? '',
-                        style: GoogleFonts.quicksand(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey[600],
-                          height: 1.4,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      Text(
-                        widget.reflectionPrompt.previousFollowUpAnswer ?? '',
-                        style: GoogleFonts.quicksand(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey[600],
-                          height: 1.4,
-                        ),
-                      ),
-                      if (widget.reflectionPrompt.previousPhotoUrls.isNotEmpty)
-                        ...[
-                          const SizedBox(height: AppSpacing.md),
-                          _buildPhotoGallery(
-                            widget.reflectionPrompt.previousPhotoUrls,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.reflectionPrompt.previousMainAnswer ?? '',
+                          style: GoogleFonts.quicksand(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey[600],
+                            height: 1.4,
                           ),
-                        ],
-                    ],
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        Text(
+                          widget.reflectionPrompt.previousFollowUpAnswer ?? '',
+                          style: GoogleFonts.quicksand(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey[600],
+                            height: 1.4,
+                          ),
+                        ),
+                        if (widget.reflectionPrompt.previousPhotoUrls.isNotEmpty)
+                          ...[
+                            const SizedBox(height: AppSpacing.md),
+                            _buildPhotoGallery(
+                              widget.reflectionPrompt.previousPhotoUrls,
+                            ),
+                          ],
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: AppSpacing.xl),
@@ -440,23 +451,227 @@ class _ReflectionPageState extends State<ReflectionPage> {
   }
 
   Widget _buildPhotoGallery(List<String> urls) {
-    return Wrap(
-      spacing: AppSpacing.sm,
-      runSpacing: AppSpacing.sm,
-      children: [
-        for (final url in urls)
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: SizedBox(
-              width: 92,
-              height: 92,
-              child: Image.network(
-                url,
-                fit: BoxFit.cover,
+    return FutureBuilder<String?>(
+      future: AuthLocalDataSource().readAccessToken(),
+      builder: (context, snapshot) {
+        final token = snapshot.data;
+        final headers = token != null && token.isNotEmpty
+            ? <String, String>{'Authorization': 'Bearer $token'}
+            : null;
+
+        return Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: [
+            for (final entry in urls.asMap().entries)
+              GestureDetector(
+                onTap: () => _openPhotoViewer(
+                  context,
+                  urls,
+                  entry.key,
+                  headers,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: SizedBox(
+                    width: 92,
+                    height: 92,
+                    child: Image.network(
+                      _resolvePhotoUrl(entry.value),
+                      fit: BoxFit.cover,
+                      headers: headers,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: const Color(0xFFE8ECE6),
+                          alignment: Alignment.center,
+                          child: const Icon(
+                            Icons.broken_image_outlined,
+                            size: 20,
+                            color: Color(0xFF9AA79A),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+
+  String _resolvePhotoUrl(String rawUrl) {
+    final trimmed = rawUrl.trim();
+    if (trimmed.isEmpty) return trimmed;
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      return trimmed;
+    }
+
+    final base = Uri.parse(AppConstants.apiBaseUrl);
+    final origin =
+        '${base.scheme}://${base.host}${base.hasPort ? ':${base.port}' : ''}';
+    if (trimmed.startsWith('/')) {
+      return '$origin$trimmed';
+    }
+    return '$origin/$trimmed';
+  }
+
+  void _openPhotoViewer(
+    BuildContext context,
+    List<String> urls,
+    int initialIndex,
+    Map<String, String>? headers,
+  ) {
+    final resolvedUrls = urls.map(_resolvePhotoUrl).toList();
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => _PhotoViewerPage(
+          urls: resolvedUrls,
+          initialIndex: initialIndex,
+          headers: headers,
+        ),
+      ),
+    );
+  }
+
+  String _currentPracticeLang() {
+    return Localizations.localeOf(context).languageCode == 'en' ? 'en' : 'sr';
+  }
+}
+
+class _PhotoViewerPage extends StatefulWidget {
+  final List<String> urls;
+  final int initialIndex;
+  final Map<String, String>? headers;
+
+  const _PhotoViewerPage({
+    required this.urls,
+    required this.initialIndex,
+    required this.headers,
+  });
+
+  @override
+  State<_PhotoViewerPage> createState() => _PhotoViewerPageState();
+}
+
+class _PhotoViewerPageState extends State<_PhotoViewerPage> {
+  late final PageController _controller;
+  int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+    _controller = PageController(initialPage: widget.initialIndex);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _goTo(int index) {
+    if (index < 0 || index >= widget.urls.length) return;
+    _controller.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final canGoPrev = _currentIndex > 0;
+    final canGoNext = _currentIndex < widget.urls.length - 1;
+
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            PageView.builder(
+              controller: _controller,
+              itemCount: widget.urls.length,
+              onPageChanged: (index) => setState(() => _currentIndex = index),
+              itemBuilder: (context, index) {
+                final url = widget.urls[index].trim();
+                return Center(
+                  child: InteractiveViewer(
+                    minScale: 1,
+                    maxScale: 4,
+                    child: Image.network(
+                      url,
+                      headers: widget.headers,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: const Color(0xFF1C1C1C),
+                          alignment: Alignment.center,
+                          child: const Icon(
+                            Icons.broken_image_outlined,
+                            size: 32,
+                            color: Color(0xFF9AA79A),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+            Positioned(
+              top: 8,
+              left: 8,
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
               ),
             ),
-          ),
-      ],
+            if (widget.urls.length > 1)
+              Positioned(
+                bottom: 16,
+                left: 0,
+                right: 0,
+                child: Text(
+                  '${_currentIndex + 1} / ${widget.urls.length}',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.quicksand(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white70,
+                  ),
+                ),
+              ),
+            if (canGoPrev)
+              Positioned(
+                left: 8,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: IconButton(
+                    icon: const Icon(Icons.chevron_left, color: Colors.white70),
+                    onPressed: () => _goTo(_currentIndex - 1),
+                  ),
+                ),
+              ),
+            if (canGoNext)
+              Positioned(
+                right: 8,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: IconButton(
+                    icon:
+                        const Icon(Icons.chevron_right, color: Colors.white70),
+                    onPressed: () => _goTo(_currentIndex + 1),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
     );
   }
 }

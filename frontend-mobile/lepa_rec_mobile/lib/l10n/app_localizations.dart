@@ -98,7 +98,7 @@ abstract class AppLocalizations {
   /// Application title
   ///
   /// In en, this message translates to:
-  /// **'Sagledaj'**
+  /// **'See Clearly'**
   String get appTitle;
 
   /// Login button label
@@ -686,7 +686,7 @@ abstract class AppLocalizations {
   /// Instruction shown before the breathing exercise starts
   ///
   /// In en, this message translates to:
-  /// **''**
+  /// **'Begin when ready'**
   String get beginWhenReady;
 
   /// Text shown during the short countdown before the breathing exercise starts
@@ -712,6 +712,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profile'**
   String get profile;
+
+  /// Profile label for choosing application language
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// English language option label
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get languageEnglish;
+
+  /// Serbian language option label
+  ///
+  /// In en, this message translates to:
+  /// **'Serbian'**
+  String get languageSerbian;
 
   /// Title for daily session flow
   ///

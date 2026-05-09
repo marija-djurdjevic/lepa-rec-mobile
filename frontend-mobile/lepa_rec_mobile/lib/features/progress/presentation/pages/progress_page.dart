@@ -18,7 +18,11 @@ class ProgressPage extends StatelessWidget {
       appBar: AppTopBar(title: context.l10n.progress),
       body: SafeArea(
         child: FutureBuilder<List<HistoryItem>>(
-          future: HistoryRepository().getHistory(),
+          future: HistoryRepository().getHistory(
+            lang: Localizations.localeOf(context).languageCode == 'en'
+                ? 'en'
+                : 'sr',
+          ),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());

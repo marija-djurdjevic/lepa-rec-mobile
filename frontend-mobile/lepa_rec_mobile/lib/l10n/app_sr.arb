@@ -428,7 +428,7 @@
 "@startBreathing": {
   "description": "Tekst prikazan unutar kruga prije početka vježbe disanja"
 },
-"beginWhenReady": "",
+"beginWhenReady": "Počni kada budeš spreman/spremna",
 "@beginWhenReady": {
   "description": "Uputstvo prikazano prije početka vježbe disanja"
 },
@@ -452,8 +452,19 @@
   "profile": "Profil",
   "@profile": {
     "description": "Labela za profil"
-  }
-,
+  },
+  "language": "Jezik",
+  "@language": {
+    "description": "Labela u profilu za izbor jezika aplikacije"
+  },
+  "languageEnglish": "Engleski",
+  "@languageEnglish": {
+    "description": "Labela opcije za engleski jezik"
+  },
+  "languageSerbian": "Srpski",
+  "@languageSerbian": {
+    "description": "Labela opcije za srpski jezik"
+  },
   "dailySession": "Dnevna vežba",
   "@dailySession": {
     "description": "Naslov za dnevni tok sesije"

@@ -1,3 +1,5 @@
+import '../../../../core/constants/app_constants.dart';
+
 class DistancedJournalReflectionPromptDto {
   final String exerciseId;
   final String challengeContent;
@@ -27,9 +29,25 @@ class DistancedJournalReflectionPromptDto {
       previousFollowUpAnswer: json['previousFollowUpAnswer'] as String?,
       previousPhotoUrls:
           (json['previousPhotoUrls'] as List<dynamic>? ?? const [])
-              .map((value) => value.toString())
+              .map((value) => _normalizePhotoUrl(value.toString()))
               .toList(),
     );
+  }
+
+  static String _normalizePhotoUrl(String rawUrl) {
+    final trimmed = rawUrl.trim();
+    if (trimmed.isEmpty) return trimmed;
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      return trimmed;
+    }
+
+    final base = Uri.parse(AppConstants.apiBaseUrl);
+    final origin =
+        '${base.scheme}://${base.host}${base.hasPort ? ':${base.port}' : ''}';
+    if (trimmed.startsWith('/')) {
+      return '$origin$trimmed';
+    }
+    return '$origin/$trimmed';
   }
 
   static String? _toString(dynamic value) {

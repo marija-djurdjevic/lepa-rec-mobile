@@ -5,9 +5,18 @@ import '../../../sessions/data/dtos/perspective_scenario_exercise_dto.dart';
 import '../dtos/perspective_scenario_challenge_dto.dart';
 
 class HistoryRemoteDataSource {
-  Future<List<DistancedJournalExerciseDto>> getDistancedJournalExercises() async {
+  String _normalizeLang(String? lang) {
+    return lang == 'en' ? 'en' : 'sr';
+  }
+
+  Future<List<DistancedJournalExerciseDto>> getDistancedJournalExercises({
+    String? lang,
+  }) async {
     const path = '/DistancedJournals/mine';
-    final response = await ApiClient.dio.get(path);
+    final response = await ApiClient.dio.get(
+      path,
+      queryParameters: {'lang': _normalizeLang(lang)},
+    );
     final list = _asList(response.data);
     final exercises = list
         .map(
@@ -19,9 +28,14 @@ class HistoryRemoteDataSource {
     return exercises;
   }
 
-  Future<List<DistancedJournalChallengeDto>> getDistancedJournalChallenges() async {
+  Future<List<DistancedJournalChallengeDto>> getDistancedJournalChallenges({
+    String? lang,
+  }) async {
     const path = '/DistancedJournals/challenges';
-    final response = await ApiClient.dio.get(path);
+    final response = await ApiClient.dio.get(
+      path,
+      queryParameters: {'lang': _normalizeLang(lang)},
+    );
     final list = _asList(response.data);
     return list
         .map(
@@ -32,9 +46,14 @@ class HistoryRemoteDataSource {
         .toList();
   }
 
-  Future<List<PerspectiveScenarioExerciseDto>> getPerspectiveScenarioExercises() async {
+  Future<List<PerspectiveScenarioExerciseDto>> getPerspectiveScenarioExercises({
+    String? lang,
+  }) async {
     const path = '/PerspectiveScenarios/mine';
-    final response = await ApiClient.dio.get(path);
+    final response = await ApiClient.dio.get(
+      path,
+      queryParameters: {'lang': _normalizeLang(lang)},
+    );
     final list = _asList(response.data);
     return list
         .map(
@@ -45,9 +64,15 @@ class HistoryRemoteDataSource {
         .toList();
   }
 
-  Future<List<PerspectiveScenarioChallengeDto>> getPerspectiveScenarioChallenges() async {
+  Future<List<PerspectiveScenarioChallengeDto>>
+      getPerspectiveScenarioChallenges({
+    String? lang,
+  }) async {
     const path = '/PerspectiveScenarios/challenges';
-    final response = await ApiClient.dio.get(path);
+    final response = await ApiClient.dio.get(
+      path,
+      queryParameters: {'lang': _normalizeLang(lang)},
+    );
     final list = _asList(response.data);
     return list
         .map(

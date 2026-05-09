@@ -12,7 +12,6 @@ import '../../data/dtos/start_distanced_journal_exercise_dto.dart';
 import '../../data/dtos/submit_distanced_journal_answer_dto.dart';
 import '../../data/repositories/session_repository.dart';
 import 'end_growth_message_page.dart';
-import 'journal_feedback_page.dart';
 
 class DistancedJournalPage extends StatefulWidget {
   final DistancedJournalChallengeDto challenge;
@@ -188,7 +187,10 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
 
       debugPrint('[DistancedJournal] Starting exercise');
       final startedExercise = await _sessionRepository
-          .startDistancedJournalExercise(startRequest);
+          .startDistancedJournalExercise(
+            startRequest,
+            _currentPracticeLang(),
+          );
       debugPrint(
         '[DistancedJournal] Started exercise id=${startedExercise.id}',
       );
@@ -212,6 +214,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                 ..._mainPhotos.map((photo) => photo.path),
                 ..._followUpPhotos.map((photo) => photo.path),
               ],
+              lang: _currentPracticeLang(),
             )
           : await _sessionRepository.submitDistancedJournalAnswer(
               SubmitDistancedJournalAnswerDto(
@@ -221,6 +224,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                 followUpAnswer: _followUpAnswerController.text.trim(),
                 reflection: null,
               ),
+              _currentPracticeLang(),
             );
       debugPrint(
         '[DistancedJournal] Submit completed feedbackType='
@@ -804,6 +808,10 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
         curve: Curves.easeOutCubic,
       );
     });
+  }
+
+  String _currentPracticeLang() {
+    return Localizations.localeOf(context).languageCode == 'en' ? 'en' : 'sr';
   }
 }
 

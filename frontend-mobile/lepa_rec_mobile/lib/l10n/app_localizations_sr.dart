@@ -329,7 +329,7 @@ class AppLocalizationsSr extends AppLocalizations {
   String get startBreathing => 'Dodirnite da započnete vežbu';
 
   @override
-  String get beginWhenReady => '';
+  String get beginWhenReady => 'Počni kada budeš spreman/spremna';
 
   @override
   String get getReady => 'Pripremi se';
@@ -344,6 +344,15 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String get profile => 'Profil';
+
+  @override
+  String get language => 'Jezik';
+
+  @override
+  String get languageEnglish => 'Engleski';
+
+  @override
+  String get languageSerbian => 'Srpski';
 
   @override
   String get dailySession => 'Dnevna vežba';

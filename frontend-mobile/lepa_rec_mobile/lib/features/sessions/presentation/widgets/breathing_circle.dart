@@ -42,26 +42,52 @@ class BreathingCircle extends StatelessWidget {
             color: Colors.transparent,
           ),
           child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Transform.translate(
-                  offset: const Offset(0, -20),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Text(
-                      idleText,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.quicksand(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF6B9B6E),
-                        height: 1.3,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                const horizontalPadding = 20.0;
+                final textStyle = GoogleFonts.quicksand(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF6B9B6E),
+                  height: 1.3,
+                );
+                final textPainter = TextPainter(
+                  text: TextSpan(text: idleText, style: textStyle),
+                  textAlign: TextAlign.center,
+                  textDirection: TextDirection.ltr,
+                  textScaler: MediaQuery.textScalerOf(context),
+                  maxLines: null,
+                )..layout(maxWidth: constraints.maxWidth - (horizontalPadding * 2));
+
+                final lines = textPainter.computeLineMetrics();
+                double textTop = 0;
+                double textBottom = textPainter.height;
+                if (lines.isNotEmpty) {
+                  final first = lines.first;
+                  final last = lines.last;
+                  textTop = first.baseline - first.ascent;
+                  textBottom = last.baseline + last.descent;
+                }
+                final visualHeight = textBottom - textTop;
+                const verticalNudge = 20.0;
+                final top =
+                    ((constraints.maxHeight - visualHeight) / 2) - textTop + verticalNudge;
+
+                return Stack(
+                  children: [
+                    Positioned(
+                      top: top,
+                      left: horizontalPadding,
+                      right: horizontalPadding,
+                      child: Text(
+                        idleText,
+                        textAlign: TextAlign.center,
+                        style: textStyle,
                       ),
                     ),
-                  ),
-                ),
-              ],
+                  ],
+                );
+              },
             ),
           ),
         ),
