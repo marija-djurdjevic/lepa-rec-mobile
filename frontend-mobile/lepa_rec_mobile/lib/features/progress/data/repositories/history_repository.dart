@@ -11,16 +11,19 @@ class HistoryRepository {
 
   final HistoryRemoteDataSource _remote;
 
-  static List<DistancedJournalChallengeDto>? _cachedJournalChallenges;
-  static List<PerspectiveScenarioChallengeDto>? _cachedScenarioChallenges;
-  static DateTime? _cacheTimestamp;
+  static final Map<String, List<DistancedJournalChallengeDto>>
+      _cachedJournalChallengesByLang = {};
+  static final Map<String, List<PerspectiveScenarioChallengeDto>>
+      _cachedScenarioChallengesByLang = {};
+  static final Map<String, DateTime> _cacheTimestampByLang = {};
   static const Duration _cacheTtl = Duration(hours: 12);
 
-  Future<List<HistoryItem>> getHistory() async {
-    final challengeBundle = await _getChallenges();
+  Future<List<HistoryItem>> getHistory({String? lang}) async {
+    final resolvedLang = _normalizeLang(lang);
+    final challengeBundle = await _getChallenges(resolvedLang);
     final results = await Future.wait([
-      _remote.getDistancedJournalExercises(),
-      _remote.getPerspectiveScenarioExercises(),
+      _remote.getDistancedJournalExercises(lang: resolvedLang),
+      _remote.getPerspectiveScenarioExercises(lang: resolvedLang),
     ]);
 
     final journalExercises = results[0] as List<DistancedJournalExerciseDto>;
@@ -44,33 +47,39 @@ class HistoryRepository {
     return historyItems;
   }
 
-  Future<_ChallengeBundle> _getChallenges() async {
-    if (_isCacheValid()) {
+  Future<_ChallengeBundle> _getChallenges(String lang) async {
+    if (_isCacheValid(lang)) {
       return _ChallengeBundle(
-        journalChallenges: _cachedJournalChallenges ?? const [],
-        scenarioChallenges: _cachedScenarioChallenges ?? const [],
+        journalChallenges: _cachedJournalChallengesByLang[lang] ?? const [],
+        scenarioChallenges: _cachedScenarioChallengesByLang[lang] ?? const [],
       );
     }
 
     final results = await Future.wait([
-      _remote.getDistancedJournalChallenges(),
-      _remote.getPerspectiveScenarioChallenges(),
+      _remote.getDistancedJournalChallenges(lang: lang),
+      _remote.getPerspectiveScenarioChallenges(lang: lang),
     ]);
 
-    _cachedJournalChallenges = results[0] as List<DistancedJournalChallengeDto>;
-    _cachedScenarioChallenges =
+    _cachedJournalChallengesByLang[lang] =
+        results[0] as List<DistancedJournalChallengeDto>;
+    _cachedScenarioChallengesByLang[lang] =
         results[1] as List<PerspectiveScenarioChallengeDto>;
-    _cacheTimestamp = DateTime.now();
+    _cacheTimestampByLang[lang] = DateTime.now();
 
     return _ChallengeBundle(
-      journalChallenges: _cachedJournalChallenges ?? const [],
-      scenarioChallenges: _cachedScenarioChallenges ?? const [],
+      journalChallenges: _cachedJournalChallengesByLang[lang] ?? const [],
+      scenarioChallenges: _cachedScenarioChallengesByLang[lang] ?? const [],
     );
   }
 
-  bool _isCacheValid() {
-    if (_cacheTimestamp == null) return false;
-    final age = DateTime.now().difference(_cacheTimestamp!);
+  String _normalizeLang(String? lang) {
+    return lang == 'en' ? 'en' : 'sr';
+  }
+
+  bool _isCacheValid(String lang) {
+    final timestamp = _cacheTimestampByLang[lang];
+    if (timestamp == null) return false;
+    final age = DateTime.now().difference(timestamp);
     return age < _cacheTtl;
   }
 
@@ -148,7 +157,7 @@ class HistoryRepository {
               challengeId: exercise.challengeId,
               submittedAt: submittedAt,
               promptText: challenge?.scenarioText ?? 'Prompt unavailable',
-              reveal: challenge?.reveal,
+              reveal: null,
               questions: questions,
               answers: answers,
             );

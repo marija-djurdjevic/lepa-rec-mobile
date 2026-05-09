@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'Sagledaj';
+  String get appTitle => 'See Clearly';
 
   @override
   String get login => 'Login';
@@ -329,7 +329,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get startBreathing => 'Tap to begin the exercise';
 
   @override
-  String get beginWhenReady => '';
+  String get beginWhenReady => 'Begin when ready';
 
   @override
   String get getReady => 'Get ready';
@@ -344,6 +344,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profile => 'Profile';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get languageSerbian => 'Serbian';
 
   @override
   String get dailySession => 'Daily Practice';

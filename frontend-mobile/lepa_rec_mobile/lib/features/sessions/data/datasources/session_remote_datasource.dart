@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../../core/network/api_client.dart';
+import '../dtos/answer_perspective_scenario_question_dto.dart';
+import '../dtos/answer_perspective_scenario_reveal_result_dto.dart';
 import '../dtos/complete_primer_dto.dart';
 import '../dtos/daily_session_state_dto.dart';
 import '../dtos/distanced_journal_exercise_dto.dart';
@@ -58,6 +60,10 @@ class SubmitDistancedJournalResultDto {
 class SessionRemoteDataSource {
   static const String _baseEndpoint = '/sessions';
 
+  String _normalizeLang(String? lang) {
+    return lang == 'en' ? 'en' : 'sr';
+  }
+
   Future<DailySessionStateDto> getTodaySession() async {
     const path = '$_baseEndpoint/today';
 
@@ -102,11 +108,16 @@ class SessionRemoteDataSource {
     }
   }
 
-  Future<List<PrimerStatementDto>> getRandomPrimerStatements() async {
+  Future<List<PrimerStatementDto>> getRandomPrimerStatements({
+    String? lang,
+  }) async {
     const path = '/practice/affirmation-values/random-statements';
 
     try {
-      final response = await ApiClient.dio.get(path);
+      final response = await ApiClient.dio.get(
+        path,
+        queryParameters: {'lang': _normalizeLang(lang)},
+      );
 
       final List<dynamic> jsonList = response.data as List<dynamic>;
       final statements = jsonList
@@ -123,13 +134,25 @@ class SessionRemoteDataSource {
 
   Future<GrowthMessageDto> getRandomGrowthMessage({
     GrowthMessageType? type,
+    String? selectedStatementId,
+    String? lang,
   }) async {
     const path = '/practice/growth-messages/random';
 
     try {
+      final queryParameters = <String, dynamic>{
+        'lang': _normalizeLang(lang),
+      };
+      if (type != null) {
+        queryParameters['type'] = type.apiValue;
+      }
+      if (selectedStatementId != null && selectedStatementId.trim().isNotEmpty) {
+        queryParameters['selectedStatementId'] = selectedStatementId;
+      }
+
       final response = await ApiClient.dio.get(
         path,
-        queryParameters: type == null ? null : {'type': type.apiValue},
+        queryParameters: queryParameters.isEmpty ? null : queryParameters,
       );
 
       final message = GrowthMessageDto.fromJson(
@@ -177,15 +200,43 @@ class SessionRemoteDataSource {
     }
   }
 
-  Future<TodayPracticePlanDto> getTodaysPracticePlan() async {
+  Future<TodayPracticePlanDto> getTodaysPracticePlan({
+    String? lang,
+  }) async {
     const path = '$_baseEndpoint/today-plan';
+    final resolvedLang = _normalizeLang(lang);
 
     try {
-      final response = await ApiClient.dio.get(path);
+      final response = await ApiClient.dio.get(
+        path,
+        queryParameters: {'lang': resolvedLang},
+      );
 
       final dto = TodayPracticePlanDto.fromJson(
         response.data as Map<String, dynamic>,
       );
+
+      if (kDebugMode) {
+        final firstJournal = dto.distancedJournalChoices.isNotEmpty
+            ? dto.distancedJournalChoices.first
+            : null;
+        final firstScenario = dto.perspectiveScenarioChoices.isNotEmpty
+            ? dto.perspectiveScenarioChoices.first
+            : null;
+        final firstQuestion =
+            (firstScenario != null && firstScenario.questions.isNotEmpty)
+            ? firstScenario.questions.first
+            : null;
+
+        debugPrint(
+          '[L10N][today-plan] lang=$resolvedLang '
+          'journalContent="${firstJournal?.content ?? ''}" '
+          'journalFollowUp="${firstJournal?.followUpQuestion ?? ''}" '
+          'scenarioText="${firstScenario?.scenarioText ?? ''}" '
+          'questionText="${firstQuestion?.questionText ?? ''}" '
+          'reflectionChallenge="${dto.reflectionPrompt?.challengeContent ?? ''}"',
+        );
+      }
 
       return dto;
     } catch (e) {
@@ -195,6 +246,7 @@ class SessionRemoteDataSource {
 
   Future<DistancedJournalExerciseDto> startDistancedJournalExercise(
     StartDistancedJournalExerciseDto startRequest,
+    String? lang,
   ) async {
     const path = '/DistancedJournals/start';
 
@@ -203,6 +255,7 @@ class SessionRemoteDataSource {
       final response = await ApiClient.dio.post(
         path,
         data: startRequest.toJson(),
+        queryParameters: {'lang': _normalizeLang(lang)},
       );
 
       final dto = DistancedJournalExerciseDto.fromJson(
@@ -221,12 +274,14 @@ class SessionRemoteDataSource {
 
   Future<SubmitDistancedJournalResultDto> submitDistancedJournalAnswer(
     SubmitDistancedJournalAnswerDto submitRequest,
+    String? lang,
   ) async {
     debugPrint('[DistancedJournal][Remote] POST /DistancedJournals/submit');
     try {
       final response = await ApiClient.dio.post(
         '/DistancedJournals/submit',
         data: submitRequest.toJson(),
+        queryParameters: {'lang': _normalizeLang(lang)},
       );
 
       final dto = SubmitDistancedJournalResultDto.fromJson(
@@ -255,6 +310,7 @@ class SessionRemoteDataSource {
         String? followUpAnswer,
         String? reflection,
         required List<String> photoPaths,
+        String? lang,
       }) async {
     debugPrint(
       '[DistancedJournal][Remote] POST /DistancedJournals/submit-with-photos '
@@ -289,6 +345,7 @@ class SessionRemoteDataSource {
       final response = await ApiClient.dio.post(
         '/DistancedJournals/submit-with-photos',
         data: formData,
+        queryParameters: {'lang': _normalizeLang(lang)},
         options: Options(contentType: 'multipart/form-data'),
       );
 
@@ -312,11 +369,16 @@ class SessionRemoteDataSource {
 
   Future<void> submitReflectionAnswer(
     SubmitReflectionAnswerDto submitRequest,
+    String? lang,
   ) async {
     const path = '/DistancedJournals/reflection';
 
     try {
-      await ApiClient.dio.post(path, data: submitRequest.toJson());
+      await ApiClient.dio.post(
+        path,
+        data: submitRequest.toJson(),
+        queryParameters: {'lang': _normalizeLang(lang)},
+      );
     } catch (e) {
       rethrow;
     }
@@ -324,6 +386,7 @@ class SessionRemoteDataSource {
 
   Future<PerspectiveScenarioExerciseDto> startPerspectiveScenario(
     StartPerspectiveScenarioDto startRequest,
+    String? lang,
   ) async {
     const path = '/PerspectiveScenarios/start';
 
@@ -331,6 +394,7 @@ class SessionRemoteDataSource {
       final response = await ApiClient.dio.post(
         path,
         data: startRequest.toJson(),
+        queryParameters: {'lang': _normalizeLang(lang)},
       );
 
       return PerspectiveScenarioExerciseDto.fromJson(
@@ -343,6 +407,7 @@ class SessionRemoteDataSource {
 
   Future<SubmitPerspectiveScenarioResultDto> submitPerspectiveScenario(
     SubmitPerspectiveScenarioAnswerDto submitRequest,
+    String? lang,
   ) async {
     const path = '/PerspectiveScenarios/submit';
 
@@ -350,13 +415,40 @@ class SessionRemoteDataSource {
       final response = await ApiClient.dio.post(
         path,
         data: submitRequest.toJson(),
+        queryParameters: {'lang': _normalizeLang(lang)},
       );
-
-      return SubmitPerspectiveScenarioResultDto.fromJson(
+      final dto = SubmitPerspectiveScenarioResultDto.fromJson(
         response.data as Map<String, dynamic>,
       );
+      if (kDebugMode) {
+        final data = response.data as Map<String, dynamic>;
+        debugPrint(
+          '[PerspectiveScenario][Remote] SUBMIT OK '
+          'reveals=${dto.reveals.length} '
+          'keys=${data.keys.join(',')}',
+        );
+      }
+      return dto;
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<AnswerPerspectiveScenarioRevealResultDto>
+      answerPerspectiveScenarioAndReveal(
+    AnswerPerspectiveScenarioQuestionDto answerRequest,
+    String? lang,
+  ) async {
+    const path = '/PerspectiveScenarios/answer-and-reveal';
+
+    final response = await ApiClient.dio.post(
+      path,
+      data: answerRequest.toJson(),
+      queryParameters: {'lang': _normalizeLang(lang)},
+    );
+
+    return AnswerPerspectiveScenarioRevealResultDto.fromJson(
+      response.data as Map<String, dynamic>,
+    );
   }
 }

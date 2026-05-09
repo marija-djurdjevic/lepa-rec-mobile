@@ -1,11 +1,13 @@
 class DistancedJournalChallengeDto {
   final String id;
+  final String? skillId;
   final String content;
   final String followUpQuestion;
   final String challengeLevel;
 
   DistancedJournalChallengeDto({
     required this.id,
+    this.skillId,
     required this.content,
     required this.followUpQuestion,
     required this.challengeLevel,
@@ -14,6 +16,7 @@ class DistancedJournalChallengeDto {
   factory DistancedJournalChallengeDto.fromJson(Map<String, dynamic> json) {
     return DistancedJournalChallengeDto(
       id: _toString(json['id']) ?? '',
+      skillId: _toString(json['skillId']),
       content: json['content'] as String? ?? '',
       followUpQuestion: json['followUpQuestion'] as String? ?? '',
       challengeLevel: _mapChallengeLevel(json['challengeLevel']),
@@ -42,6 +45,7 @@ class DistancedJournalChallengeDto {
 
   Map<String, dynamic> toJson() => {
     'id': id,
+    'skillId': skillId,
     'content': content,
     'followUpQuestion': followUpQuestion,
     'challengeLevel': challengeLevel,

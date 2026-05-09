@@ -147,9 +147,13 @@ class _LoginPageState extends State<LoginPage> {
                 color: Colors.white,
                 shape: BoxShape.circle,
               ),
-              child: Image.network(
-                'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png',
-                height: 20,
+              child: Text(
+                'G',
+                style: GoogleFonts.quicksand(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF4285F4),
+                ),
               ),
             ),
             const SizedBox(width: AppSpacing.sm),

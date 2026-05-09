@@ -26,12 +26,21 @@ class _DashboardPageState extends State<DashboardPage> {
   late DashboardViewState _viewState;
 
   bool _isCompletingSession = false;
+  String? _activePracticeLang;
 
   @override
   void initState() {
     super.initState();
     _sessionRepository = SessionRepository();
     _viewState = DashboardViewState(isLoading: true);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentLang = _currentPracticeLang();
+    if (_activePracticeLang == currentLang) return;
+    _activePracticeLang = currentLang;
     _loadTodaysPlan();
   }
 
@@ -68,8 +77,9 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Future<void> _loadTodaysPlan() async {
+    final lang = _currentPracticeLang();
     try {
-      final plan = await _sessionRepository.getTodaysPracticePlan();
+      final plan = await _sessionRepository.getTodaysPracticePlan(lang: lang);
 
       if (!mounted) return;
 
@@ -162,6 +172,10 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
       body: _buildBody(),
     );
+  }
+
+  String _currentPracticeLang() {
+    return Localizations.localeOf(context).languageCode == 'en' ? 'en' : 'sr';
   }
 
   Widget _buildBody() {

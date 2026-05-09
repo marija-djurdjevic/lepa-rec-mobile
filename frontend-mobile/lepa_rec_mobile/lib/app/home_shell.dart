@@ -7,8 +7,13 @@ import '../features/sessions/presentation/pages/dashboard_page.dart';
 
 class HomeShell extends StatefulWidget {
   final VoidCallback? onLogout;
+  final ValueChanged<String> onLanguageChanged;
 
-  const HomeShell({super.key, this.onLogout});
+  const HomeShell({
+    super.key,
+    this.onLogout,
+    required this.onLanguageChanged,
+  });
 
   @override
   State<HomeShell> createState() => _HomeShellState();
@@ -19,13 +24,24 @@ class _HomeShellState extends State<HomeShell> {
 
   @override
   Widget build(BuildContext context) {
+    final currentLanguageCode =
+        Localizations.localeOf(context).languageCode == 'en' ? 'en' : 'sr';
+
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
         children: [
-          const DashboardPage(),
-          const ProgressPage(),
-          ProfilePage(onLogout: widget.onLogout),
+          DashboardPage(
+            key: ValueKey('dashboard-$currentLanguageCode'),
+          ),
+          ProgressPage(
+            key: ValueKey('progress-$currentLanguageCode'),
+          ),
+          ProfilePage(
+            key: ValueKey('profile-$currentLanguageCode'),
+            onLogout: widget.onLogout,
+            onLanguageChanged: widget.onLanguageChanged,
+          ),
         ],
       ),
       bottomNavigationBar: Container(

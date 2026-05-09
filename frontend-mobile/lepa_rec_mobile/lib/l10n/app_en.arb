@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "appTitle": "Sagledaj",
+  "appTitle": "See Clearly",
   "@appTitle": {
     "description": "Application title"
   },
@@ -430,7 +430,7 @@
 "@startBreathing": {
   "description": "Text shown inside the breathing circle before the exercise starts"
 },
-"beginWhenReady": "",
+"beginWhenReady": "Begin when ready",
 "@beginWhenReady": {
   "description": "Instruction shown before the breathing exercise starts"
 },
@@ -456,6 +456,19 @@
   "profile": "Profile",
   "@profile": {
     "description": "Profile page label"
+  }
+,
+  "language": "Language",
+  "@language": {
+    "description": "Profile label for choosing application language"
+  },
+  "languageEnglish": "English",
+  "@languageEnglish": {
+    "description": "English language option label"
+  },
+  "languageSerbian": "Serbian",
+  "@languageSerbian": {
+    "description": "Serbian language option label"
   }
 ,
   "dailySession": "Daily Practice",
