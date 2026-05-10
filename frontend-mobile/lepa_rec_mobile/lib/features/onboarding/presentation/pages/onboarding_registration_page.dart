@@ -4,7 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lepa_rec_mobile/core/constants/app_spacing.dart';
 import 'package:lepa_rec_mobile/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:lepa_rec_mobile/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:lepa_rec_mobile/features/auth/presentation/auth_post_auth_router.dart';
 import 'package:lepa_rec_mobile/features/onboarding/data/datasources/onboarding_local_datasource.dart';
+import 'package:lepa_rec_mobile/features/profile/data/datasources/profile_remote_datasource.dart';
 
 class OnboardingRegistrationPage extends StatefulWidget {
   const OnboardingRegistrationPage({super.key});
@@ -17,6 +19,7 @@ class _OnboardingRegistrationPageState extends State<OnboardingRegistrationPage>
   final _authRemote = AuthRemoteDataSource();
   final _authLocal = AuthLocalDataSource();
   final _onboardingLocal = OnboardingLocalDataSource();
+  final _profileRemote = ProfileRemoteDataSource();
 
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
@@ -30,8 +33,15 @@ class _OnboardingRegistrationPageState extends State<OnboardingRegistrationPage>
   TimeOfDay _notificationTime = const TimeOfDay(hour: 15, minute: 0);
   bool _showPassword = false;
   bool _showConfirmPassword = false;
+  bool _didPrefill = false;
 
   bool get _isEnglish => Localizations.localeOf(context).languageCode == 'en';
+
+  @override
+  void initState() {
+    super.initState();
+    _prefillFromExistingAccount();
+  }
 
   @override
   void dispose() {
@@ -81,6 +91,31 @@ class _OnboardingRegistrationPageState extends State<OnboardingRegistrationPage>
     if (confirm.isEmpty) return null;
     if (confirm == _passwordController.text) return null;
     return _isEnglish ? 'Passwords do not match.' : 'Lozinke se ne poklapaju.';
+  }
+
+  Future<void> _prefillFromExistingAccount() async {
+    if (_didPrefill) return;
+    _didPrefill = true;
+    try {
+      final token = await _authLocal.readAccessToken();
+      if (token == null || token.isEmpty) return;
+
+      final me = await _profileRemote.getMe();
+      if (!mounted) return;
+      setState(() {
+        if (_firstNameController.text.trim().isEmpty) {
+          _firstNameController.text = me.firstName;
+        }
+        if (_lastNameController.text.trim().isEmpty) {
+          _lastNameController.text = me.lastName;
+        }
+        if (_emailController.text.trim().isEmpty) {
+          _emailController.text = me.email;
+        }
+      });
+    } catch (_) {
+      // Best-effort prefill only.
+    }
   }
 
   Future<void> _pickNotificationTime() async {
@@ -146,7 +181,7 @@ class _OnboardingRegistrationPageState extends State<OnboardingRegistrationPage>
       await _onboardingLocal.clearSessionId();
 
       if (!mounted) return;
-      Navigator.of(context).pushNamedAndRemoveUntil('/', (_) => false);
+      await AuthPostAuthRouter.routeAfterAuth(context, auth);
     } on DioException catch (e) {
       if (!mounted) return;
       final data = e.response?.data;

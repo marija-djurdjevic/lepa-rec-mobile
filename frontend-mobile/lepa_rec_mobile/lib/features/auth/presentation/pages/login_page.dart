@@ -6,6 +6,7 @@ import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
 import '../../../onboarding/data/datasources/onboarding_local_datasource.dart';
 import '../../../onboarding/data/datasources/onboarding_remote_datasource.dart';
+import '../auth_post_auth_router.dart';
 
 import '../../data/datasources/auth_local_datasource.dart';
 import '../../data/datasources/auth_remote_datasource.dart';
@@ -89,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
       await _local.saveSession(auth);
 
       if (!mounted) return;
-      Navigator.of(context).pushNamedAndRemoveUntil('/', (_) => false);
+      await AuthPostAuthRouter.routeAfterAuth(context, auth);
     } catch (_) {
       if (!mounted) return;
       setState(() {
@@ -128,8 +129,7 @@ class _LoginPageState extends State<LoginPage> {
       await _local.saveSession(auth);
 
       if (!mounted) return;
-
-      Navigator.of(context).pushNamedAndRemoveUntil('/', (_) => false);
+      await AuthPostAuthRouter.routeAfterAuth(context, auth);
     } catch (_) {
       if (!mounted) return;
       setState(() {
