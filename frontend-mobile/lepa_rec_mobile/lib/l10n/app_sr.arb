@@ -1,4 +1,4 @@
-{
+﻿{
   "@@locale": "sr",
   "appTitle": "Sagledaj",
   "@appTitle": {
@@ -474,3 +474,4 @@
     "description": "Labela za zatvaranje"
   }
 }
+

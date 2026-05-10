@@ -9,6 +9,14 @@ import 'core/navigation/app_page_route.dart';
 import 'core/constants/app_theme.dart';
 import 'core/localization/app_locale_storage.dart';
 import 'features/auth/presentation/pages/login_page.dart';
+import 'features/onboarding/presentation/pages/onboarding_distanced_journal_follow_up_page.dart';
+import 'features/onboarding/presentation/pages/onboarding_distanced_journal_page.dart';
+import 'features/onboarding/presentation/pages/onboarding_perspective_question_page.dart';
+import 'features/onboarding/presentation/pages/onboarding_perspective_reveal_page.dart';
+import 'features/onboarding/presentation/pages/onboarding_hook_choice_page.dart';
+import 'features/onboarding/presentation/pages/onboarding_language_page.dart';
+import 'features/onboarding/presentation/pages/onboarding_perspective_scenario_page.dart';
+import 'features/onboarding/presentation/pages/onboarding_registration_page.dart';
 import 'features/sessions/presentation/pages/session_flow_page.dart';
 
 void main() async {
@@ -24,11 +32,15 @@ class LepaRecApp extends StatefulWidget {
 
   const LepaRecApp({super.key, this.initialLanguageCode});
 
+  static LepaRecAppState? maybeOf(BuildContext context) {
+    return context.findAncestorStateOfType<LepaRecAppState>();
+  }
+
   @override
-  State<LepaRecApp> createState() => _LepaRecAppState();
+  State<LepaRecApp> createState() => LepaRecAppState();
 }
 
-class _LepaRecAppState extends State<LepaRecApp> {
+class LepaRecAppState extends State<LepaRecApp> {
   late Locale _locale;
 
   @override
@@ -53,11 +65,23 @@ class _LepaRecAppState extends State<LepaRecApp> {
     await AppLocaleStorage().saveLanguageCode(normalized);
   }
 
+  Future<void> changeLanguage(String languageCode) {
+    return _changeLanguage(languageCode);
+  }
+
   @override
   Widget build(BuildContext context) {
     final Map<String, WidgetBuilder> appRoutes = {
       '/': (context) => const SplashRouter(),
       '/login': (context) => const LoginPage(),
+      '/onboarding/language': (context) => const OnboardingLanguagePage(),
+      '/onboarding/hook-choice': (context) => const OnboardingHookChoicePage(),
+      '/onboarding/distanced-journal': (context) => const OnboardingDistancedJournalPage(),
+      '/onboarding/distanced-journal/follow-up': (context) => const OnboardingDistancedJournalFollowUpPage(),
+      '/onboarding/perspective-scenario': (context) => const OnboardingPerspectiveScenarioPage(),
+      '/onboarding/perspective-scenario/question': (context) => const OnboardingPerspectiveQuestionPage(),
+      '/onboarding/perspective-scenario/reveal': (context) => const OnboardingPerspectiveRevealPage(),
+      '/onboarding/register': (context) => const OnboardingRegistrationPage(),
       '/home': (context) => HomePage(
             onLanguageChanged: _changeLanguage,
           ),

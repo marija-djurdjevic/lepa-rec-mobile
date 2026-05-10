@@ -1,4 +1,5 @@
 import '../datasources/history_remote_datasource.dart';
+import 'package:flutter/foundation.dart';
 import '../dtos/perspective_scenario_challenge_dto.dart';
 import '../models/history_item.dart';
 import '../../../sessions/data/dtos/distanced_journal_challenge_dto.dart';
@@ -42,6 +43,14 @@ class HistoryRepository {
 
     historyItems.sort(
       (a, b) => b.submittedAt.compareTo(a.submittedAt),
+    );
+
+    debugPrint(
+      '[History][Repo] journalRaw=${journalExercises.length} '
+      'journalCompleted=${journalExercises.where((e) => e.isCompleted).length} '
+      'scenarioRaw=${scenarioExercises.length} '
+      'scenarioCompleted=${scenarioExercises.where((e) => e.isCompleted).length} '
+      'mergedItems=${historyItems.length}',
     );
 
     return historyItems;

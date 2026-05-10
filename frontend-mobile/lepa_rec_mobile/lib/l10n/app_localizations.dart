@@ -440,7 +440,7 @@ abstract class AppLocalizations {
   /// Title for the perspective scenario reveal screen
   ///
   /// In en, this message translates to:
-  /// **'What’s Behind the Scenes?'**
+  /// **'Whatâ€™s Behind the Scenes?'**
   String get perspectiveRevealTitle;
 
   /// Helper text shown below the reveal content
@@ -626,7 +626,7 @@ abstract class AppLocalizations {
   /// Helper text for distanced journal prompt
   ///
   /// In en, this message translates to:
-  /// **'Use “he”, “she”, or your name instead of “I”.'**
+  /// **'Use â€œheâ€, â€œsheâ€, or your name instead of â€œIâ€.'**
   String get distancedJournalHint;
 
   /// Title for the journal feedback screen
@@ -742,6 +742,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close'**
   String get close;
+
+  /// Title for selecting the initial onboarding exercise
+  ///
+  /// In en, this message translates to:
+  /// **'How would you like us to begin?'**
+  String get onboardingHookChoiceTitle;
+
+  /// Description for the seeing-yourself onboarding exercise
+  ///
+  /// In en, this message translates to:
+  /// **'You will reflect on one of your own experiences and write from a distance. This helps emotions settle and helps you see the situation more clearly.'**
+  String get onboardingDistancedJournalDescription;
+
+  /// Description for the seeing-others onboarding exercise
+  ///
+  /// In en, this message translates to:
+  /// **'You will read one scenario and answer questions. Along the way, you will uncover hidden perspectives, which helps you better understand the people around you.'**
+  String get onboardingPerspectiveScenarioDescription;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

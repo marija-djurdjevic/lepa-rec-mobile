@@ -200,7 +200,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get perspectiveRevealTitle => 'What’s Behind the Scenes?';
+  String get perspectiveRevealTitle => 'Whatâ€™s Behind the Scenes?';
 
   @override
   String get perspectiveRevealHint => 'Reflect on your answers and the assumptions you made.';
@@ -299,7 +299,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get todayReflection => 'Today\'s Journal Review';
 
   @override
-  String get distancedJournalHint => 'Use “he”, “she”, or your name instead of “I”.';
+  String get distancedJournalHint => 'Use â€œheâ€, â€œsheâ€, or your name instead of â€œIâ€.';
 
   @override
   String get journalFeedbackTitle => 'Reflection Feedback';
@@ -359,4 +359,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get close => 'Close';
+
+  @override
+  String get onboardingHookChoiceTitle => 'How would you like us to begin?';
+
+  @override
+  String get onboardingDistancedJournalDescription => 'You will reflect on one of your own experiences and write from a distance. This helps emotions settle and helps you see the situation more clearly.';
+
+  @override
+  String get onboardingPerspectiveScenarioDescription => 'You will read one scenario and answer questions. Along the way, you will uncover hidden perspectives, which helps you better understand the people around you.';
 }

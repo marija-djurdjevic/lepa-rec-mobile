@@ -1,4 +1,4 @@
-// ignore: unused_import
+﻿// ignore: unused_import
 import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
 
@@ -82,7 +82,7 @@ class AppLocalizationsSr extends AppLocalizations {
   String get conclude => 'Zaključi';
 
   @override
-  String get wrapUp => 'Zaokruži';
+  String get wrapUp => 'Zaokruši';
 
   @override
   String get home => 'Početna';
@@ -217,7 +217,7 @@ class AppLocalizationsSr extends AppLocalizations {
   String get comingSoon => 'Uskoro dostupno';
 
   @override
-  String get chooseJournalChallenge => 'Izaberi temu o kojoj ćeš pisati danas';
+  String get chooseJournalChallenge => 'Izaberi temu o kojoj ćete pisati danas';
 
   @override
   String get selectAvailablePrompts => 'Izaberi jedno od dostupnih pitanja koja te privlači. Nivoi težine ti pomažu da pronađeš pravi izazov.';
@@ -299,7 +299,7 @@ class AppLocalizationsSr extends AppLocalizations {
   String get todayReflection => 'Današnje sagledavanje dnevnika';
 
   @override
-  String get distancedJournalHint => 'Koristite „on“, „ona“ ili svoje ime umesto „ja“';
+  String get distancedJournalHint => 'Koristite "on", "ona" ili svoje ime umesto "ja"';
 
   @override
   String get journalFeedbackTitle => 'Povratna poruka';
@@ -359,4 +359,14 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String get close => 'Zatvori';
+
+  @override
+  String get onboardingHookChoiceTitle => 'Kako želite da počnemo?';
+
+  @override
+  String get onboardingDistancedJournalDescription => 'Razmišljaćete o nekom svom iskustvu i pisati sa distance. To pomaže da se emocije umire i da jasnije sagledate situaciju.';
+
+  @override
+  String get onboardingPerspectiveScenarioDescription => 'Čitaćete jedan scenario i odgovarati na pitanja. Usput ćete otkrivati skrivene perspektive, što će vam pomoći da bolje razumete ljude oko sebe.';
 }
+
