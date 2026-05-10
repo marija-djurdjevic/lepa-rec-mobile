@@ -175,6 +175,27 @@ class HistoryDetailPage extends StatelessWidget {
                 _buildAnswerText('Answer unavailable'),
               for (final answer in item.answers) ...[
                 _buildAnswerText(answer.answerText),
+                if (answer.revealText != null &&
+                    answer.revealText!.trim().isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.xs),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(AppSpacing.sm),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE7F2E3),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      answer.revealText!.trim(),
+                      style: GoogleFonts.quicksand(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF557157),
+                        height: 1.35,
+                      ),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: AppSpacing.sm),
               ],
             ],

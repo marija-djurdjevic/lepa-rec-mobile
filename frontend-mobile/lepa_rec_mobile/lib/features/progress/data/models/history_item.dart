@@ -11,11 +11,13 @@ class HistoryAnswer {
   final String questionId;
   final String questionText;
   final String answerText;
+  final String? revealText;
 
   const HistoryAnswer({
     required this.questionId,
     required this.questionText,
     required this.answerText,
+    this.revealText,
   });
 }
 

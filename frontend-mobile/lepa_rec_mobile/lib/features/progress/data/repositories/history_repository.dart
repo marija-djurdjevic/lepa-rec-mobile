@@ -148,6 +148,10 @@ class HistoryRepository {
             final questionTextMap = {
               for (final question in questions) question.id: question.text,
             };
+            final questionRevealMap = {
+              for (final question in (challenge?.questions ?? const []))
+                question.id: question.reveal,
+            };
             final answers = exercise.answers
                 .map(
                   (answer) => HistoryAnswer(
@@ -155,6 +159,7 @@ class HistoryRepository {
                     questionText:
                         questionTextMap[answer.questionId] ?? 'Question',
                     answerText: answer.answerText,
+                    revealText: questionRevealMap[answer.questionId],
                   ),
                 )
                 .toList();
