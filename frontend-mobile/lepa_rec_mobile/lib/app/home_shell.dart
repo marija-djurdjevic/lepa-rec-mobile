@@ -21,6 +21,7 @@ class HomeShell extends StatefulWidget {
 
 class _HomeShellState extends State<HomeShell> {
   int _currentIndex = 0;
+  int _progressRefreshTick = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +36,7 @@ class _HomeShellState extends State<HomeShell> {
             key: ValueKey('dashboard-$currentLanguageCode'),
           ),
           ProgressPage(
-            key: ValueKey('progress-$currentLanguageCode'),
+            key: ValueKey('progress-$currentLanguageCode-$_progressRefreshTick'),
           ),
           ProfilePage(
             key: ValueKey('profile-$currentLanguageCode'),
@@ -59,6 +60,9 @@ class _HomeShellState extends State<HomeShell> {
           currentIndex: _currentIndex,
           onTap: (index) {
             if (index == _currentIndex) return;
+            if (index == 1) {
+              _progressRefreshTick++;
+            }
             setState(() => _currentIndex = index);
           },
           showUnselectedLabels: true,

@@ -97,8 +97,26 @@ class _ProgressPageState extends State<ProgressPage> {
 
               return TabBarView(
                 children: [
-                  _HistoryList(items: selfItems),
-                  _HistoryList(items: othersItems),
+                  _HistoryList(
+                    items: selfItems,
+                    onRefresh: () async {
+                      final refreshed = _loadHistory();
+                      setState(() {
+                        _historyFuture = refreshed;
+                      });
+                      await refreshed;
+                    },
+                  ),
+                  _HistoryList(
+                    items: othersItems,
+                    onRefresh: () async {
+                      final refreshed = _loadHistory();
+                      setState(() {
+                        _historyFuture = refreshed;
+                      });
+                      await refreshed;
+                    },
+                  ),
                 ],
               );
             },
@@ -111,8 +129,9 @@ class _ProgressPageState extends State<ProgressPage> {
 
 class _HistoryList extends StatelessWidget {
   final List<HistoryItem> items;
+  final Future<void> Function() onRefresh;
 
-  const _HistoryList({required this.items});
+  const _HistoryList({required this.items, required this.onRefresh});
 
   @override
   Widget build(BuildContext context) {
@@ -129,11 +148,14 @@ class _HistoryList extends StatelessWidget {
       );
     }
 
-    return ListView.separated(
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      itemCount: items.length,
-      separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
-      itemBuilder: (context, index) => _HistoryCard(item: items[index]),
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      child: ListView.separated(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        itemCount: items.length,
+        separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
+        itemBuilder: (context, index) => _HistoryCard(item: items[index]),
+      ),
     );
   }
 }
