@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lepa_rec_mobile/core/notifications/push_notification_service.dart';
 
 import '../../onboarding/data/datasources/onboarding_local_datasource.dart';
 import '../../onboarding/data/datasources/onboarding_remote_datasource.dart';
@@ -11,6 +12,8 @@ class AuthPostAuthRouter {
     BuildContext context,
     AuthResponse auth,
   ) async {
+    await PushNotificationService.instance.registerCurrentTokenIfAuthenticated();
+
     if (auth.onboardingCompleted) {
       if (!context.mounted) return;
       Navigator.of(context).pushNamedAndRemoveUntil('/', (_) => false);
@@ -31,4 +34,3 @@ class AuthPostAuthRouter {
     Navigator.of(context).pushNamedAndRemoveUntil('/onboarding/language', (_) => false);
   }
 }
-

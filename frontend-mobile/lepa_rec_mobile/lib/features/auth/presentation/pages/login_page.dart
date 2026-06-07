@@ -130,7 +130,9 @@ class _LoginPageState extends State<LoginPage> {
 
       if (!mounted) return;
       await AuthPostAuthRouter.routeAfterAuth(context, auth);
-    } catch (_) {
+    } catch (e, st) {
+      debugPrint('Google login error: $e');
+      debugPrintStack(stackTrace: st);
       if (!mounted) return;
       setState(() {
         _error = _isEnglish ? 'Login failed. Please try again.' : 'Prijava nije uspjela. Pokušajte ponovo.';

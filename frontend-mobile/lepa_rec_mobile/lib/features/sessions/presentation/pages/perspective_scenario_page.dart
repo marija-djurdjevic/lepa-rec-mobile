@@ -207,6 +207,17 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
       final revealQuestionId = response.reveal?.questionId;
       final revealOrder = response.reveal?.order;
 
+      if (response.isExerciseCompleted) {
+        try {
+          await _sessionRepository.recordExercise(
+            exerciseId: response.exercise.id,
+            type: 'PerspectiveScenario',
+          );
+        } catch (e) {
+          debugPrint('[PerspectiveScenario] recordExercise failed: $e');
+        }
+      }
+
       setState(() {
         if (revealText != null &&
             revealText.isNotEmpty &&
@@ -272,11 +283,13 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
   }
 
   Future<void> _finishScenario() async {
+    final developedSkillIds = _collectDevelopedSkillIds();
     final messageCompleted = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
         builder: (context) => EndGrowthMessagePage(
           onComplete: () => Navigator.pop(context, true),
+          developedSkillIds: developedSkillIds,
         ),
       ),
     );
@@ -286,6 +299,23 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
     if (messageCompleted == true) {
       Navigator.pop(context, true);
     }
+  }
+
+  List<String> _collectDevelopedSkillIds() {
+    final answeredQuestionIds = _answersByQuestionId.entries
+        .where((entry) => entry.value.trim().isNotEmpty)
+        .map((entry) => entry.key)
+        .toSet();
+    final developedSkillIds = <String>{};
+
+    for (final question in _orderedQuestions) {
+      if (!answeredQuestionIds.contains(question.id)) continue;
+      final skillId = question.skillId.trim();
+      if (skillId.isEmpty) continue;
+      developedSkillIds.add(skillId);
+    }
+
+    return developedSkillIds.toList();
   }
 
   @override
@@ -437,6 +467,17 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
                     ),
                   ),
                 ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              context.l10n.perspectiveScenarioDisclaimer,
+              style: GoogleFonts.quicksand(
+                fontSize: 12.5,
+                fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[600],
+                height: 1.35,
               ),
             ),
             const SizedBox(height: AppSpacing.lg),

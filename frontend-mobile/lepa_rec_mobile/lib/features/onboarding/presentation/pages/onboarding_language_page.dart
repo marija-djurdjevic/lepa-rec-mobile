@@ -80,7 +80,7 @@ class _OnboardingLanguagePageState extends State<OnboardingLanguagePage> {
       await appState?.changeLanguage(preferredLanguage);
 
       if (!mounted) return;
-      Navigator.of(context).pushNamed('/onboarding/hook-choice');
+      Navigator.of(context).pushNamed('/onboarding/story');
     } catch (_) {
       if (!mounted) return;
       setState(() {
@@ -113,7 +113,7 @@ class _OnboardingLanguagePageState extends State<OnboardingLanguagePage> {
                 children: [
                   const SizedBox(height: AppSpacing.xl),
                   Text(
-                    context.l10n.language,
+                    context.l10n.onboardingChooseLanguageTitle,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.quicksand(
                       fontSize: 34,

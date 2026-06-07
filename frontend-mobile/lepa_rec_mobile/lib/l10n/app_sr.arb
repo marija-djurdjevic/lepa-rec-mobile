@@ -28,7 +28,7 @@
   "@primerWelcomeDescription": {
     "description": "Opis teksta za primerski ekran dobrodoslice"
   },
-  "proceed": "Započnite pripremu",
+  "proceed": "Završite pripremu",
   "@proceed": {
     "description": "Labela dugmeta za nastavak"
   },
@@ -76,7 +76,7 @@
   "@rounds": {
     "description": "Labela za krugove disanja"
   },
-  "complete": "Završi",
+  "complete": "Završite",
   "@complete": {
     "description": "Labela dugmeta za zavrsavanje"
   },
@@ -88,15 +88,15 @@
   "@sessionCompleteMessage": {
     "description": "Detaljni tekst pohvale nakon uspesnog zavrsavanja sesije disanja"
   },
-  "continueToNext": "Nastavi",
+  "continueToNext": "Nastavite",
   "@continueToNext": {
     "description": "Labela dugmeta za nastavak na sledeci korak"
   },
-  "conclude": "Zaključi",
+  "conclude": "Zaključite",
   "@conclude": {
     "description": "Labela dugmeta za zakljucivanje"
   },
-  "wrapUp": "Zaokruži",
+  "wrapUp": "Zaokružite",
   "@wrapUp": {
     "description": "Dugme za završavanje scenarija perspektive"
   },
@@ -120,7 +120,7 @@
   "@growthMessageTitle": {
     "description": "Naslov za ekran poruke rasta"
   },
-  "completePrimer": "Završi pripremu",
+  "completePrimer": "Završite pripremu",
   "@completePrimer": {
     "description": "Labela dugmeta za završavanje primerske faze"
   },
@@ -241,6 +241,34 @@
   "@answerEachScenarioQuestion": {
     "description": "Pomoćni tekst za pitanja u scenariju perspektive"
   },
+  "perspectiveScenarioDisclaimer": "Odgovaraćete na pitanja o prikazanoj sceni. Cilj nije da pogodite svaki detalj, već da razumete perspektive, potrebe i emocije aktera. Svaki promišljen odgovor je dobar, čak i kad se razlikuje od pozadine priče koju ćemo vam na kraju otkriti.",
+  "@perspectiveScenarioDisclaimer": {
+    "description": "Disclaimer ispod scenarija koji objašnjava cilj zadatka"
+  },
+  "perspectiveDisclaimerWhatWeDo": "Postavićemo vam pitanja u vezi prikazane scene.",
+  "@perspectiveDisclaimerWhatWeDo": {
+    "description": "Prvi red skraćenog disclaimera za perspective scenario"
+  },
+  "perspectiveDisclaimerNotGoal": "Cilj nije da tačno pogodite sve detalje pozadine priče.",
+  "@perspectiveDisclaimerNotGoal": {
+    "description": "Drugi red skraćenog disclaimera za perspective scenario"
+  },
+  "perspectiveDisclaimerGoal": "Cilj je da pokušate da razumete perspektive, potrebe i želje ljudi koje oblikuju njihove reakcije i emocije.",
+  "@perspectiveDisclaimerGoal": {
+    "description": "Treći red skraćenog disclaimera za perspective scenario"
+  },
+  "perspectiveDisclaimerAnswerGood": "Svaki promišljeni odgovor je dobar, čak i kada se razlikuje od pozadine priče koju ćemo na kraju razotkriti.",
+  "@perspectiveDisclaimerAnswerGood": {
+    "description": "Četvrti red skraćenog disclaimera za perspective scenario"
+  },
+  "showMore": "Prikaži više",
+  "@showMore": {
+    "description": "Akcija za proširenje dodatnog sadržaja"
+  },
+  "showLess": "Prikaži manje",
+  "@showLess": {
+    "description": "Akcija za skupljanje dodatnog sadržaja"
+  },
   "scenarioQuestionNumber": "Pitanje {number}",
   "@scenarioQuestionNumber": {
     "description": "Labela za numerisano pitanje scenarija perspektive",
@@ -294,6 +322,10 @@
   "scenarioCompletedToday": "Scenario završen za danas",
   "@scenarioCompletedToday": {
     "description": "Poruka koja označava da je scenario perspektive završen za dan"
+  },
+  "dailyChallengeReward": "Rešili ste današnji izazov! Pridružite nam se sutra za sledeći.",
+  "@dailyChallengeReward": {
+    "description": "Poruka nagrade prikazana na kontrolnoj tabli nakon što su svi dnevni zadaci završeni"
   },
   "exerciseNotInitialized": "Greška: Vežba nije inicijalizovana",
   "@exerciseNotInitialized": {
@@ -408,7 +440,7 @@
 "@journalFeedbackSubtitle": {
   "description": "Podnaslov na ekranu povratne poruke"
 },
-"continueToDashboard": "Nastavi",
+"continueToDashboard": "Nastavite",
 "@continueToDashboard": {
   "description": "Tekst dugmeta za povratak na pregled"
 },
@@ -465,6 +497,10 @@
   "@languageSerbian": {
     "description": "Labela opcije za srpski jezik"
   },
+  "profileLanguageSaveHint": "Promena jezika će biti primenjena nakon čuvanja izmena.",
+  "@profileLanguageSaveHint": {
+    "description": "Napomena u profilu da se promena jezika primenjuje nakon cuvanja"
+  },
   "dailySession": "Dnevna vežba",
   "@dailySession": {
     "description": "Naslov za dnevni tok sesije"
@@ -472,6 +508,115 @@
   "close": "Zatvori",
   "@close": {
     "description": "Labela za zatvaranje"
+  },
+  "onboardingStoryHook": "Verovatno primećujete nerazumevanje između ljudi u našoj okolini.\n\nĆerka se posvađa sa majkom. Ogovaramo i odbacujemo kolege. Politički neistomišljenici ni ne pričaju.\n\nDa li mora da bude tako?",
+  "@onboardingStoryHook": {
+    "description": "Prva onboarding poruka - hook"
+  },
+  "onboardingStorySkill": "Ne mora.\n\nMožemo da razumemo drugog i da im pomognemo da razumeju nas. Ovo je veština koju vežbamo kao mišić.\n\nIstraživanja pokazuju da ljudi koji treniraju ove sposobnosti lakše rešavaju sukobe i osećaju se povezanije sa svojim ljudima.",
+  "@onboardingStorySkill": {
+    "description": "Druga onboarding poruka - objasnjenje vestine"
+  },
+  "onboardingStoryHabit": "Svaki dan po deset minuta.\n\nPonekad kratka situacija kroz koju vežbate da razumete šta neko drugi misli i oseća. Ponekad osvrt na sopstveni dan iz pozicije mudrog posmatrača.\n\nMala navika koja vremenom menja način na koji vidite ljude i način na koji oni vide vas.",
+  "@onboardingStoryHabit": {
+    "description": "Treca onboarding poruka - dnevna navika"
+  },
+  "onboardingStoryBack": "Nazad",
+  "@onboardingStoryBack": {
+    "description": "Dugme za povratak na prethodnu onboarding poruku"
+  },
+  "onboardingStoryContinue": "Nastavite",
+  "@onboardingStoryContinue": {
+    "description": "Dugme za prelazak na sledecu onboarding poruku ili korak"
+  },
+  "onboardingChooseLanguageTitle": "Izaberite jezik",
+  "@onboardingChooseLanguageTitle": {
+    "description": "Naslov za onboarding ekran izbora jezika"
+  },
+  "aboutApp": "O aplikaciji",
+  "@aboutApp": {
+    "description": "Naslov sekcije o aplikaciji na profilu"
+  },
+  "onboardingStoryReferenceButton": "Uvodna priča",
+  "@onboardingStoryReferenceButton": {
+    "description": "Stavka u sekciji O aplikaciji koja otvara onboarding pricu"
+  },
+  "onboardingStoryReferenceTitle": "Uvodna priča",
+  "@onboardingStoryReferenceTitle": {
+    "description": "Naslov ekrana koji prikazuje sve onboarding poruke na jednom mestu"
+  },
+  "onboardingStoryReferenceIntro": "Ovo je uvodna priča koju korisnik vidi pri prvom korišćenju aplikacije.",
+  "@onboardingStoryReferenceIntro": {
+    "description": "Kratki uvod iznad članaka onboarding priče"
+  },
+  "onboardingStorySectionTitle": "Poruka {number}",
+  "@onboardingStorySectionTitle": {
+    "description": "Naslov sekcije onboarding priče",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "onboardingLabel": "PRVI KORAK",
+  "@onboardingLabel": {
+    "description": "Mala oznaka iznad naslova onboarding hook choice ekrana"
+  },
+  "onboardingHookChoiceTitle": "A sada, hajde da probate jednu takvu vežbu. Da li bi radije da sagledate tuđu situaciju ili da sagledate svoju iz tuđe perspektive?",
+  "@onboardingHookChoiceTitle": {
+    "description": "Pitanje za izbor uvodne vezbe u onboardingu"
+  },
+  "onboardingHookChoiceSelfTitle": "Da sagledam svoju situaciju iz tuđe perspektive",
+  "@onboardingHookChoiceSelfTitle": {
+    "description": "Opcija za izbor distanciranog dnevnika"
+  },
+  "onboardingHookChoiceOthersTitle": "Da sagledam tuđu situaciju",
+  "@onboardingHookChoiceOthersTitle": {
+    "description": "Opcija za izbor scenarija perspektive"
+  },
+  "onboardingDistancedJournalDescription": "Pišete o sopstvenoj situaciji kao mudar posmatrač. Tako pravite korak unazad i jasnije vidite sebe i svoje izbore.",
+  "@onboardingDistancedJournalDescription": {
+    "description": "Opis opcije sagledavanja sebe u onboardingu"
+  },
+  "onboardingPerspectiveScenarioDescription": "Prolazite kroz kratku situaciju i pokušavate da razumete šta druga osoba misli i oseća.",
+  "@onboardingPerspectiveScenarioDescription": {
+    "description": "Opis opcije sagledavanja tudje situacije u onboardingu"
+  },
+  "profileDeleteAccountTitle": "Brisanje naloga",
+  "@profileDeleteAccountTitle": {
+    "description": "Naslov sekcije za brisanje naloga na profilu"
+  },
+  "profileDeleteAccountLearnMore": "Saznajte više: https://api.sagledaj.com/account-deletion",
+  "@profileDeleteAccountLearnMore": {
+    "description": "Pomoćni tekst sa linkom za dodatne informacije o brisanju naloga"
+  },
+  "profileDeleteAccountAction": "Obrišite",
+  "@profileDeleteAccountAction": {
+    "description": "Akcija za potvrdu brisanja naloga"
+  },
+  "profileDeleteAccountCancel": "Otkaži",
+  "@profileDeleteAccountCancel": {
+    "description": "Akcija za otkazivanje brisanja naloga"
+  },
+  "profileDeleteAccountConfirmTitle": "Obrisati nalog?",
+  "@profileDeleteAccountConfirmTitle": {
+    "description": "Naslov dijaloga za potvrdu brisanja naloga"
+  },
+  "profileDeleteAccountConfirmMessage": "Ovo će trajno obrisati vaš Sagledaj nalog i odjaviti vas. Ovu akciju nije moguće poništiti.",
+  "@profileDeleteAccountConfirmMessage": {
+    "description": "Tekst dijaloga za potvrdu brisanja naloga"
+  },
+  "profileDeleteAccountSuccess": "Nalog je obrisan.",
+  "@profileDeleteAccountSuccess": {
+    "description": "Poruka nakon uspešnog brisanja naloga"
+  },
+  "profileDeleteAccountError": "Brisanje naloga trenutno nije uspelo. Pokušaj ponovo.",
+  "@profileDeleteAccountError": {
+    "description": "Poruka kada brisanje naloga ne uspe"
+  },
+  "profileDeleteAccountInfoOpenFailed": "Nije moguće otvoriti link.",
+  "@profileDeleteAccountInfoOpenFailed": {
+    "description": "Poruka kada link za dodatne informacije ne može da se otvori"
   }
 }
 

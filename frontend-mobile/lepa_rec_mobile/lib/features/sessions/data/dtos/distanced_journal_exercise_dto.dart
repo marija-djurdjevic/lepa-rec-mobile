@@ -1,4 +1,4 @@
-import '../../../../core/constants/app_constants.dart';
+import '../../../../core/config/api_environment.dart';
 
 class DistancedJournalExerciseDto {
   final String id;
@@ -49,7 +49,7 @@ class DistancedJournalExerciseDto {
       return trimmed;
     }
 
-    final base = Uri.parse(AppConstants.apiBaseUrl);
+    final base = Uri.parse(ApiEnvironment.baseUrl);
     final origin =
         '${base.scheme}://${base.host}${base.hasPort ? ':${base.port}' : ''}';
     if (trimmed.startsWith('/')) {

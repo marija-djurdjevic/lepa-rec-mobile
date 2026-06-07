@@ -17,13 +17,17 @@ class ProgressPage extends StatefulWidget {
 
 class _ProgressPageState extends State<ProgressPage> {
   Future<List<HistoryItem>>? _historyFuture;
-  bool _didInit = false;
+  String? _activeLang;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_didInit) return;
-    _didInit = true;
+    final currentLang =
+        Localizations.localeOf(context).languageCode == 'en' ? 'en' : 'sr';
+    if (_activeLang == currentLang && _historyFuture != null) {
+      return;
+    }
+    _activeLang = currentLang;
     _historyFuture = _loadHistory();
   }
 
@@ -167,7 +171,10 @@ class _HistoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dateLabel = DateFormat('d MMM yyyy', 'sr_Latn').format(item.submittedAt);
+    final locale = Localizations.localeOf(context).languageCode == 'en'
+        ? 'en_US'
+        : 'sr_Latn';
+    final dateLabel = DateFormat('d MMM yyyy', locale).format(item.submittedAt);
 
     return InkWell(
       borderRadius: BorderRadius.circular(16),

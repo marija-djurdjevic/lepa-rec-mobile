@@ -11,8 +11,13 @@ import '../../data/repositories/session_repository.dart';
 
 class EndGrowthMessagePage extends StatefulWidget {
   final VoidCallback onComplete;
+  final List<String> developedSkillIds;
 
-  const EndGrowthMessagePage({super.key, required this.onComplete});
+  const EndGrowthMessagePage({
+    super.key,
+    required this.onComplete,
+    this.developedSkillIds = const [],
+  });
 
   @override
   State<EndGrowthMessagePage> createState() => _EndGrowthMessagePageState();
@@ -20,15 +25,24 @@ class EndGrowthMessagePage extends StatefulWidget {
 
 class _EndGrowthMessagePageState extends State<EndGrowthMessagePage> {
   late final SessionRepository _sessionRepository;
+  late final PageController _pageController;
   bool _isLoading = true;
   String? _errorMessage;
   GrowthMessageDto? _growthMessage;
   String? _activePracticeLang;
+  int _currentCardIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _sessionRepository = SessionRepository();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -48,6 +62,7 @@ class _EndGrowthMessagePageState extends State<EndGrowthMessagePage> {
     try {
       final message = await _sessionRepository.getRandomGrowthMessage(
         type: GrowthMessageType.end,
+        developedSkillIds: _normalizedSkillIds(),
         lang: _currentPracticeLang(),
       );
 
@@ -66,6 +81,15 @@ class _EndGrowthMessagePageState extends State<EndGrowthMessagePage> {
         _errorMessage = '${context.l10n.failedLoadGrowthMessage}: $e';
       });
     }
+  }
+
+  List<String> _normalizedSkillIds() {
+    final normalized = widget.developedSkillIds
+        .map((id) => id.trim())
+        .where((id) => id.isNotEmpty)
+        .toSet()
+        .toList();
+    return normalized;
   }
 
   @override
@@ -174,28 +198,36 @@ class _EndGrowthMessagePageState extends State<EndGrowthMessagePage> {
   Widget _buildContent() {
     final messageText = _growthMessage?.text ??
         context.l10n.loadingPersonalizedMessage;
+    final messageParts = _resolvePrefixAndDescription(messageText);
+    final cards = [messageParts.$1, messageParts.$2];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const SizedBox(height: AppSpacing.sm),
-        Text(
-          context.l10n.growthMessageTitle,
-          textAlign: TextAlign.center,
-          style: GoogleFonts.quicksand(
-            fontSize: 28,
-            fontWeight: FontWeight.w700,
-            color: const Color(0xFF6B9B6E),
-          ),
-        ),
-        const SizedBox(height: AppSpacing.md),
-        Expanded(
-          child: Center(
-            child: SingleChildScrollView(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isCompact = constraints.maxHeight < 700;
+        final horizontalPadding = isCompact ? AppSpacing.md : AppSpacing.lg;
+        final cardPadding = isCompact ? AppSpacing.lg : AppSpacing.xl;
+        final titleSize = isCompact ? 24.0 : 28.0;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(height: isCompact ? AppSpacing.xs : AppSpacing.sm),
+            Text(
+              context.l10n.growthMessageTitle,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.quicksand(
+                fontSize: titleSize,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF6B9B6E),
+              ),
+            ),
+            SizedBox(height: isCompact ? AppSpacing.sm : AppSpacing.md),
+            Expanded(
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.xl,
-                  vertical: AppSpacing.xl,
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(
+                  horizontal: horizontalPadding,
+                  vertical: cardPadding,
                 ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(24),
@@ -203,8 +235,8 @@ class _EndGrowthMessagePageState extends State<EndGrowthMessagePage> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Colors.white.withValues(alpha: 0.9),
-                      const Color(0xFFEAF2E6).withValues(alpha: 0.85),
+                      Colors.white.withValues(alpha: 0.92),
+                      const Color(0xFFEAF2E6).withValues(alpha: 0.86),
                     ],
                   ),
                   boxShadow: [
@@ -223,52 +255,117 @@ class _EndGrowthMessagePageState extends State<EndGrowthMessagePage> {
                   children: [
                     Icon(
                       Icons.auto_awesome_outlined,
-                      size: 32,
-                      color: const Color(0xFF6B9B6E)
-                          .withValues(alpha: 0.85),
+                      size: isCompact ? 28 : 32,
+                      color: const Color(0xFF6B9B6E).withValues(alpha: 0.85),
+                    ),
+                    SizedBox(height: isCompact ? AppSpacing.sm : AppSpacing.md),
+                    Expanded(
+                      child: PageView.builder(
+                        controller: _pageController,
+                        itemCount: cards.length,
+                        onPageChanged: (index) {
+                          if (!mounted) return;
+                          setState(() => _currentCardIndex = index);
+                        },
+                        itemBuilder: (context, index) {
+                          return _AdaptiveMessageText(text: cards[index]);
+                        },
+                      ),
                     ),
                     const SizedBox(height: AppSpacing.md),
                     Text(
-                      messageText,
-                      textAlign: TextAlign.center,
+                      '${_currentCardIndex + 1}/2',
                       style: GoogleFonts.quicksand(
-                        fontSize: 18,
+                        fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF2F3A2F),
-                        height: 1.6,
+                        color: const Color(0xFF6B9B6E).withValues(alpha: 0.85),
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-          ),
-        ),
-        const SizedBox(height: AppSpacing.lg),
-        SizedBox(
-          height: 56,
-          child: ElevatedButton(
-            onPressed: widget.onComplete,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF6B9B6E),
-              foregroundColor: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
+            const SizedBox(height: AppSpacing.md),
+            SizedBox(
+              height: 56,
+              child: ElevatedButton(
+                onPressed: () {
+                  if (_currentCardIndex == 0) {
+                    _pageController.nextPage(
+                      duration: const Duration(milliseconds: 220),
+                      curve: Curves.easeOut,
+                    );
+                    return;
+                  }
+                  widget.onComplete();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF6B9B6E),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+                child: Text(
+                  _currentCardIndex == 0
+                      ? (_currentPracticeLang() == 'en' ? 'Continue' : 'Nastavite')
+                      : context.l10n.continueToDashboard,
+                  style: GoogleFonts.quicksand(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ),
             ),
-            child: Text(
-              context.l10n.continueToDashboard,
-              style: GoogleFonts.quicksand(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: AppSpacing.lg),
-      ],
+            SizedBox(height: isCompact ? AppSpacing.md : AppSpacing.lg),
+          ],
+        );
+      },
     );
+  }
+
+  (String, String) _resolvePrefixAndDescription(String fullText) {
+    final apiPrefix = _growthMessage?.prefix?.trim() ?? '';
+    final apiDescription = _growthMessage?.description?.trim() ?? '';
+    if (apiPrefix.isNotEmpty && apiDescription.isNotEmpty) {
+      return (apiPrefix, apiDescription);
+    }
+
+    final normalized = fullText.replaceAll(RegExp(r'\s+'), ' ').trim();
+    if (normalized.isEmpty) {
+      return ('', '');
+    }
+
+    // Frontend-only fallback: split message into two balanced cards by sentence count.
+    final sentenceRegex = RegExp(r'[^.!?]+[.!?]+|[^.!?]+$');
+    final sentences = sentenceRegex
+        .allMatches(normalized)
+        .map((m) => m.group(0)!.trim())
+        .where((s) => s.isNotEmpty)
+        .toList();
+
+    if (sentences.length >= 2) {
+      final firstCount = (sentences.length / 2).ceil();
+      final firstPart = sentences.take(firstCount).join(' ').trim();
+      final secondPart = sentences.skip(firstCount).join(' ').trim();
+      if (firstPart.isNotEmpty && secondPart.isNotEmpty) {
+        return (firstPart, secondPart);
+      }
+    }
+
+    // If sentence detection fails, split by words to avoid duplicate cards.
+    final words = normalized.split(' ').where((w) => w.isNotEmpty).toList();
+    if (words.length >= 2) {
+      final firstCount = (words.length / 2).ceil();
+      final firstPart = words.take(firstCount).join(' ').trim();
+      final secondPart = words.skip(firstCount).join(' ').trim();
+      if (firstPart.isNotEmpty && secondPart.isNotEmpty) {
+        return (firstPart, secondPart);
+      }
+    }
+
+    return (normalized, normalized);
   }
 
   String _currentPracticeLang() {
@@ -331,4 +428,39 @@ class _HaloPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class _AdaptiveMessageText extends StatelessWidget {
+  final String text;
+
+  const _AdaptiveMessageText({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final baseStyle = GoogleFonts.quicksand(
+          fontSize: constraints.maxHeight < 280 ? 16 : 18,
+          fontWeight: FontWeight.w600,
+          color: const Color(0xFF2F3A2F),
+          height: 1.55,
+        );
+        return Scrollbar(
+          thumbVisibility: false,
+          child: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Center(
+                child: Text(
+                  text,
+                  textAlign: TextAlign.center,
+                  style: baseStyle,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 }

@@ -195,6 +195,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get answerEachScenarioQuestion => 'Answer each question before you reveal the final perspective.';
 
   @override
+  String get perspectiveScenarioDisclaimer => 'We will ask you questions about the shown scene. The goal is not to guess every exact detail in the background of the story, but to get as close as possible to understanding other people\'s perspectives, needs, and wishes that shaped their reactions and emotions. Every thoughtful answer is good, even when it differs in details from the background story we will reveal at the end.';
+
+  @override
+  String get perspectiveDisclaimerWhatWeDo => 'We will ask you questions about the shown scene.';
+
+  @override
+  String get perspectiveDisclaimerNotGoal => 'The goal is not to guess every exact detail in the background story.';
+
+  @override
+  String get perspectiveDisclaimerGoal => 'The goal is to understand people’s perspectives, needs, and wishes that shape their reactions and emotions.';
+
+  @override
+  String get perspectiveDisclaimerAnswerGood => 'Every thoughtful answer is good, even when it differs from the background story we reveal at the end.';
+
+  @override
+  String get showMore => 'Show more';
+
+  @override
+  String get showLess => 'Show less';
+
+  @override
   String scenarioQuestionNumber(int number) {
     return 'Question $number';
   }
@@ -230,6 +251,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get scenarioCompletedToday => 'Scenario completed for today';
+
+  @override
+  String get dailyChallengeReward => 'You completed today\'s challenge! Join us tomorrow for the next one.';
 
   @override
   String get exerciseNotInitialized => 'Error: Exercise not initialized';
@@ -355,17 +379,91 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageSerbian => 'Serbian';
 
   @override
+  String get profileLanguageSaveHint => 'Language change is applied after you save changes.';
+
+  @override
   String get dailySession => 'Daily Practice';
 
   @override
   String get close => 'Close';
 
   @override
-  String get onboardingHookChoiceTitle => 'How would you like us to begin?';
+  String get onboardingStoryHook => 'You have probably noticed how often people misunderstand each other.\n\nA daughter argues with her mother. We gossip about and reject colleagues. Political opponents do not even talk.\n\nDoes it have to be that way?';
 
   @override
-  String get onboardingDistancedJournalDescription => 'You will reflect on one of your own experiences and write from a distance. This helps emotions settle and helps you see the situation more clearly.';
+  String get onboardingStorySkill => 'It does not.\n\nWe can understand others and help them understand us. But this is a skill we train like a muscle.\n\nResearch shows that people who practice these abilities resolve conflicts more easily and feel more connected to their people.';
 
   @override
-  String get onboardingPerspectiveScenarioDescription => 'You will read one scenario and answer questions. Along the way, you will uncover hidden perspectives, which helps you better understand the people around you.';
+  String get onboardingStoryHabit => 'Ten minutes a day.\n\nSometimes a short scenario where you practice understanding what someone else thinks and feels. Sometimes a reflection on your own day from the position of a wise observer.\n\nA small habit that gradually changes how you see people and how they see you.';
+
+  @override
+  String get onboardingStoryBack => 'Back';
+
+  @override
+  String get onboardingStoryContinue => 'Continue';
+
+  @override
+  String get onboardingChooseLanguageTitle => 'Choose language';
+
+  @override
+  String get aboutApp => 'About app';
+
+  @override
+  String get onboardingStoryReferenceButton => 'Intro story';
+
+  @override
+  String get onboardingStoryReferenceTitle => 'Onboarding story';
+
+  @override
+  String get onboardingStoryReferenceIntro => 'This is the intro story shown to users during their first app experience.';
+
+  @override
+  String onboardingStorySectionTitle(int number) {
+    return 'Message $number';
+  }
+
+  @override
+  String get onboardingLabel => 'FIRST STEP';
+
+  @override
+  String get onboardingHookChoiceTitle => 'Now, let us try one exercise like that. Would you rather look at someone else\'s situation, or look at your own from someone else\'s perspective?';
+
+  @override
+  String get onboardingHookChoiceSelfTitle => 'Look at my own situation from another perspective';
+
+  @override
+  String get onboardingHookChoiceOthersTitle => 'Look at someone else\'s situation';
+
+  @override
+  String get onboardingDistancedJournalDescription => 'Write about your own situation as a wise observer. This helps you step back and see yourself and your choices more clearly.';
+
+  @override
+  String get onboardingPerspectiveScenarioDescription => 'Go through a short scenario and try to understand what the other person thinks and feels.';
+
+  @override
+  String get profileDeleteAccountTitle => 'Delete account';
+
+  @override
+  String get profileDeleteAccountLearnMore => 'Learn more: https://api.sagledaj.com/account-deletion';
+
+  @override
+  String get profileDeleteAccountAction => 'Delete';
+
+  @override
+  String get profileDeleteAccountCancel => 'Cancel';
+
+  @override
+  String get profileDeleteAccountConfirmTitle => 'Delete account?';
+
+  @override
+  String get profileDeleteAccountConfirmMessage => 'This will permanently delete your Sagledaj account and sign you out. This action cannot be undone.';
+
+  @override
+  String get profileDeleteAccountSuccess => 'Account deleted.';
+
+  @override
+  String get profileDeleteAccountError => 'Could not delete account right now. Please try again.';
+
+  @override
+  String get profileDeleteAccountInfoOpenFailed => 'Could not open link.';
 }

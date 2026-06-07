@@ -37,6 +37,7 @@ class HistoryItem {
   final String? mainAnswer;
   final String? followUpAnswer;
   final String? reflection;
+  final String? reflectionQuestion;
   final List<String> photoUrls;
   final List<HistoryAnswer> answers;
 
@@ -49,6 +50,7 @@ class HistoryItem {
     this.mainAnswer,
     this.followUpAnswer,
     this.reflection,
+    this.reflectionQuestion,
     this.photoUrls = const [],
   })  : type = HistoryItemType.distancedJournal,
         reveal = null,
@@ -68,6 +70,7 @@ class HistoryItem {
         mainAnswer = null,
         followUpAnswer = null,
         reflection = null,
+        reflectionQuestion = null,
         photoUrls = const [];
 
   String get safePromptText => promptText.trim().isEmpty

@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:lepa_rec_mobile/features/sessions/presentation/state/primer_flow_state.dart';
 
 import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/constants/app_spacing.dart';
-import '../pages/breathing_exercise_page.dart';
-import '../pages/growth_message_page.dart';
+import '../../data/dtos/complete_primer_dto.dart';
+import '../../data/dtos/growth_message_type.dart';
 import '../pages/primer_welcome_page.dart';
-import '../pages/value_statement_page.dart';
+import '../../data/repositories/session_repository.dart';
 
 enum SessionFlowStep {
   primerWelcome,
-  breathingExercise,
-  valueStatement,
-  growthMessage,
+  completingPrimer,
   complete,
 }
 
@@ -26,29 +23,64 @@ class SessionFlowPage extends StatefulWidget {
 }
 
 class _SessionFlowPageState extends State<SessionFlowPage> {
+  final SessionRepository _sessionRepository = SessionRepository();
   SessionFlowStep _currentStep = SessionFlowStep.primerWelcome;
-  PrimerFlowState _primerFlowState = PrimerFlowState();
+  bool _isCompletingPrimer = false;
+  String? _completePrimerError;
 
-  void _moveToNext() {
+  Future<void> _completePrimerAndFinish() async {
+    if (_isCompletingPrimer) return;
+
     setState(() {
-      _currentStep = switch (_currentStep) {
-        SessionFlowStep.primerWelcome => SessionFlowStep.breathingExercise,
-        SessionFlowStep.breathingExercise => SessionFlowStep.valueStatement,
-        SessionFlowStep.valueStatement => SessionFlowStep.growthMessage,
-        SessionFlowStep.growthMessage => SessionFlowStep.complete,
-        SessionFlowStep.complete => SessionFlowStep.complete,
-      };
+      _currentStep = SessionFlowStep.completingPrimer;
+      _isCompletingPrimer = true;
+      _completePrimerError = null;
     });
 
-    if (_currentStep == SessionFlowStep.complete) {
+    try {
+      final lang = _currentPracticeLang();
+
+      final statements = await _sessionRepository.getRandomPrimerStatements(
+        lang: lang,
+      );
+      if (statements.isEmpty) {
+        throw Exception('No primer statements available.');
+      }
+
+      final selectedStatement = statements.first;
+      final presentedStatementIds = statements.map((s) => s.statementId).toList();
+
+      final growthMessage = await _sessionRepository.getRandomGrowthMessage(
+        type: GrowthMessageType.begin,
+        selectedStatementId: selectedStatement.statementId,
+        lang: lang,
+      );
+
+      final completePrimerDto = CompletePrimerDto(
+        isSkipped: false,
+        presentedStatementIds: presentedStatementIds,
+        selectedStatementId: selectedStatement.statementId,
+        growthMessageId: growthMessage.messageId,
+      );
+
+      await _sessionRepository.completePrimerWithData(completePrimerDto);
+      if (!mounted) return;
+      setState(() {
+        _isCompletingPrimer = false;
+        _currentStep = SessionFlowStep.complete;
+      });
       widget.onSessionComplete();
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _isCompletingPrimer = false;
+        _completePrimerError = context.l10n.unknownError;
+      });
     }
   }
 
-  void _updatePrimerFlowState(PrimerFlowState newState) {
-    setState(() {
-      _primerFlowState = newState;
-    });
+  String _currentPracticeLang() {
+    return Localizations.localeOf(context).languageCode == 'en' ? 'en' : 'sr';
   }
 
   @override
@@ -60,26 +92,29 @@ class _SessionFlowPageState extends State<SessionFlowPage> {
         case SessionFlowStep.primerWelcome:
           pageWidget = PrimerWelcomePage(
             key: const ValueKey(SessionFlowStep.primerWelcome),
-            onProceed: _moveToNext,
+            onProceed: _completePrimerAndFinish,
           );
-        case SessionFlowStep.breathingExercise:
-          pageWidget = BreathingExercisePage(
-            key: const ValueKey(SessionFlowStep.breathingExercise),
-            onComplete: _moveToNext,
-          );
-        case SessionFlowStep.valueStatement:
-          pageWidget = ValueStatementPage(
-            key: const ValueKey(SessionFlowStep.valueStatement),
-            onComplete: _moveToNext,
-            onStateUpdate: _updatePrimerFlowState,
-            primerFlowState: _primerFlowState,
-          );
-        case SessionFlowStep.growthMessage:
-          pageWidget = GrowthMessagePage(
-            key: const ValueKey(SessionFlowStep.growthMessage),
-            onComplete: _moveToNext,
-            onStateUpdate: _updatePrimerFlowState,
-            primerFlowState: _primerFlowState,
+        case SessionFlowStep.completingPrimer:
+          pageWidget = Scaffold(
+            key: const ValueKey(SessionFlowStep.completingPrimer),
+            body: Center(
+              child: _completePrimerError == null
+                  ? const CircularProgressIndicator()
+                  : Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _completePrimerError!,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        ElevatedButton(
+                          onPressed: _completePrimerAndFinish,
+                          child: Text(context.l10n.retry),
+                        ),
+                      ],
+                    ),
+            ),
           );
         case SessionFlowStep.complete:
           pageWidget = Scaffold(
@@ -89,8 +124,8 @@ class _SessionFlowPageState extends State<SessionFlowPage> {
       }
 
       return AnimatedSwitcher(
-        duration: const Duration(milliseconds: 1200),
-        reverseDuration: const Duration(milliseconds: 1000),
+        duration: const Duration(milliseconds: 500),
+        reverseDuration: const Duration(milliseconds: 400),
         switchInCurve: Curves.easeInOutCubic,
         switchOutCurve: Curves.easeInOutCubic,
         layoutBuilder: (currentChild, previousChildren) {

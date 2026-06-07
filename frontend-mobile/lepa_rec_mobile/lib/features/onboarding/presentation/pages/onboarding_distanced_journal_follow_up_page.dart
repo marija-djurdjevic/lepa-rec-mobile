@@ -101,7 +101,7 @@ class _OnboardingDistancedJournalFollowUpPageState extends State<OnboardingDista
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
                 ),
                 child: Text(
-                  _isEnglish ? 'Conclude' : 'Zaključi',
+                  _isEnglish ? 'Conclude' : 'Zaključite',
                   style: GoogleFonts.quicksand(fontSize: 18, fontWeight: FontWeight.w700),
                 ),
               ),
@@ -152,14 +152,33 @@ class _OnboardingDistancedJournalFollowUpPageState extends State<OnboardingDista
               const SizedBox(height: AppSpacing.lg),
               TextField(
                 controller: _controller,
-                minLines: 8,
-                maxLines: 14,
+                minLines: 10,
+                maxLines: 18,
                 enabled: !_submitting,
                 decoration: InputDecoration(
                   hintText: context.l10n.shareYourThoughts,
+                  hintStyle: GoogleFonts.quicksand(
+                    color: const Color(0xFF9AA99B),
+                    fontWeight: FontWeight.w500,
+                  ),
                   filled: true,
                   fillColor: const Color(0xFFFAFCF9),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(color: Color(0xFFD9E5D7)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(color: Color(0xFFD9E5D7)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(color: Color(0xFF6B9B6E), width: 1.4),
+                  ),
+                  disabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(color: Color(0xFFD9E5D7)),
+                  ),
                 ),
               ),
             ],

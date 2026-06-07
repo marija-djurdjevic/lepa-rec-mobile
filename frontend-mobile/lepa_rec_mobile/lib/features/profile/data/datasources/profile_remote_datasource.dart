@@ -30,12 +30,34 @@ class ProfileRemoteDataSource {
         'lastName': lastName,
         'preferredLanguage': preferredLanguage,
         'notificationEnabled': notificationEnabled,
-        'notificationTimeLocal': notificationEnabled ? notificationTimeLocal : null,
+        'notificationTimeLocal': notificationEnabled
+            ? notificationTimeLocal
+            : null,
         'timeZoneId': notificationEnabled ? timeZoneId : null,
       },
     );
 
     return ProfileMeDto.fromJson(response.data as Map<String, dynamic>);
   }
-}
 
+  Future<void> registerPushToken({
+    required String token,
+    required String platform,
+  }) async {
+    const endpoint = '/profile/push-token';
+    await _dio.post(
+      endpoint,
+      data: <String, dynamic>{'token': token, 'platform': platform},
+    );
+  }
+
+  Future<void> unregisterPushToken({required String token}) async {
+    const endpoint = '/profile/push-token';
+    await _dio.delete(endpoint, data: <String, dynamic>{'token': token});
+  }
+
+  Future<void> deleteAccount() async {
+    const endpoint = '/account';
+    await _dio.delete<void>(endpoint);
+  }
+}

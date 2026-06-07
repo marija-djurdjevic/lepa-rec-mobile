@@ -5,7 +5,6 @@ import 'package:lepa_rec_mobile/core/localization/localization_extension.dart';
 import 'package:lepa_rec_mobile/features/onboarding/data/datasources/onboarding_local_datasource.dart';
 import 'package:lepa_rec_mobile/features/onboarding/data/datasources/onboarding_remote_datasource.dart';
 import 'package:lepa_rec_mobile/features/onboarding/data/dtos/onboarding_distanced_journal_challenge_dto.dart';
-import 'package:lepa_rec_mobile/features/onboarding/presentation/models/onboarding_distanced_journal_follow_up_args.dart';
 
 class OnboardingDistancedJournalPage extends StatefulWidget {
   const OnboardingDistancedJournalPage({super.key});
@@ -17,10 +16,13 @@ class OnboardingDistancedJournalPage extends StatefulWidget {
 class _OnboardingDistancedJournalPageState extends State<OnboardingDistancedJournalPage> {
   final _remote = OnboardingRemoteDataSource();
   final _local = OnboardingLocalDataSource();
-  final _controller = TextEditingController();
+  final _mainAnswerController = TextEditingController();
+  final _followUpAnswerController = TextEditingController();
+  final _scrollController = ScrollController();
 
   bool _loading = true;
   bool _submitting = false;
+  bool _showFollowUpQuestion = false;
   String? _error;
 
   OnboardingDistancedJournalChallengeDto? _challenge;
@@ -28,16 +30,28 @@ class _OnboardingDistancedJournalPageState extends State<OnboardingDistancedJour
   String? _sessionId;
 
   bool get _isEnglish => Localizations.localeOf(context).languageCode == 'en';
+  bool get _hasMainAnswer => _mainAnswerController.text.trim().isNotEmpty;
 
   @override
   void initState() {
     super.initState();
+    _mainAnswerController.addListener(_onAnswerChanged);
+    _followUpAnswerController.addListener(_onAnswerChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) => _initialize());
+  }
+
+  void _onAnswerChanged() {
+    if (!mounted) return;
+    setState(() {});
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _mainAnswerController.removeListener(_onAnswerChanged);
+    _followUpAnswerController.removeListener(_onAnswerChanged);
+    _mainAnswerController.dispose();
+    _followUpAnswerController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -84,16 +98,30 @@ class _OnboardingDistancedJournalPageState extends State<OnboardingDistancedJour
   }
 
   Future<void> _continue() async {
-    final answer = _controller.text.trim();
-    if (answer.isEmpty) {
+    if (!_hasMainAnswer) {
       setState(() => _error = context.l10n.answerRequired);
       return;
     }
 
-    final challenge = _challenge;
+    setState(() {
+      _error = null;
+      _showFollowUpQuestion = true;
+    });
+
+    _scrollToBottom();
+  }
+
+  Future<void> _submit() async {
+    final mainAnswer = _mainAnswerController.text.trim();
+    final followUpAnswer = _followUpAnswerController.text.trim();
+    if (mainAnswer.isEmpty || followUpAnswer.isEmpty) {
+      setState(() => _error = context.l10n.answerRequired);
+      return;
+    }
+
     final sessionId = _sessionId;
     final exerciseId = _exerciseId;
-    if (challenge == null || sessionId == null || exerciseId == null) {
+    if (sessionId == null || exerciseId == null) {
       setState(() => _error = context.l10n.unknownError);
       return;
     }
@@ -103,21 +131,42 @@ class _OnboardingDistancedJournalPageState extends State<OnboardingDistancedJour
       _error = null;
     });
 
-    final args = OnboardingDistancedJournalFollowUpArgs(
-      onboardingSessionId: sessionId,
-      exerciseId: exerciseId,
-      mainAnswer: answer,
-      followUpQuestion: challenge.followUpQuestion,
-    );
+    try {
+      await _remote.submitDistancedJournal(
+        onboardingSessionId: sessionId,
+        exerciseId: exerciseId,
+        sessionDate: DateTime.now().toUtc(),
+        mainAnswer: mainAnswer,
+        followUpAnswer: followUpAnswer,
+      );
 
-    if (!mounted) return;
-    await Navigator.of(context).pushNamed('/onboarding/distanced-journal/follow-up', arguments: args);
-
-    if (mounted) {
+      if (!mounted) return;
+      Navigator.of(context).pushNamedAndRemoveUntil('/onboarding/register', (route) => false);
+    } catch (_) {
+      if (!mounted) return;
       setState(() {
-        _submitting = false;
+        _error = _isEnglish
+            ? 'Could not submit your answers. Please try again.'
+            : 'Nismo uspjeli da pošaljemo odgovore. Pokušajte ponovo.';
       });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _submitting = false;
+        });
+      }
     }
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_scrollController.hasClients) return;
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeOutCubic,
+      );
+    });
   }
 
   @override
@@ -137,43 +186,62 @@ class _OnboardingDistancedJournalPageState extends State<OnboardingDistancedJour
         ),
       );
     }
+    final showBottomActions = _hasMainAnswer || _error != null;
+    final extraBottomPadding = showBottomActions
+        ? (AppSpacing.xl + AppSpacing.lg)
+        : AppSpacing.lg;
+    final openingQuestion = challenge.openingQuestion.trim();
+    final cardText = openingQuestion.isEmpty
+        ? challenge.content
+        : '${challenge.content}\n\n$openingQuestion';
 
     return Scaffold(
-      bottomNavigationBar: SafeArea(
-        minimum: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, AppSpacing.lg),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (_error != null) ...[
-              Text(_error!, textAlign: TextAlign.center, style: const TextStyle(color: Colors.red)),
-              const SizedBox(height: AppSpacing.md),
-            ],
-            SizedBox(
-              height: 56,
-              child: ElevatedButton(
-                onPressed: _submitting ? null : _continue,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF6B9B6E),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-                ),
-                child: Text(
-                  _isEnglish ? 'Continue' : 'Nastavite',
-                  style: GoogleFonts.quicksand(fontSize: 18, fontWeight: FontWeight.w700),
-                ),
+      bottomNavigationBar: showBottomActions
+          ? SafeArea(
+              minimum: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, AppSpacing.lg),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (_error != null) ...[
+                    Text(_error!, textAlign: TextAlign.center, style: const TextStyle(color: Colors.red)),
+                    const SizedBox(height: AppSpacing.md),
+                  ],
+                  if (_hasMainAnswer)
+                    SizedBox(
+                      height: 56,
+                      child: ElevatedButton(
+                        onPressed: _submitting
+                            ? null
+                            : _showFollowUpQuestion
+                            ? _submit
+                            : _continue,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF6B9B6E),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                        ),
+                        child: Text(
+                          _showFollowUpQuestion
+                              ? (_isEnglish ? 'Conclude' : 'Zaključite')
+                              : (_isEnglish ? 'Wrap up' : 'Zaokružite'),
+                          style: GoogleFonts.quicksand(fontSize: 18, fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                    ),
+                ],
               ),
-            ),
-          ],
-        ),
-      ),
+            )
+          : null,
       body: SafeArea(
         child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          controller: _scrollController,
           padding: EdgeInsets.fromLTRB(
             AppSpacing.lg,
             AppSpacing.lg,
             AppSpacing.lg,
-            AppSpacing.xl + AppSpacing.lg + MediaQuery.of(context).viewInsets.bottom,
+            extraBottomPadding + MediaQuery.of(context).viewInsets.bottom,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -197,29 +265,118 @@ class _OnboardingDistancedJournalPageState extends State<OnboardingDistancedJour
                     BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3)),
                   ],
                 ),
-                child: Text(
-                  challenge.content,
-                  style: GoogleFonts.quicksand(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF4E6650),
-                    height: 1.35,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      cardText,
+                      style: GoogleFonts.quicksand(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF4E6650),
+                        height: 1.35,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    Text(
+                      context.l10n.distancedJournalHint,
+                      style: GoogleFonts.quicksand(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.grey[600],
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
               TextField(
-                controller: _controller,
-                minLines: 8,
-                maxLines: 14,
+                controller: _mainAnswerController,
+                minLines: 10,
+                maxLines: null,
                 enabled: !_submitting,
                 decoration: InputDecoration(
                   hintText: context.l10n.shareYourThoughts,
+                  hintStyle: GoogleFonts.quicksand(
+                    color: const Color(0xFF9AA99B),
+                    fontWeight: FontWeight.w500,
+                  ),
                   filled: true,
                   fillColor: const Color(0xFFFAFCF9),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(color: Color(0xFFD9E5D7)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(color: Color(0xFFD9E5D7)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(color: Color(0xFF6B9B6E), width: 1.4),
+                  ),
+                  disabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(color: Color(0xFFD9E5D7)),
+                  ),
                 ),
               ),
+              if (_showFollowUpQuestion) ...[
+                const SizedBox(height: AppSpacing.lg),
+                Container(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE7F2E3),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: const [
+                      BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3)),
+                    ],
+                  ),
+                  child: Text(
+                    challenge.followUpQuestion,
+                    style: GoogleFonts.quicksand(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF4E6650),
+                      height: 1.35,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                TextField(
+                  controller: _followUpAnswerController,
+                  minLines: 10,
+                  maxLines: null,
+                  enabled: !_submitting,
+                  decoration: InputDecoration(
+                    hintText: context.l10n.shareYourThoughts,
+                    hintStyle: GoogleFonts.quicksand(
+                      color: const Color(0xFF9AA99B),
+                      fontWeight: FontWeight.w500,
+                    ),
+                    filled: true,
+                    fillColor: const Color(0xFFFAFCF9),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(color: Color(0xFFD9E5D7)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(color: Color(0xFFD9E5D7)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(color: Color(0xFF6B9B6E), width: 1.4),
+                    ),
+                    disabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(color: Color(0xFFD9E5D7)),
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ),

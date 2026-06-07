@@ -57,7 +57,7 @@ class _OnboardingPerspectiveRevealPageState extends State<OnboardingPerspectiveR
             ),
             child: Text(
               args.isExerciseCompleted
-                  ? (isEnglish ? 'Conclude' : 'Zaključi')
+                  ? (isEnglish ? 'Conclude' : 'Zaključite')
                   : (isEnglish ? 'Next question' : 'Sledeće pitanje'),
               style: GoogleFonts.quicksand(fontSize: 18, fontWeight: FontWeight.w700),
             ),

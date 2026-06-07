@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import '../constants/app_constants.dart';
+import '../config/api_environment.dart';
 import 'auth_interceptor.dart';
 
 class ApiClient {
@@ -9,7 +9,7 @@ class ApiClient {
 
   static final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: AppConstants.apiBaseUrl,
+      baseUrl: ApiEnvironment.baseUrl,
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       headers: {'Content-Type': 'application/json'},

@@ -241,6 +241,34 @@
     "@answerEachScenarioQuestion":  {
                                         "description":  "Helper text for the perspective scenario questionnaire"
                                     },
+    "perspectiveScenarioDisclaimer":  "We will ask you questions about the shown scene. The goal is not to guess every exact detail in the background of the story, but to get as close as possible to understanding other people's perspectives, needs, and wishes that shaped their reactions and emotions. Every thoughtful answer is good, even when it differs in details from the background story we will reveal at the end.",
+    "@perspectiveScenarioDisclaimer":  {
+                                           "description":  "Disclaimer shown under scenario text to explain task goal"
+                                       },
+    "perspectiveDisclaimerWhatWeDo":  "We will ask you questions about the shown scene.",
+    "@perspectiveDisclaimerWhatWeDo":  {
+                                           "description":  "First short line in perspective scenario disclaimer"
+                                       },
+    "perspectiveDisclaimerNotGoal":  "The goal is not to guess every exact detail in the background story.",
+    "@perspectiveDisclaimerNotGoal":  {
+                                          "description":  "Second short line in perspective scenario disclaimer"
+                                      },
+    "perspectiveDisclaimerGoal":  "The goal is to understand people’s perspectives, needs, and wishes that shape their reactions and emotions.",
+    "@perspectiveDisclaimerGoal":  {
+                                      "description":  "Third short line in perspective scenario disclaimer"
+                                  },
+    "perspectiveDisclaimerAnswerGood":  "Every thoughtful answer is good, even when it differs from the background story we reveal at the end.",
+    "@perspectiveDisclaimerAnswerGood":  {
+                                            "description":  "Fourth short line in perspective scenario disclaimer"
+                                        },
+    "showMore":  "Show more",
+    "@showMore":  {
+                     "description":  "Action label to expand additional content"
+                 },
+    "showLess":  "Show less",
+    "@showLess":  {
+                     "description":  "Action label to collapse additional content"
+                 },
     "scenarioQuestionNumber":  "Question {number}",
     "@scenarioQuestionNumber":  {
                                     "description":  "Label for a numbered perspective scenario question",
@@ -295,6 +323,10 @@
     "@scenarioCompletedToday":  {
                                     "description":  "Message indicating perspective scenario is completed for the day"
                                 },
+    "dailyChallengeReward":  "You completed today's challenge! Join us tomorrow for the next one.",
+    "@dailyChallengeReward":  {
+                                  "description":  "Reward message shown on the dashboard after all daily tasks are completed"
+                              },
     "exerciseNotInitialized":  "Error: Exercise not initialized",
     "@exerciseNotInitialized":  {
                                     "description":  "Error message when exercise fails to initialize"
@@ -466,6 +498,10 @@
     "@languageSerbian":  {
                              "description":  "Serbian language option label"
                          },
+    "profileLanguageSaveHint":  "Language change is applied after you save changes.",
+    "@profileLanguageSaveHint":  {
+                                     "description":  "Hint on profile page that language change applies after save"
+                                 },
     "dailySession":  "Daily Practice",
     "@dailySession":  {
                           "description":  "Title for daily session flow"
@@ -474,16 +510,113 @@
     "@close":  {
                    "description":  "Close button label"
                },
-    "onboardingHookChoiceTitle":  "How would you like us to begin?",
+    "onboardingStoryHook":  "You have probably noticed how often people misunderstand each other.\n\nA daughter argues with her mother. We gossip about and reject colleagues. Political opponents do not even talk.\n\nDoes it have to be that way?",
+    "@onboardingStoryHook":  {
+                                 "description":  "First onboarding message - hook"
+                             },
+    "onboardingStorySkill":  "It does not.\n\nWe can understand others and help them understand us. But this is a skill we train like a muscle.\n\nResearch shows that people who practice these abilities resolve conflicts more easily and feel more connected to their people.",
+    "@onboardingStorySkill":  {
+                                  "description":  "Second onboarding message - skill explanation"
+                              },
+    "onboardingStoryHabit":  "Ten minutes a day.\n\nSometimes a short scenario where you practice understanding what someone else thinks and feels. Sometimes a reflection on your own day from the position of a wise observer.\n\nA small habit that gradually changes how you see people and how they see you.",
+    "@onboardingStoryHabit":  {
+                                  "description":  "Third onboarding message - daily habit"
+                              },
+    "onboardingStoryBack":  "Back",
+    "@onboardingStoryBack":  {
+                                 "description":  "Button to return to the previous onboarding story message"
+                             },
+    "onboardingStoryContinue":  "Continue",
+    "@onboardingStoryContinue":  {
+                                     "description":  "Button to advance in onboarding story flow"
+                                 },
+    "onboardingChooseLanguageTitle":  "Choose language",
+    "@onboardingChooseLanguageTitle":  {
+                                           "description":  "Title for onboarding language selection screen"
+                                       },
+    "aboutApp":  "About app",
+    "@aboutApp":  {
+                      "description":  "Title for about app section on profile page"
+                  },
+    "onboardingStoryReferenceButton":  "Intro story",
+    "@onboardingStoryReferenceButton":  {
+                                            "description":  "Item in About app section that opens onboarding story"
+                                        },
+    "onboardingStoryReferenceTitle":  "Onboarding story",
+    "@onboardingStoryReferenceTitle":  {
+                                           "description":  "Title of screen that shows all onboarding story messages together"
+                                       },
+    "onboardingStoryReferenceIntro":  "This is the intro story shown to users during their first app experience.",
+    "@onboardingStoryReferenceIntro":  {
+                                           "description":  "Short intro text above onboarding story article sections"
+                                       },
+    "onboardingStorySectionTitle":  "Message {number}",
+    "@onboardingStorySectionTitle":  {
+                                         "description":  "Section heading in onboarding story article",
+                                         "placeholders":  {
+                                                              "number":  {
+                                                                             "type":  "int"
+                                                                         }
+                                                          }
+                                     },
+    "onboardingLabel":  "FIRST STEP",
+    "@onboardingLabel":  {
+                             "description":  "Small label shown above onboarding hook choice title"
+                         },
+    "onboardingHookChoiceTitle":  "Now, let us try one exercise like that. Would you rather look at someone else's situation, or look at your own from someone else's perspective?",
     "@onboardingHookChoiceTitle":  {
-                                       "description":  "Title for selecting the initial onboarding exercise"
+                                       "description":  "Question for selecting the initial onboarding exercise"
                                    },
-    "onboardingDistancedJournalDescription":  "You will reflect on one of your own experiences and write from a distance. This helps emotions settle and helps you see the situation more clearly.",
+    "onboardingHookChoiceSelfTitle":  "Look at my own situation from another perspective",
+    "@onboardingHookChoiceSelfTitle":  {
+                                           "description":  "Option title for distanced journal onboarding choice"
+                                       },
+    "onboardingHookChoiceOthersTitle":  "Look at someone else's situation",
+    "@onboardingHookChoiceOthersTitle":  {
+                                             "description":  "Option title for perspective scenario onboarding choice"
+                                         },
+    "onboardingDistancedJournalDescription":  "Write about your own situation as a wise observer. This helps you step back and see yourself and your choices more clearly.",
     "@onboardingDistancedJournalDescription":  {
                                                    "description":  "Description for the seeing-yourself onboarding exercise"
                                                },
-    "onboardingPerspectiveScenarioDescription":  "You will read one scenario and answer questions. Along the way, you will uncover hidden perspectives, which helps you better understand the people around you.",
+    "onboardingPerspectiveScenarioDescription":  "Go through a short scenario and try to understand what the other person thinks and feels.",
     "@onboardingPerspectiveScenarioDescription":  {
                                                       "description":  "Description for the seeing-others onboarding exercise"
-                                                  }
+                                                  },
+    "profileDeleteAccountTitle": "Delete account",
+    "@profileDeleteAccountTitle": {
+      "description": "Title for the profile delete account section"
+    },
+    "profileDeleteAccountLearnMore": "Learn more: https://api.sagledaj.com/account-deletion",
+    "@profileDeleteAccountLearnMore": {
+      "description": "Helper text with link for account deletion info page"
+    },
+    "profileDeleteAccountAction": "Delete",
+    "@profileDeleteAccountAction": {
+      "description": "Delete account action label"
+    },
+    "profileDeleteAccountCancel": "Cancel",
+    "@profileDeleteAccountCancel": {
+      "description": "Cancel label in account deletion confirmation dialog"
+    },
+    "profileDeleteAccountConfirmTitle": "Delete account?",
+    "@profileDeleteAccountConfirmTitle": {
+      "description": "Title of account deletion confirmation dialog"
+    },
+    "profileDeleteAccountConfirmMessage": "This will permanently delete your Sagledaj account and sign you out. This action cannot be undone.",
+    "@profileDeleteAccountConfirmMessage": {
+      "description": "Message of account deletion confirmation dialog"
+    },
+    "profileDeleteAccountSuccess": "Account deleted.",
+    "@profileDeleteAccountSuccess": {
+      "description": "Snackbar shown when account is deleted"
+    },
+    "profileDeleteAccountError": "Could not delete account right now. Please try again.",
+    "@profileDeleteAccountError": {
+      "description": "Snackbar shown when account deletion fails"
+    },
+    "profileDeleteAccountInfoOpenFailed": "Could not open link.",
+    "@profileDeleteAccountInfoOpenFailed": {
+      "description": "Snackbar shown when learn more link cannot be opened"
+    }
 }

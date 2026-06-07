@@ -57,8 +57,8 @@ class _MeditativePageTransitionsBuilder extends PageTransitionsBuilder {
   const _MeditativePageTransitionsBuilder();
 
   static const Curve _curve = Curves.easeInOutQuart;
-  static const Duration _duration = Duration(milliseconds: 950);
-  static const Duration _settleDelay = Duration(milliseconds: 200);
+  static const Duration _duration = Duration(milliseconds: 500);
+  static const Duration _settleDelay = Duration(milliseconds: 100);
   static const Color _fadeThroughColor = Color(0xFFF5F9F3);
 
   @override

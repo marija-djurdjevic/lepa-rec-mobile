@@ -214,7 +214,7 @@ class _OnboardingRegistrationPageState extends State<OnboardingRegistrationPage>
 
   @override
   Widget build(BuildContext context) {
-    final title = _isEnglish ? 'Save your progress' : 'Sačuvaj svoj napredak';
+    final title = _isEnglish ? 'Save your progress' : 'Sačuvajte svoj napredak';
     final helper = _isEnglish
         ? 'Best moments are with morning coffee, on the bus, or near the end of your day when you can take 5 minutes for yourself.'
         : 'Najbolje da ovo bude uz jutarnju kafu, kada si u autobusu ili pred kraj dana kada imaš vremena da izdvojiš 5 minuta za sebe.';
@@ -240,7 +240,7 @@ class _OnboardingRegistrationPageState extends State<OnboardingRegistrationPage>
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
                 ),
                 child: Text(
-                  _isEnglish ? 'Finish registration' : 'Završi registraciju',
+                  _isEnglish ? 'Finish registration' : 'Završite registraciju',
                   style: GoogleFonts.quicksand(fontSize: 18, fontWeight: FontWeight.w700),
                 ),
               ),

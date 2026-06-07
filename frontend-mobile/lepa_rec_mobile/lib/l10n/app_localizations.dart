@@ -431,6 +431,48 @@ abstract class AppLocalizations {
   /// **'Answer each question before you reveal the final perspective.'**
   String get answerEachScenarioQuestion;
 
+  /// Disclaimer shown under scenario text to explain task goal
+  ///
+  /// In en, this message translates to:
+  /// **'We will ask you questions about the shown scene. The goal is not to guess every exact detail in the background of the story, but to get as close as possible to understanding other people\'s perspectives, needs, and wishes that shaped their reactions and emotions. Every thoughtful answer is good, even when it differs in details from the background story we will reveal at the end.'**
+  String get perspectiveScenarioDisclaimer;
+
+  /// First short line in perspective scenario disclaimer
+  ///
+  /// In en, this message translates to:
+  /// **'We will ask you questions about the shown scene.'**
+  String get perspectiveDisclaimerWhatWeDo;
+
+  /// Second short line in perspective scenario disclaimer
+  ///
+  /// In en, this message translates to:
+  /// **'The goal is not to guess every exact detail in the background story.'**
+  String get perspectiveDisclaimerNotGoal;
+
+  /// Third short line in perspective scenario disclaimer
+  ///
+  /// In en, this message translates to:
+  /// **'The goal is to understand people’s perspectives, needs, and wishes that shape their reactions and emotions.'**
+  String get perspectiveDisclaimerGoal;
+
+  /// Fourth short line in perspective scenario disclaimer
+  ///
+  /// In en, this message translates to:
+  /// **'Every thoughtful answer is good, even when it differs from the background story we reveal at the end.'**
+  String get perspectiveDisclaimerAnswerGood;
+
+  /// Action label to expand additional content
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get showMore;
+
+  /// Action label to collapse additional content
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get showLess;
+
   /// Label for a numbered perspective scenario question
   ///
   /// In en, this message translates to:
@@ -496,6 +538,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Scenario completed for today'**
   String get scenarioCompletedToday;
+
+  /// Reward message shown on the dashboard after all daily tasks are completed
+  ///
+  /// In en, this message translates to:
+  /// **'You completed today\'s challenge! Join us tomorrow for the next one.'**
+  String get dailyChallengeReward;
 
   /// Error message when exercise fails to initialize
   ///
@@ -731,6 +779,12 @@ abstract class AppLocalizations {
   /// **'Serbian'**
   String get languageSerbian;
 
+  /// Hint on profile page that language change applies after save
+  ///
+  /// In en, this message translates to:
+  /// **'Language change is applied after you save changes.'**
+  String get profileLanguageSaveHint;
+
   /// Title for daily session flow
   ///
   /// In en, this message translates to:
@@ -743,23 +797,161 @@ abstract class AppLocalizations {
   /// **'Close'**
   String get close;
 
-  /// Title for selecting the initial onboarding exercise
+  /// First onboarding message - hook
   ///
   /// In en, this message translates to:
-  /// **'How would you like us to begin?'**
+  /// **'You have probably noticed how often people misunderstand each other.\n\nA daughter argues with her mother. We gossip about and reject colleagues. Political opponents do not even talk.\n\nDoes it have to be that way?'**
+  String get onboardingStoryHook;
+
+  /// Second onboarding message - skill explanation
+  ///
+  /// In en, this message translates to:
+  /// **'It does not.\n\nWe can understand others and help them understand us. But this is a skill we train like a muscle.\n\nResearch shows that people who practice these abilities resolve conflicts more easily and feel more connected to their people.'**
+  String get onboardingStorySkill;
+
+  /// Third onboarding message - daily habit
+  ///
+  /// In en, this message translates to:
+  /// **'Ten minutes a day.\n\nSometimes a short scenario where you practice understanding what someone else thinks and feels. Sometimes a reflection on your own day from the position of a wise observer.\n\nA small habit that gradually changes how you see people and how they see you.'**
+  String get onboardingStoryHabit;
+
+  /// Button to return to the previous onboarding story message
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get onboardingStoryBack;
+
+  /// Button to advance in onboarding story flow
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get onboardingStoryContinue;
+
+  /// Title for onboarding language selection screen
+  ///
+  /// In en, this message translates to:
+  /// **'Choose language'**
+  String get onboardingChooseLanguageTitle;
+
+  /// Title for about app section on profile page
+  ///
+  /// In en, this message translates to:
+  /// **'About app'**
+  String get aboutApp;
+
+  /// Item in About app section that opens onboarding story
+  ///
+  /// In en, this message translates to:
+  /// **'Intro story'**
+  String get onboardingStoryReferenceButton;
+
+  /// Title of screen that shows all onboarding story messages together
+  ///
+  /// In en, this message translates to:
+  /// **'Onboarding story'**
+  String get onboardingStoryReferenceTitle;
+
+  /// Short intro text above onboarding story article sections
+  ///
+  /// In en, this message translates to:
+  /// **'This is the intro story shown to users during their first app experience.'**
+  String get onboardingStoryReferenceIntro;
+
+  /// Section heading in onboarding story article
+  ///
+  /// In en, this message translates to:
+  /// **'Message {number}'**
+  String onboardingStorySectionTitle(int number);
+
+  /// Small label shown above onboarding hook choice title
+  ///
+  /// In en, this message translates to:
+  /// **'FIRST STEP'**
+  String get onboardingLabel;
+
+  /// Question for selecting the initial onboarding exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Now, let us try one exercise like that. Would you rather look at someone else\'s situation, or look at your own from someone else\'s perspective?'**
   String get onboardingHookChoiceTitle;
+
+  /// Option title for distanced journal onboarding choice
+  ///
+  /// In en, this message translates to:
+  /// **'Look at my own situation from another perspective'**
+  String get onboardingHookChoiceSelfTitle;
+
+  /// Option title for perspective scenario onboarding choice
+  ///
+  /// In en, this message translates to:
+  /// **'Look at someone else\'s situation'**
+  String get onboardingHookChoiceOthersTitle;
 
   /// Description for the seeing-yourself onboarding exercise
   ///
   /// In en, this message translates to:
-  /// **'You will reflect on one of your own experiences and write from a distance. This helps emotions settle and helps you see the situation more clearly.'**
+  /// **'Write about your own situation as a wise observer. This helps you step back and see yourself and your choices more clearly.'**
   String get onboardingDistancedJournalDescription;
 
   /// Description for the seeing-others onboarding exercise
   ///
   /// In en, this message translates to:
-  /// **'You will read one scenario and answer questions. Along the way, you will uncover hidden perspectives, which helps you better understand the people around you.'**
+  /// **'Go through a short scenario and try to understand what the other person thinks and feels.'**
   String get onboardingPerspectiveScenarioDescription;
+
+  /// Title for the profile delete account section
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get profileDeleteAccountTitle;
+
+  /// Helper text with link for account deletion info page
+  ///
+  /// In en, this message translates to:
+  /// **'Learn more: https://api.sagledaj.com/account-deletion'**
+  String get profileDeleteAccountLearnMore;
+
+  /// Delete account action label
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get profileDeleteAccountAction;
+
+  /// Cancel label in account deletion confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get profileDeleteAccountCancel;
+
+  /// Title of account deletion confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account?'**
+  String get profileDeleteAccountConfirmTitle;
+
+  /// Message of account deletion confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently delete your Sagledaj account and sign you out. This action cannot be undone.'**
+  String get profileDeleteAccountConfirmMessage;
+
+  /// Snackbar shown when account is deleted
+  ///
+  /// In en, this message translates to:
+  /// **'Account deleted.'**
+  String get profileDeleteAccountSuccess;
+
+  /// Snackbar shown when account deletion fails
+  ///
+  /// In en, this message translates to:
+  /// **'Could not delete account right now. Please try again.'**
+  String get profileDeleteAccountError;
+
+  /// Snackbar shown when learn more link cannot be opened
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open link.'**
+  String get profileDeleteAccountInfoOpenFailed;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

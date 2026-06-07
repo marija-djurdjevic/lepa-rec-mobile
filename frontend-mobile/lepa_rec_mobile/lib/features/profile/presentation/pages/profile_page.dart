@@ -1,21 +1,30 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/widgets/app_top_bar.dart';
+import '../../../auth/data/datasources/auth_local_datasource.dart';
 import '../../data/datasources/profile_remote_datasource.dart';
 import '../../data/dtos/profile_me_dto.dart';
+import 'onboarding_story_reference_page.dart';
 
 class ProfilePage extends StatefulWidget {
   final VoidCallback? onLogout;
   final ValueChanged<String> onLanguageChanged;
+  final ProfileRemoteDataSource? remoteDataSource;
+  final AuthLocalDataSource? authLocalDataSource;
+  final Future<bool> Function(Uri uri)? openExternalLink;
 
   const ProfilePage({
     super.key,
     this.onLogout,
     required this.onLanguageChanged,
+    this.remoteDataSource,
+    this.authLocalDataSource,
+    this.openExternalLink,
   });
 
   @override
@@ -23,12 +32,30 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final _remote = ProfileRemoteDataSource();
+  static const Color _primary = Color(0xFF6B9B6E);
+  static const Color _textPrimary = Color(0xFF3F4C45);
+  static const Color _textMuted = Color(0xFF6A776F);
+  static const Color _surfaceSoft = Color(0xFFF7FBF5);
+  static const Color _surfaceReadOnly = Color(0xFFEEF4EC);
+  static const Color _border = Color(0xFFD9E5D7);
+
+  static final Uri _accountDeletionInfoUri = Uri.parse(
+    'https://api.sagledaj.com/account-deletion',
+  );
+  static final Uri _privacyPolicyUri = Uri.parse(
+    'https://api.sagledaj.com/privacy',
+  );
+
+  late final ProfileRemoteDataSource _remote;
+  late final AuthLocalDataSource _authLocal;
+  late final Future<bool> Function(Uri uri) _openExternalLink;
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
 
   bool _loading = true;
   bool _saving = false;
+  bool _deletingAccount = false;
+  bool _isEditingPersonalInfo = false;
   String? _error;
   String? _success;
 
@@ -47,6 +74,11 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
+    _remote = widget.remoteDataSource ?? ProfileRemoteDataSource();
+    _authLocal = widget.authLocalDataSource ?? AuthLocalDataSource();
+    _openExternalLink =
+        widget.openExternalLink ??
+        ((uri) => launchUrl(uri, mode: LaunchMode.externalApplication));
     _loadProfile();
   }
 
@@ -75,9 +107,11 @@ class _ProfilePageState extends State<ProfilePage> {
       if (!mounted) return;
       setState(() {
         _loading = false;
-        _error = _extractError(e) ?? (Localizations.localeOf(context).languageCode == 'en'
-            ? 'Could not load profile.'
-            : 'Nismo uspjeli učitati profil.');
+        _error =
+            _extractError(e) ??
+            (Localizations.localeOf(context).languageCode == 'en'
+                ? 'Could not load profile.'
+                : 'Nismo uspjeli učitati profil.');
       });
     } catch (_) {
       if (!mounted) return;
@@ -96,14 +130,19 @@ class _ProfilePageState extends State<ProfilePage> {
     _email = me.email;
     _preferredLanguage = me.preferredLanguage == 'en' ? 'en' : 'sr';
     _notificationEnabled = me.notificationEnabled;
-    _timeZoneId = (me.timeZoneId == null || me.timeZoneId!.trim().isEmpty) ? 'Europe/Sarajevo' : me.timeZoneId;
-    _notificationTime = _parseTime(me.notificationTimeLocal) ?? const TimeOfDay(hour: 15, minute: 0);
+    _timeZoneId = (me.timeZoneId == null || me.timeZoneId!.trim().isEmpty)
+        ? 'Europe/Sarajevo'
+        : me.timeZoneId;
+    _notificationTime =
+        _parseTime(me.notificationTimeLocal) ??
+        const TimeOfDay(hour: 15, minute: 0);
     _initialFirstName = _firstNameController.text.trim();
     _initialLastName = _lastNameController.text.trim();
     _initialPreferredLanguage = _preferredLanguage;
     _initialNotificationEnabled = _notificationEnabled;
     _initialNotificationTime = _formatTime(_notificationTime);
     _initialTimeZoneId = _timeZoneId ?? 'Europe/Sarajevo';
+    _isEditingPersonalInfo = false;
   }
 
   TimeOfDay? _parseTime(String? value) {
@@ -142,7 +181,10 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _pickTime() async {
-    final picked = await showTimePicker(context: context, initialTime: _notificationTime);
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: _notificationTime,
+    );
     if (picked == null) return;
     setState(() {
       _notificationTime = picked;
@@ -177,8 +219,12 @@ class _ProfilePageState extends State<ProfilePage> {
         lastName: lastName,
         preferredLanguage: _preferredLanguage,
         notificationEnabled: _notificationEnabled,
-        notificationTimeLocal: _notificationEnabled ? _formatTime(_notificationTime) : null,
-        timeZoneId: _notificationEnabled ? (_timeZoneId ?? 'Europe/Sarajevo') : null,
+        notificationTimeLocal: _notificationEnabled
+            ? _formatTime(_notificationTime)
+            : null,
+        timeZoneId: _notificationEnabled
+            ? (_timeZoneId ?? 'Europe/Sarajevo')
+            : null,
       );
 
       _applyProfile(updated);
@@ -187,15 +233,19 @@ class _ProfilePageState extends State<ProfilePage> {
       if (!mounted) return;
       setState(() {
         _saving = false;
-        _success = Localizations.localeOf(context).languageCode == 'en' ? 'Saved.' : 'Sačuvano.';
+        _success = Localizations.localeOf(context).languageCode == 'en'
+            ? 'Saved.'
+            : 'Sačuvano.';
       });
     } on DioException catch (e) {
       if (!mounted) return;
       setState(() {
         _saving = false;
-        _error = _extractError(e) ?? (Localizations.localeOf(context).languageCode == 'en'
-            ? 'Could not save profile.'
-            : 'Nismo uspjeli sačuvati profil.');
+        _error =
+            _extractError(e) ??
+            (Localizations.localeOf(context).languageCode == 'en'
+                ? 'Could not save profile.'
+                : 'Nismo uspjeli sačuvati profil.');
       });
     } catch (_) {
       if (!mounted) return;
@@ -205,6 +255,105 @@ class _ProfilePageState extends State<ProfilePage> {
             ? 'Could not save profile.'
             : 'Nismo uspjeli sačuvati profil.';
       });
+    }
+  }
+
+  Future<void> _openDeletionInfo() async {
+    final opened = await _openExternalLink(_accountDeletionInfoUri);
+    if (!opened && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(context.l10n.profileDeleteAccountInfoOpenFailed),
+        ),
+      );
+    }
+  }
+
+  Future<void> _openPrivacyPolicy() async {
+    final opened = await _openExternalLink(_privacyPolicyUri);
+    if (!opened && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(context.l10n.profileDeleteAccountInfoOpenFailed),
+        ),
+      );
+    }
+  }
+
+  Future<void> _showDeleteConfirmationDialog() async {
+    if (_deletingAccount || _saving) return;
+    final confirmed =
+        await showDialog<bool>(
+          context: context,
+          builder: (dialogContext) {
+            return AlertDialog(
+              title: Text(context.l10n.profileDeleteAccountConfirmTitle),
+              content: Text(context.l10n.profileDeleteAccountConfirmMessage),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(false),
+                  child: Text(context.l10n.profileDeleteAccountCancel),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(true),
+                  child: Text(
+                    context.l10n.profileDeleteAccountAction,
+                    style: const TextStyle(color: Color(0xFFB00020)),
+                  ),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
+
+    if (!confirmed) return;
+    await _deleteAccount();
+  }
+
+  Future<void> _handleSignedOut() async {
+    await _authLocal.clearSession();
+    if (!mounted) return;
+    Navigator.of(context).pushNamedAndRemoveUntil('/login', (_) => false);
+  }
+
+  Future<void> _deleteAccount() async {
+    if (_deletingAccount) return;
+
+    setState(() {
+      _deletingAccount = true;
+      _error = null;
+      _success = null;
+    });
+
+    try {
+      await _remote.deleteAccount();
+      await _handleSignedOut();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.profileDeleteAccountSuccess)),
+      );
+    } on DioException catch (e) {
+      final statusCode = e.response?.statusCode;
+      if (statusCode == 401 || statusCode == 403) {
+        await _handleSignedOut();
+        return;
+      }
+      if (!mounted) return;
+      setState(() {
+        _deletingAccount = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.profileDeleteAccountError)),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _deletingAccount = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.profileDeleteAccountError)),
+      );
     }
   }
 
@@ -232,7 +381,12 @@ class _ProfilePageState extends State<ProfilePage> {
               child: RefreshIndicator(
                 onRefresh: _loadProfile,
                 child: ListView(
-                  padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.xl),
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.lg,
+                    AppSpacing.lg,
+                    AppSpacing.lg,
+                    AppSpacing.xl,
+                  ),
                   children: [
                     Container(
                       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -250,8 +404,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           Container(
                             width: 52,
                             height: 52,
-                            decoration: const BoxDecoration(color: Color(0xFF6B9B6E), shape: BoxShape.circle),
-                            child: const Icon(Icons.person, color: Colors.white),
+                            decoration: const BoxDecoration(
+                              color: Color(0xFF6B9B6E),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.person,
+                              color: Colors.white,
+                            ),
                           ),
                           const SizedBox(width: AppSpacing.md),
                           Expanded(
@@ -259,13 +419,17 @@ class _ProfilePageState extends State<ProfilePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  '${_firstNameController.text} ${_lastNameController.text}'.trim().isEmpty
-                                      ? (isEnglish ? 'Your profile' : 'Vaš profil')
+                                  '${_firstNameController.text} ${_lastNameController.text}'
+                                          .trim()
+                                          .isEmpty
+                                      ? (isEnglish
+                                            ? 'Your profile'
+                                            : 'Vaš profil')
                                       : '${_firstNameController.text} ${_lastNameController.text}',
                                   style: GoogleFonts.quicksand(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w700,
-                                    color: const Color(0xFF4E6650),
+                                    color: _textPrimary,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -274,7 +438,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   style: GoogleFonts.quicksand(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF6D806E),
+                                    color: _textMuted,
                                   ),
                                 ),
                               ],
@@ -286,11 +450,43 @@ class _ProfilePageState extends State<ProfilePage> {
                     const SizedBox(height: AppSpacing.lg),
                     _sectionCard(
                       title: isEnglish ? 'Personal info' : 'Lični podaci',
+                      trailing: IconButton(
+                        tooltip: isEnglish
+                            ? 'Edit personal info'
+                            : 'Izmeni lične podatke',
+                        onPressed: _saving
+                            ? null
+                            : () {
+                                setState(() {
+                                  _isEditingPersonalInfo =
+                                      !_isEditingPersonalInfo;
+                                  _success = null;
+                                  _error = null;
+                                });
+                                if (!_isEditingPersonalInfo) {
+                                  FocusScope.of(context).unfocus();
+                                }
+                              },
+                        icon: Icon(
+                          _isEditingPersonalInfo
+                              ? Icons.check_rounded
+                              : Icons.edit_outlined,
+                          color: _primary,
+                        ),
+                      ),
                       child: Column(
                         children: [
-                          _field(_firstNameController, isEnglish ? 'First name' : 'Ime'),
+                          _field(
+                            _firstNameController,
+                            isEnglish ? 'First name' : 'Ime',
+                            enabled: _isEditingPersonalInfo && !_saving,
+                          ),
                           const SizedBox(height: AppSpacing.md),
-                          _field(_lastNameController, isEnglish ? 'Last name' : 'Prezime'),
+                          _field(
+                            _lastNameController,
+                            isEnglish ? 'Last name' : 'Prezime',
+                            enabled: _isEditingPersonalInfo && !_saving,
+                          ),
                           const SizedBox(height: AppSpacing.md),
                           _readonlyField(label: 'Email', value: _email),
                         ],
@@ -306,8 +502,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             context.l10n.language,
                             style: GoogleFonts.quicksand(
                               fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                              color: const Color(0xFF4E6650),
+                              fontWeight: FontWeight.w600,
+                              color: _textMuted,
                             ),
                           ),
                           const SizedBox(height: AppSpacing.sm),
@@ -316,38 +512,49 @@ class _ProfilePageState extends State<ProfilePage> {
                           SwitchListTile.adaptive(
                             contentPadding: EdgeInsets.zero,
                             title: Text(
-                              isEnglish ? 'Enable reminders' : 'Uključi podsetnike',
+                              isEnglish
+                                  ? 'Enable reminders'
+                                  : 'Uključite podsetnike',
                               style: GoogleFonts.quicksand(
                                 fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xFF4E6650),
+                                fontWeight: FontWeight.w600,
+                                color: _textMuted,
                               ),
                             ),
                             value: _notificationEnabled,
                             onChanged: _saving
                                 ? null
                                 : (v) => setState(() {
-                                      _notificationEnabled = v;
-                                      _success = null;
-                                      _error = null;
-                                    }),
+                                    _notificationEnabled = v;
+                                    _success = null;
+                                    _error = null;
+                                  }),
                           ),
                           if (_notificationEnabled) ...[
                             OutlinedButton(
                               onPressed: _saving ? null : _pickTime,
                               style: OutlinedButton.styleFrom(
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                side: const BorderSide(color: Color(0xFFCFE1CD)),
-                                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.md),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                side: const BorderSide(
+                                  color: Color(0xFFCFE1CD),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.md,
+                                  vertical: AppSpacing.md,
+                                ),
                               ),
                               child: Row(
                                 children: [
                                   Text(
-                                    isEnglish ? 'Reminder time' : 'Vreme podsetnika',
+                                    isEnglish
+                                        ? 'Reminder time'
+                                        : 'Vreme podsetnika',
                                     style: GoogleFonts.quicksand(
                                       fontSize: 15,
-                                      fontWeight: FontWeight.w700,
-                                      color: const Color(0xFF4E6650),
+                                      fontWeight: FontWeight.w600,
+                                      color: _textMuted,
                                     ),
                                   ),
                                   const Spacer(),
@@ -355,8 +562,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                     _formatTime(_notificationTime),
                                     style: GoogleFonts.quicksand(
                                       fontSize: 15,
-                                      fontWeight: FontWeight.w700,
-                                      color: const Color(0xFF6B9B6E),
+                                      fontWeight: FontWeight.w600,
+                                      color: _textMuted,
                                     ),
                                   ),
                                 ],
@@ -367,13 +574,137 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.lg),
+                    _sectionCard(
+                      title: context.l10n.aboutApp,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextButton.icon(
+                            onPressed: _saving
+                                ? null
+                                : () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute<void>(
+                                        builder: (_) =>
+                                            const OnboardingStoryReferencePage(),
+                                      ),
+                                    );
+                                  },
+                            style: TextButton.styleFrom(
+                              foregroundColor: _textMuted,
+                              padding: EdgeInsets.zero,
+                              minimumSize: const Size(0, 36),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            icon: const Icon(Icons.menu_book_outlined, size: 18),
+                            label: Text(
+                              context.l10n.onboardingStoryReferenceButton,
+                              style: GoogleFonts.quicksand(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.xs),
+                          TextButton.icon(
+                            onPressed: _saving ? null : _openPrivacyPolicy,
+                            style: TextButton.styleFrom(
+                              foregroundColor: _textMuted,
+                              padding: EdgeInsets.zero,
+                              minimumSize: const Size(0, 36),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            icon: const Icon(Icons.privacy_tip_outlined, size: 18),
+                            label: Text(
+                              isEnglish ? 'Privacy Policy' : 'Politika privatnosti',
+                              style: GoogleFonts.quicksand(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    _sectionCard(
+                      title: context.l10n.profileDeleteAccountTitle,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: TextButton(
+                              onPressed: (_saving || _deletingAccount)
+                                  ? null
+                                  : _openDeletionInfo,
+                              style: TextButton.styleFrom(
+                                foregroundColor: _textMuted,
+                                padding: EdgeInsets.zero,
+                                minimumSize: const Size(0, 36),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              child: Text(
+                                context.l10n.profileDeleteAccountLearnMore,
+                                style: GoogleFonts.quicksand(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          SizedBox(
+                            height: 50,
+                            child: OutlinedButton(
+                              onPressed: (_saving || _deletingAccount)
+                                  ? null
+                                  : _showDeleteConfirmationDialog,
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(
+                                  color: _primary,
+                                  width: 1.2,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: _deletingAccount
+                                  ? const SizedBox(
+                                      width: 18,
+                                      height: 18,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              _primary,
+                                            ),
+                                      ),
+                                    )
+                                  : Text(
+                                      context.l10n.profileDeleteAccountAction,
+                                      style: GoogleFonts.quicksand(
+                                        color: _primary,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
                     if (_error != null)
                       Padding(
                         padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                         child: Text(
                           _error!,
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.quicksand(color: Colors.red, fontWeight: FontWeight.w600),
+                          style: GoogleFonts.quicksand(
+                            color: const Color(0xFFB00020),
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     if (_success != null)
@@ -382,17 +713,22 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: Text(
                           _success!,
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.quicksand(color: const Color(0xFF2E7D32), fontWeight: FontWeight.w700),
+                          style: GoogleFonts.quicksand(
+                            color: _primary,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     if (_hasChanges)
                       Padding(
                         padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                         child: Text(
-                          isEnglish ? 'You have unsaved changes.' : 'Imate nesačuvane izmene.',
+                          isEnglish
+                              ? 'You have unsaved changes.'
+                              : 'Imate nesačuvane izmene.',
                           textAlign: TextAlign.center,
                           style: GoogleFonts.quicksand(
-                            color: const Color(0xFF6D806E),
+                            color: _textMuted,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -402,15 +738,20 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: ElevatedButton(
                         onPressed: (_saving || !_hasChanges) ? null : _save,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF6B9B6E),
+                          backgroundColor: _primary,
                           foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
                         ),
                         child: Text(
                           _saving
                               ? (isEnglish ? 'Saving...' : 'Čuvanje...')
-                              : (isEnglish ? 'Save changes' : 'Sačuvaj izmene'),
-                          style: GoogleFonts.quicksand(fontSize: 17, fontWeight: FontWeight.w700),
+                              : (isEnglish ? 'Save changes' : 'Sačuvajte izmene'),
+                          style: GoogleFonts.quicksand(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ),
@@ -418,15 +759,19 @@ class _ProfilePageState extends State<ProfilePage> {
                     SizedBox(
                       height: 50,
                       child: OutlinedButton(
-                        onPressed: _saving ? null : widget.onLogout,
+                        onPressed: (_saving || _deletingAccount)
+                            ? null
+                            : widget.onLogout,
                         style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: Color(0xFF6B9B6E), width: 1.3),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          side: const BorderSide(color: _primary, width: 1.3),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                         child: Text(
                           context.l10n.logout,
                           style: GoogleFonts.quicksand(
-                            color: const Color(0xFF6B9B6E),
+                            color: _primary,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -446,27 +791,42 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _sectionCard({required String title, required Widget child}) {
+  Widget _sectionCard({
+    required String title,
+    required Widget child,
+    Widget? trailing,
+  }) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE0EADF)),
+        border: Border.all(color: _border),
         boxShadow: const [
-          BoxShadow(color: Color(0x12000000), blurRadius: 8, offset: Offset(0, 3)),
+          BoxShadow(
+            color: Color(0x12000000),
+            blurRadius: 8,
+            offset: Offset(0, 3),
+          ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: GoogleFonts.quicksand(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF6B9B6E),
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: GoogleFonts.quicksand(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: _primary,
+                  ),
+                ),
+              ),
+              if (trailing != null) trailing,
+            ],
           ),
           const SizedBox(height: AppSpacing.md),
           child,
@@ -475,26 +835,40 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _field(TextEditingController controller, String label) {
+  Widget _field(
+    TextEditingController controller,
+    String label, {
+    bool enabled = true,
+  }) {
     return TextField(
       controller: controller,
-      enabled: !_saving,
-      onChanged: (_) => setState(() {
-        _success = null;
-        _error = null;
-      }),
+      enabled: enabled,
+      readOnly: !enabled,
+      onChanged: enabled
+          ? (_) => setState(() {
+              _success = null;
+              _error = null;
+            })
+          : null,
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: const Color(0xFFF7FBF5),
-        labelStyle: GoogleFonts.quicksand(color: const Color(0xFF7C917C), fontWeight: FontWeight.w600),
+        fillColor: enabled ? _surfaceSoft : _surfaceReadOnly,
+        labelStyle: GoogleFonts.quicksand(
+          color: _textMuted,
+          fontWeight: FontWeight.w600,
+        ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFD9E5D7)),
+          borderSide: const BorderSide(color: _border),
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: _border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFA9C2A8), width: 1.4),
+          borderSide: const BorderSide(color: _primary, width: 1.4),
         ),
       ),
     );
@@ -505,17 +879,20 @@ class _ProfilePageState extends State<ProfilePage> {
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: const Color(0xFFEEF4EC),
-        labelStyle: GoogleFonts.quicksand(color: const Color(0xFF7C917C), fontWeight: FontWeight.w600),
+        fillColor: _surfaceReadOnly,
+        labelStyle: GoogleFonts.quicksand(
+          color: _textMuted,
+          fontWeight: FontWeight.w600,
+        ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFD9E5D7)),
+          borderSide: const BorderSide(color: _border),
         ),
       ),
       child: Text(
         value,
         style: GoogleFonts.quicksand(
-          color: const Color(0xFF5B6D5C),
+          color: _textPrimary,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -523,88 +900,56 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _languageSwitcher() {
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: const Color(0xFF6B9B6E).withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF6B9B6E).withValues(alpha: 0.45), width: 1.2),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: _LanguageOption(
-              label: context.l10n.languageSerbian,
-              isSelected: _preferredLanguage == 'sr',
-              onTap: () {
-                if (_preferredLanguage == 'sr' || _saving) return;
-                setState(() {
-                  _preferredLanguage = 'sr';
-                  _success = null;
-                  _error = null;
-                });
-                widget.onLanguageChanged('sr');
-              },
-            ),
-          ),
-          const SizedBox(width: 6),
-          Expanded(
-            child: _LanguageOption(
-              label: context.l10n.languageEnglish,
-              isSelected: _preferredLanguage == 'en',
-              onTap: () {
-                if (_preferredLanguage == 'en' || _saving) return;
-                setState(() {
-                  _preferredLanguage = 'en';
-                  _success = null;
-                  _error = null;
-                });
-                widget.onLanguageChanged('en');
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _LanguageOption extends StatelessWidget {
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _LanguageOption({
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(10),
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        curve: Curves.easeOut,
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF6B9B6E) : Colors.transparent,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: isSelected ? const Color(0xFF6B9B6E) : const Color(0xFF6B9B6E).withValues(alpha: 0.45),
-          ),
+    return DropdownButtonFormField<String>(
+      value: _preferredLanguage,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: _surfaceSoft,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
         ),
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-            color: isSelected ? Colors.white : const Color(0xFF6B9B6E),
-          ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: _border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: _primary, width: 1.4),
         ),
       ),
+      items: [
+        DropdownMenuItem(
+          value: 'sr',
+          child: Text(
+            context.l10n.languageSerbian,
+            style: GoogleFonts.quicksand(
+              fontWeight: FontWeight.w600,
+              color: _textMuted,
+            ),
+          ),
+        ),
+        DropdownMenuItem(
+          value: 'en',
+          child: Text(
+            context.l10n.languageEnglish,
+            style: GoogleFonts.quicksand(
+              fontWeight: FontWeight.w600,
+              color: _textMuted,
+            ),
+          ),
+        ),
+      ],
+      onChanged: _saving
+          ? null
+          : (value) {
+              if (value == null || value == _preferredLanguage) return;
+              setState(() {
+                _preferredLanguage = value;
+                _success = null;
+                _error = null;
+              });
+            },
     );
   }
 }

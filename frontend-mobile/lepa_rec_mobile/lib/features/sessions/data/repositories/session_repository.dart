@@ -29,8 +29,10 @@ class SessionRepository {
   Future<void> completePrimerWithData(CompletePrimerDto primerData) =>
       _remote.completePrimerWithData(primerData);
 
-  Future<DailySessionStateDto> recordExercise(String exerciseName) =>
-      _remote.recordExercise(exerciseName);
+  Future<DailySessionStateDto> recordExercise({
+    required String exerciseId,
+    required String type,
+  }) => _remote.recordExercise(exerciseId: exerciseId, type: type);
 
   Future<DailySessionStateDto> completeSession() => _remote.completeSession();
 
@@ -41,10 +43,12 @@ class SessionRepository {
   Future<GrowthMessageDto> getRandomGrowthMessage({
     GrowthMessageType? type,
     String? selectedStatementId,
+    List<String>? developedSkillIds,
     String? lang,
   }) => _remote.getRandomGrowthMessage(
     type: type,
     selectedStatementId: selectedStatementId,
+    developedSkillIds: developedSkillIds,
     lang: lang,
   );
 

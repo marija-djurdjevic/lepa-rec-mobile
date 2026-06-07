@@ -45,15 +45,32 @@ class HistoryRepository {
       (a, b) => b.submittedAt.compareTo(a.submittedAt),
     );
 
+    final dedupedHistoryItems = _dedupeByExerciseId(historyItems);
+
     debugPrint(
       '[History][Repo] journalRaw=${journalExercises.length} '
       'journalCompleted=${journalExercises.where((e) => e.isCompleted).length} '
       'scenarioRaw=${scenarioExercises.length} '
       'scenarioCompleted=${scenarioExercises.where((e) => e.isCompleted).length} '
-      'mergedItems=${historyItems.length}',
+      'mergedItems=${historyItems.length} '
+      'dedupedItems=${dedupedHistoryItems.length}',
     );
 
-    return historyItems;
+    return dedupedHistoryItems;
+  }
+
+  List<HistoryItem> _dedupeByExerciseId(List<HistoryItem> items) {
+    final byKey = <String, HistoryItem>{};
+    for (final item in items) {
+      final key = '${item.type}:${item.exerciseId}';
+      final existing = byKey[key];
+      if (existing == null || item.submittedAt.isAfter(existing.submittedAt)) {
+        byKey[key] = item;
+      }
+    }
+    final result = byKey.values.toList()
+      ..sort((a, b) => b.submittedAt.compareTo(a.submittedAt));
+    return result;
   }
 
   Future<_ChallengeBundle> _getChallenges(String lang) async {
@@ -112,16 +129,33 @@ class HistoryRepository {
               exerciseId: exercise.id,
               challengeId: exercise.challengeId,
               submittedAt: submittedAt,
-              promptText: challenge?.content ?? 'Prompt unavailable',
-              followUpPrompt: challenge?.followUpQuestion,
+              promptText: _composeHistoryPrompt(challenge),
+              followUpPrompt: challenge?.followUpPromptText(),
               mainAnswer: exercise.mainAnswer,
               followUpAnswer: exercise.followUpAnswer,
               reflection: exercise.reflection,
+              reflectionQuestion: _extractReflectionQuestion(challenge),
               photoUrls: exercise.photoUrls,
             );
           },
         )
         .toList();
+  }
+
+  String? _extractReflectionQuestion(DistancedJournalChallengeDto? challenge) {
+    return challenge?.reflectionPromptText();
+  }
+
+  String _composeHistoryPrompt(DistancedJournalChallengeDto? challenge) {
+    if (challenge == null) return 'Prompt unavailable';
+    final content = challenge.content.trim();
+    final opening = challenge.openingPromptText().trim();
+    if (content.isNotEmpty && opening.isNotEmpty && content != opening) {
+      return '$content\n\n$opening';
+    }
+    if (content.isNotEmpty) return content;
+    if (opening.isNotEmpty) return opening;
+    return 'Prompt unavailable';
   }
 
   List<HistoryItem> _mapScenarioHistory(
