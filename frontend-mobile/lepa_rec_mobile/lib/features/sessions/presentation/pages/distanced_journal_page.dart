@@ -12,7 +12,6 @@ import '../../data/dtos/start_distanced_journal_exercise_dto.dart';
 import '../../data/dtos/submit_distanced_journal_answer_dto.dart';
 import '../../data/repositories/session_repository.dart';
 import 'end_growth_message_page.dart';
-import 'journal_feedback_page.dart';
 
 class DistancedJournalPage extends StatefulWidget {
   final DistancedJournalChallengeDto challenge;
@@ -24,7 +23,11 @@ class DistancedJournalPage extends StatefulWidget {
 }
 
 class _DistancedJournalPageState extends State<DistancedJournalPage> {
-  static const double _answerBoxHeight = 360;
+  static const int _maxPickedImageWidth = 1600;
+  static const int _maxPickedImageHeight = 1600;
+  static const int _pickedImageQuality = 75;
+  static const int _maxTotalUploadBytes = 17 * 1000 * 1000;
+
   late final TextEditingController _mainAnswerController;
   late final TextEditingController _followUpAnswerController;
   late final SessionRepository _sessionRepository;
@@ -36,18 +39,24 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
   bool _showValidationErrors = false;
   bool _isSubmitting = false;
   bool _showFollowUpQuestion = false;
+  bool _mainHasText = false;
+  bool _followUpHasText = false;
 
   @override
   void initState() {
     super.initState();
     _mainAnswerController = TextEditingController();
     _followUpAnswerController = TextEditingController();
+    _mainAnswerController.addListener(_onMainAnswerChanged);
+    _followUpAnswerController.addListener(_onFollowUpAnswerChanged);
     _sessionRepository = SessionRepository();
     _scrollController = ScrollController();
   }
 
   @override
   void dispose() {
+    _mainAnswerController.removeListener(_onMainAnswerChanged);
+    _followUpAnswerController.removeListener(_onFollowUpAnswerChanged);
     _mainAnswerController.dispose();
     _followUpAnswerController.dispose();
     _scrollController.dispose();
@@ -55,12 +64,10 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
   }
 
   bool get _hasTextInput =>
-      _mainAnswerController.text.trim().isNotEmpty ||
-      _followUpAnswerController.text.trim().isNotEmpty;
+      _mainHasText || _followUpHasText;
 
   bool get _isTextComplete =>
-      _mainAnswerController.text.trim().isNotEmpty &&
-      _followUpAnswerController.text.trim().isNotEmpty;
+      _mainHasText && _followUpHasText;
 
   bool get _hasPhotos => _mainPhotos.isNotEmpty || _followUpPhotos.isNotEmpty;
 
@@ -68,13 +75,35 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
 
   bool get _hasAnyResponse => _hasTextInput || _hasPhotos;
 
+  void _onMainAnswerChanged() {
+    final hasText = _mainAnswerController.text.trim().isNotEmpty;
+    if (hasText == _mainHasText) return;
+    if (!mounted) return;
+    setState(() {
+      _mainHasText = hasText;
+    });
+  }
+
+  void _onFollowUpAnswerChanged() {
+    final hasText = _followUpAnswerController.text.trim().isNotEmpty;
+    if (hasText == _followUpHasText) return;
+    if (!mounted) return;
+    setState(() {
+      _followUpHasText = hasText;
+    });
+  }
+
   Future<void> _pickPhotos(_PhotoAnchor anchor) async {
     if (_totalPhotoCount >= 3) {
       _showPhotoLimitMessage();
       return;
     }
 
-    final picked = await _imagePicker.pickMultiImage();
+    final picked = await _imagePicker.pickMultiImage(
+      maxWidth: _maxPickedImageWidth.toDouble(),
+      maxHeight: _maxPickedImageHeight.toDouble(),
+      imageQuality: _pickedImageQuality,
+    );
     if (picked.isEmpty) return;
 
     setState(() {
@@ -96,7 +125,12 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
       return;
     }
 
-    final picked = await _imagePicker.pickImage(source: ImageSource.camera);
+    final picked = await _imagePicker.pickImage(
+      source: ImageSource.camera,
+      maxWidth: _maxPickedImageWidth.toDouble(),
+      maxHeight: _maxPickedImageHeight.toDouble(),
+      imageQuality: _pickedImageQuality,
+    );
     if (picked == null) return;
 
     setState(() {
@@ -177,6 +211,19 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
       return;
     }
 
+    if (hasPhotos) {
+      final totalUploadBytes = await _selectedPhotoBytes();
+      debugPrint(
+        '[DistancedJournal] Selected photo bytes=$totalUploadBytes '
+        'limit=$_maxTotalUploadBytes',
+      );
+      if (totalUploadBytes > _maxTotalUploadBytes) {
+        if (!mounted) return;
+        _showUploadTooLargeMessage();
+        return;
+      }
+    }
+
     setState(() {
       _isSubmitting = true;
     });
@@ -188,7 +235,10 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
 
       debugPrint('[DistancedJournal] Starting exercise');
       final startedExercise = await _sessionRepository
-          .startDistancedJournalExercise(startRequest);
+          .startDistancedJournalExercise(
+            startRequest,
+            _currentPracticeLang(),
+          );
       debugPrint(
         '[DistancedJournal] Started exercise id=${startedExercise.id}',
       );
@@ -212,6 +262,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                 ..._mainPhotos.map((photo) => photo.path),
                 ..._followUpPhotos.map((photo) => photo.path),
               ],
+              lang: _currentPracticeLang(),
             )
           : await _sessionRepository.submitDistancedJournalAnswer(
               SubmitDistancedJournalAnswerDto(
@@ -221,13 +272,31 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                 followUpAnswer: _followUpAnswerController.text.trim(),
                 reflection: null,
               ),
+              _currentPracticeLang(),
             );
       debugPrint(
         '[DistancedJournal] Submit completed feedbackType='
         '${submitResult.feedbackType ?? 'null'}',
       );
+      final completedExerciseId = submitResult.exercise.id.trim().isNotEmpty
+          ? submitResult.exercise.id
+          : startedExercise.id;
+      try {
+        await _sessionRepository.recordExercise(
+          exerciseId: completedExerciseId,
+          type: 'DistancedJournal',
+        );
+      } catch (e) {
+        debugPrint('[DistancedJournal] recordExercise failed: $e');
+      }
 
       if (!mounted) return;
+
+      final challengeSkillId = widget.challenge.skillId?.trim();
+      final developedSkillIds =
+          challengeSkillId != null && challengeSkillId.isNotEmpty
+          ? [challengeSkillId]
+          : const <String>[];
 
       final messageCompleted = await Navigator.push<bool>(
         context,
@@ -235,19 +304,21 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
           builder: (context) =>
               EndGrowthMessagePage(
                 onComplete: () => Navigator.pop(context, true),
+                developedSkillIds: developedSkillIds,
               ),
         ),
       );
 
       if (!mounted) return;
 
-      if (messageCompleted == true) {
-        Navigator.pop(context, true);
-      } else {
-        setState(() {
-          _isSubmitting = false;
-        });
+      if (messageCompleted != true) {
+        debugPrint(
+          '[DistancedJournal] Growth message dismissed before completion, '
+          'returning success because journal is already submitted.',
+        );
       }
+
+      Navigator.pop(context, true);
     } on DioException catch (e) {
       if (!mounted) return;
 
@@ -261,9 +332,13 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
         _isSubmitting = false;
       });
 
+      final errorMessage = e.response?.statusCode == 413
+          ? 'The selected photos are too large to upload together. Please try smaller photos or fewer photos.'
+          : context.l10n.errorSubmittingResponse(e.toString());
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(context.l10n.errorSubmittingResponse(e.toString())),
+          content: Text(errorMessage),
           backgroundColor: Colors.red[600],
         ),
       );
@@ -304,11 +379,12 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          controller: _scrollController,
-          child: Padding(
+      body: ScrollNotificationObserver(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            controller: _scrollController,
+            child: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.lg,
               vertical: AppSpacing.lg,
@@ -332,11 +408,23 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      if (_challengeContentText.isNotEmpty) ...[
+                        Text(
+                          _challengeContentText,
+                          style: GoogleFonts.quicksand(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey[600],
+                            height: 1.4,
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                      ],
                       Text(
-                        widget.challenge.content,
+                        _openingPromptText,
                         style: GoogleFonts.quicksand(
                           fontSize: 15,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
                           color: Colors.grey[600],
                           height: 1.4,
                         ),
@@ -391,19 +479,17 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                       ),
                     ],
                   ),
-                  child: SizedBox(
-                    height: _answerBoxHeight,
-                    child: _buildTextInputField(
-                      controller: _mainAnswerController,
-                      hintText: context.l10n.shareYourThoughts,
-                      isError:
-                          _showValidationErrors &&
-                          _hasTextInput &&
-                          _mainAnswerController.text.trim().isEmpty,
-                      showPhotoPicker: true,
-                      photoThumbnails: _mainPhotos,
-                      expands: true,
-                    ),
+                  child: _buildTextInputField(
+                    controller: _mainAnswerController,
+                    hintText: context.l10n.shareYourThoughts,
+                    isError:
+                        _showValidationErrors &&
+                        _hasTextInput &&
+                        _mainAnswerController.text.trim().isEmpty,
+                    showPhotoPicker: true,
+                    photoThumbnails: _mainPhotos,
+                    minLines: 10,
+                    maxLines: null,
                   ),
                 ),
                 if (_showValidationErrors && !_hasAnyResponse)
@@ -455,7 +541,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                 if (_showFollowUpQuestion) ...[
                   const SizedBox(height: AppSpacing.lg),
                   Text(
-                    widget.challenge.followUpQuestion,
+                    _followUpPromptText,
                     style: GoogleFonts.quicksand(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
@@ -475,19 +561,17 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                         ),
                       ],
                     ),
-                    child: SizedBox(
-                      height: _answerBoxHeight,
-                      child: _buildTextInputField(
-                        controller: _followUpAnswerController,
-                        hintText: context.l10n.shareYourThoughts,
-                        isError:
-                            _showValidationErrors &&
-                            _hasTextInput &&
-                            _followUpAnswerController.text.trim().isEmpty,
-                        showPhotoPicker: true,
-                        photoThumbnails: _followUpPhotos,
-                        expands: true,
-                      ),
+                    child: _buildTextInputField(
+                      controller: _followUpAnswerController,
+                      hintText: context.l10n.shareYourThoughts,
+                      isError:
+                          _showValidationErrors &&
+                          _hasTextInput &&
+                          _followUpAnswerController.text.trim().isEmpty,
+                      showPhotoPicker: true,
+                      photoThumbnails: _followUpPhotos,
+                      minLines: 10,
+                      maxLines: null,
                     ),
                   ),
                   if (_showValidationErrors &&
@@ -539,6 +623,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                 ],
               ],
             ),
+            ),
           ),
         ),
       ),
@@ -563,6 +648,29 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
     );
   }
 
+  void _showUploadTooLargeMessage() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text(
+          'Selected photos are too large to upload together. Please choose smaller photos or fewer photos.',
+        ),
+        backgroundColor: Colors.red[600],
+      ),
+    );
+  }
+
+  Future<int> _selectedPhotoBytes() async {
+    var total = 0;
+    for (final photo in [..._mainPhotos, ..._followUpPhotos]) {
+      try {
+        total += await File(photo.path).length();
+      } catch (_) {
+        // Ignore missing/unreadable files here; the upload path will surface it.
+      }
+    }
+    return total;
+  }
+
   Widget _buildTextInputField({
     required TextEditingController controller,
     required String hintText,
@@ -571,7 +679,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
     List<XFile> photoThumbnails = const [],
     bool expands = false,
     int minLines = 10,
-    int maxLines = 10,
+    int? maxLines = 10,
   }) {
     final bool showThumbnails = photoThumbnails.isNotEmpty;
     const double thumbnailSize = 80;
@@ -589,9 +697,6 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
       enabled: !_isSubmitting,
       onChanged: (_) {
         if (_showValidationErrors) {
-          setState(() {});
-        }
-        if (controller == _mainAnswerController) {
           setState(() {});
         }
       },
@@ -804,6 +909,22 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
         curve: Curves.easeOutCubic,
       );
     });
+  }
+
+  String _currentPracticeLang() {
+    return Localizations.localeOf(context).languageCode == 'en' ? 'en' : 'sr';
+  }
+
+  String get _openingPromptText {
+    return widget.challenge.openingPromptText();
+  }
+
+  String get _challengeContentText {
+    return widget.challenge.content.trim();
+  }
+
+  String get _followUpPromptText {
+    return widget.challenge.followUpPromptText();
   }
 }
 

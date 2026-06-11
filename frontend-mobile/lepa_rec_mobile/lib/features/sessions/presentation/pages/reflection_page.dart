@@ -4,10 +4,12 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/config/api_environment.dart';
 import '../../data/dtos/today_practice_task_dto.dart';
 import '../../data/dtos/submit_reflection_answer_dto.dart';
 import '../../data/repositories/session_repository.dart';
 import 'end_growth_message_page.dart';
+import '../../../auth/data/datasources/auth_local_datasource.dart';
 
 class ReflectionPage extends StatefulWidget {
   final DistancedJournalReflectionPromptDto reflectionPrompt;
@@ -86,7 +88,18 @@ class _ReflectionPageState extends State<ReflectionPage> {
         reflection: _reflectionController.text.trim(),
       );
 
-      await _sessionRepository.submitReflectionAnswer(submitRequest);
+      await _sessionRepository.submitReflectionAnswer(
+        submitRequest,
+        _currentPracticeLang(),
+      );
+      try {
+        await _sessionRepository.recordExercise(
+          exerciseId: widget.reflectionPrompt.exerciseId,
+          type: 'DistancedJournalReflection',
+        );
+      } catch (e) {
+        debugPrint('[Reflection] recordExercise failed: $e');
+      }
 
       if (!mounted) return;
 
@@ -183,85 +196,24 @@ class _ReflectionPageState extends State<ReflectionPage> {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.md),
-
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF2F4F0).withValues(alpha: 0.75),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: const Color(0xFF6B9B6E).withValues(alpha: 0.18),
-                      width: 1.2,
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.reflectionPrompt.challengeContent,
-                        style: GoogleFonts.quicksand(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey[600],
-                          height: 1.4,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      Text(
-                        widget.reflectionPrompt.challengeFollowUpQuestion,
-                        style: GoogleFonts.quicksand(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey[600],
-                          height: 1.4,
-                        ),
-                      ),
-                    ],
-                  ),
+                _buildPromptCard(_promptParts.contextText),
+                const SizedBox(height: AppSpacing.md),
+                _buildQuestionAnswerCard(
+                  questionText: _openingQuestionText,
+                  answerText: widget.reflectionPrompt.previousMainAnswer,
+                  showQuestion: true,
                 ),
-                const SizedBox(height: AppSpacing.lg),
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF2F4F0).withValues(alpha: 0.75),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: const Color(0xFF6B9B6E).withValues(alpha: 0.18),
-                      width: 1.2,
-                    ),
+                if (_followUpQuestionText.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.md),
+                  _buildQuestionAnswerCard(
+                    questionText: _followUpQuestionText,
+                    answerText: widget.reflectionPrompt.previousFollowUpAnswer,
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.reflectionPrompt.previousMainAnswer ?? '',
-                        style: GoogleFonts.quicksand(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey[600],
-                          height: 1.4,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      Text(
-                        widget.reflectionPrompt.previousFollowUpAnswer ?? '',
-                        style: GoogleFonts.quicksand(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey[600],
-                          height: 1.4,
-                        ),
-                      ),
-                      if (widget.reflectionPrompt.previousPhotoUrls.isNotEmpty)
-                        ...[
-                          const SizedBox(height: AppSpacing.md),
-                          _buildPhotoGallery(
-                            widget.reflectionPrompt.previousPhotoUrls,
-                          ),
-                        ],
-                    ],
-                  ),
-                ),
+                ],
+                if (widget.reflectionPrompt.previousPhotoUrls.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.md),
+                  _buildPhotoCard(widget.reflectionPrompt.previousPhotoUrls),
+                ],
                 const SizedBox(height: AppSpacing.xl),
 
                 Container(
@@ -279,7 +231,7 @@ class _ReflectionPageState extends State<ReflectionPage> {
                     ),
                   ),
                   child: Text(
-                    context.l10n.reflectionFreshQuestion,
+                    _reflectionPromptText,
                     style: GoogleFonts.quicksand(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
@@ -440,23 +392,390 @@ class _ReflectionPageState extends State<ReflectionPage> {
   }
 
   Widget _buildPhotoGallery(List<String> urls) {
-    return Wrap(
-      spacing: AppSpacing.sm,
-      runSpacing: AppSpacing.sm,
-      children: [
-        for (final url in urls)
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: SizedBox(
-              width: 92,
-              height: 92,
-              child: Image.network(
-                url,
-                fit: BoxFit.cover,
+    return FutureBuilder<String?>(
+      future: AuthLocalDataSource().readAccessToken(),
+      builder: (context, snapshot) {
+        final token = snapshot.data;
+        final headers = token != null && token.isNotEmpty
+            ? <String, String>{'Authorization': 'Bearer $token'}
+            : null;
+
+        return Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: [
+            for (final entry in urls.asMap().entries)
+              GestureDetector(
+                onTap: () => _openPhotoViewer(
+                  context,
+                  urls,
+                  entry.key,
+                  headers,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: SizedBox(
+                    width: 92,
+                    height: 92,
+                    child: Image.network(
+                      _resolvePhotoUrl(entry.value),
+                      fit: BoxFit.cover,
+                      headers: headers,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: const Color(0xFFE8ECE6),
+                          alignment: Alignment.center,
+                          child: const Icon(
+                            Icons.broken_image_outlined,
+                            size: 20,
+                            color: Color(0xFF9AA79A),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-      ],
+          ],
+        );
+      },
     );
   }
+
+  String _resolvePhotoUrl(String rawUrl) {
+    final trimmed = rawUrl.trim();
+    if (trimmed.isEmpty) return trimmed;
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      return trimmed;
+    }
+
+    final base = Uri.parse(ApiEnvironment.baseUrl);
+    final origin =
+        '${base.scheme}://${base.host}${base.hasPort ? ':${base.port}' : ''}';
+    if (trimmed.startsWith('/')) {
+      return '$origin$trimmed';
+    }
+    return '$origin/$trimmed';
+  }
+
+  void _openPhotoViewer(
+    BuildContext context,
+    List<String> urls,
+    int initialIndex,
+    Map<String, String>? headers,
+  ) {
+    final resolvedUrls = urls.map(_resolvePhotoUrl).toList();
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => _PhotoViewerPage(
+          urls: resolvedUrls,
+          initialIndex: initialIndex,
+          headers: headers,
+        ),
+      ),
+    );
+  }
+
+  String _currentPracticeLang() {
+    return Localizations.localeOf(context).languageCode == 'en' ? 'en' : 'sr';
+  }
+
+  Widget _buildPromptCard(String text) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE7F2E3),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: const Color(0xFF6B9B6E).withValues(alpha: 0.28),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 14,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Text(
+        text.trim(),
+        style: GoogleFonts.quicksand(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: const Color(0xFF3E5A42),
+          height: 1.45,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuestionAnswerCard({
+    required String questionText,
+    required String? answerText,
+    bool showQuestion = true,
+  }) {
+    final resolvedQuestion = questionText.trim().isEmpty
+        ? _questionUnavailableLabel
+        : questionText.trim();
+    final resolvedAnswer = answerText?.trim();
+    final hasAnswer = resolvedAnswer != null && resolvedAnswer.isNotEmpty;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.92),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: const Color(0xFFDCE8D8),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.045),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (showQuestion) ...[
+            Text(
+              resolvedQuestion,
+              style: GoogleFonts.quicksand(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: const Color(0xFF485348),
+                height: 1.35,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+          ],
+          Text(
+            hasAnswer ? resolvedAnswer : _answerUnavailableLabel,
+            style: GoogleFonts.quicksand(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: const Color(0xFF485348),
+              height: 1.45,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPhotoCard(List<String> urls) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.92),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: const Color(0xFFDCE8D8),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.045),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: _buildPhotoGallery(urls),
+    );
+  }
+
+  String get _reflectionPromptText {
+    final prompt = widget.reflectionPrompt.reflectionQuestion?.trim();
+    if (prompt != null && prompt.isNotEmpty) return prompt;
+    return context.l10n.reflectionFreshQuestion;
+  }
+
+  _PromptParts get _promptParts {
+    final text = widget.reflectionPrompt.challengeContent.trim();
+    return _PromptParts(contextText: text, questionText: '');
+  }
+
+  String get _openingQuestionText {
+    final explicit = widget.reflectionPrompt.openingQuestion.trim();
+    if (explicit.isNotEmpty) return explicit;
+    final fallback = widget.reflectionPrompt.challengeContent.trim();
+    if (fallback.isNotEmpty) return fallback;
+    return _questionUnavailableLabel;
+  }
+
+  String get _followUpQuestionText {
+    final explicit = widget.reflectionPrompt.followUpQuestion.trim();
+    if (explicit.isNotEmpty) return explicit;
+
+    final legacy = widget.reflectionPrompt.challengeFollowUpQuestion.trim();
+    if (legacy.isNotEmpty) return legacy;
+
+    return '';
+  }
+
+  String get _answerUnavailableLabel {
+    return Localizations.localeOf(context).languageCode == 'en'
+        ? 'Answer unavailable'
+        : 'Odgovor nije dostupan';
+  }
+
+  String get _questionUnavailableLabel {
+    return Localizations.localeOf(context).languageCode == 'en'
+        ? 'Question unavailable'
+        : 'Pitanje nije dostupno';
+  }
+}
+
+class _PhotoViewerPage extends StatefulWidget {
+  final List<String> urls;
+  final int initialIndex;
+  final Map<String, String>? headers;
+
+  const _PhotoViewerPage({
+    required this.urls,
+    required this.initialIndex,
+    required this.headers,
+  });
+
+  @override
+  State<_PhotoViewerPage> createState() => _PhotoViewerPageState();
+}
+
+class _PhotoViewerPageState extends State<_PhotoViewerPage> {
+  late final PageController _controller;
+  int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+    _controller = PageController(initialPage: widget.initialIndex);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _goTo(int index) {
+    if (index < 0 || index >= widget.urls.length) return;
+    _controller.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final canGoPrev = _currentIndex > 0;
+    final canGoNext = _currentIndex < widget.urls.length - 1;
+
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            PageView.builder(
+              controller: _controller,
+              itemCount: widget.urls.length,
+              onPageChanged: (index) => setState(() => _currentIndex = index),
+              itemBuilder: (context, index) {
+                final url = widget.urls[index].trim();
+                return Center(
+                  child: InteractiveViewer(
+                    minScale: 1,
+                    maxScale: 4,
+                    child: Image.network(
+                      url,
+                      headers: widget.headers,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: const Color(0xFF1C1C1C),
+                          alignment: Alignment.center,
+                          child: const Icon(
+                            Icons.broken_image_outlined,
+                            size: 32,
+                            color: Color(0xFF9AA79A),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+            Positioned(
+              top: 8,
+              left: 8,
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+            if (widget.urls.length > 1)
+              Positioned(
+                bottom: 16,
+                left: 0,
+                right: 0,
+                child: Text(
+                  '${_currentIndex + 1} / ${widget.urls.length}',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.quicksand(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white70,
+                  ),
+                ),
+              ),
+            if (canGoPrev)
+              Positioned(
+                left: 8,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: IconButton(
+                    icon: const Icon(Icons.chevron_left, color: Colors.white70),
+                    onPressed: () => _goTo(_currentIndex - 1),
+                  ),
+                ),
+              ),
+            if (canGoNext)
+              Positioned(
+                right: 8,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: IconButton(
+                    icon:
+                        const Icon(Icons.chevron_right, color: Colors.white70),
+                    onPressed: () => _goTo(_currentIndex + 1),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PromptParts {
+  final String contextText;
+  final String questionText;
+
+  const _PromptParts({
+    required this.contextText,
+    required this.questionText,
+  });
 }

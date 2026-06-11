@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:lepa_rec_mobile/core/notifications/push_notification_service.dart';
 import '../features/auth/data/datasources/auth_session_reader.dart';
 import '../features/auth/data/datasources/auth_local_datasource.dart';
 import '../features/sessions/data/repositories/session_repository.dart';
@@ -27,6 +28,8 @@ class _SplashRouterState extends State<SplashRouter> {
       Navigator.of(context).pushNamedAndRemoveUntil('/login', (_) => false);
       return;
     }
+
+    await PushNotificationService.instance.registerCurrentTokenIfAuthenticated();
 
     try {
       final sessionRepo = SessionRepository();

@@ -36,12 +36,25 @@ class _GrowthMessagePageState extends State<GrowthMessagePage> {
   bool _isCompleting = false;
   String? _errorMessage;
   GrowthMessageDto? _growthMessage;
+  String? _activePracticeLang;
 
   @override
   void initState() {
     super.initState();
     _sessionRepository = SessionRepository();
     _accentIcon = _pickAccentIcon();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentLang = _currentPracticeLang();
+    if (_activePracticeLang == currentLang) return;
+    _activePracticeLang = currentLang;
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
     _loadGrowthMessage();
   }
 
@@ -58,6 +71,8 @@ class _GrowthMessagePageState extends State<GrowthMessagePage> {
     try {
       final message = await _sessionRepository.getRandomGrowthMessage(
         type: GrowthMessageType.begin,
+        selectedStatementId: widget.primerFlowState.selectedStatementId,
+        lang: _currentPracticeLang(),
       );
 
       if (!mounted) return;
@@ -334,6 +349,10 @@ class _GrowthMessagePageState extends State<GrowthMessagePage> {
         ),
       ),
     );
+  }
+
+  String _currentPracticeLang() {
+    return Localizations.localeOf(context).languageCode == 'en' ? 'en' : 'sr';
   }
 }
 

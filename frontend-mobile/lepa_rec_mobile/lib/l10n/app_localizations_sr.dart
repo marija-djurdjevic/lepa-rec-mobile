@@ -30,7 +30,7 @@ class AppLocalizationsSr extends AppLocalizations {
   String get primerWelcomeDescription => 'Smestite se negde gde vam je prijatno i gde vas niko neće prekidati. Ovo je vaše vreme, zaslužujete ga.';
 
   @override
-  String get proceed => 'Započnite pripremu';
+  String get proceed => 'Završite pripremu';
 
   @override
   String get breathingExercise => 'Disanjem do mira';
@@ -67,7 +67,7 @@ class AppLocalizationsSr extends AppLocalizations {
   String get rounds => 'Krugovi';
 
   @override
-  String get complete => 'Završi';
+  String get complete => 'Završite';
 
   @override
   String get sessionComplete => 'Svaka čast, učinio/la si nešto divno za sebe!';
@@ -76,13 +76,13 @@ class AppLocalizationsSr extends AppLocalizations {
   String get sessionCompleteMessage => 'Završio/la si vežbu disanja. Idemo dalje!';
 
   @override
-  String get continueToNext => 'Nastavi';
+  String get continueToNext => 'Nastavite';
 
   @override
-  String get conclude => 'Zaključi';
+  String get conclude => 'Zaključite';
 
   @override
-  String get wrapUp => 'Zaokruži';
+  String get wrapUp => 'Zaokružite';
 
   @override
   String get home => 'Početna';
@@ -100,7 +100,7 @@ class AppLocalizationsSr extends AppLocalizations {
   String get growthMessageTitle => 'Poruka za vas';
 
   @override
-  String get completePrimer => 'Završi pripremu';
+  String get completePrimer => 'Završite pripremu';
 
   @override
   String get errorLoadingStatements => 'Greška pri učitavanju iskaza';
@@ -195,6 +195,27 @@ class AppLocalizationsSr extends AppLocalizations {
   String get answerEachScenarioQuestion => 'Odgovori na svako pitanje pre nego što otkriješ završnu perspektivu.';
 
   @override
+  String get perspectiveScenarioDisclaimer => 'Odgovaraćete na pitanja o prikazanoj sceni. Cilj nije da pogodite svaki detalj, već da razumete perspektive, potrebe i emocije aktera. Svaki promišljen odgovor je dobar, čak i kad se razlikuje od pozadine priče koju ćemo vam na kraju otkriti.';
+
+  @override
+  String get perspectiveDisclaimerWhatWeDo => 'Postavićemo vam pitanja u vezi prikazane scene.';
+
+  @override
+  String get perspectiveDisclaimerNotGoal => 'Cilj nije da tačno pogodite sve detalje pozadine priče.';
+
+  @override
+  String get perspectiveDisclaimerGoal => 'Cilj je da pokušate da razumete perspektive, potrebe i želje ljudi koje oblikuju njihove reakcije i emocije.';
+
+  @override
+  String get perspectiveDisclaimerAnswerGood => 'Svaki promišljeni odgovor je dobar, čak i kada se razlikuje od pozadine priče koju ćemo na kraju razotkriti.';
+
+  @override
+  String get showMore => 'Prikaži više';
+
+  @override
+  String get showLess => 'Prikaži manje';
+
+  @override
   String scenarioQuestionNumber(int number) {
     return 'Pitanje $number';
   }
@@ -230,6 +251,9 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String get scenarioCompletedToday => 'Scenario završen za danas';
+
+  @override
+  String get dailyChallengeReward => 'Rešili ste današnji izazov! Pridružite nam se sutra za sledeći.';
 
   @override
   String get exerciseNotInitialized => 'Greška: Vežba nije inicijalizovana';
@@ -308,7 +332,7 @@ class AppLocalizationsSr extends AppLocalizations {
   String get journalFeedbackSubtitle => 'Evo kratkog osvrta na način na koji si pisao/la';
 
   @override
-  String get continueToDashboard => 'Nastavi';
+  String get continueToDashboard => 'Nastavite';
 
   @override
   String get goodDistancingFeedback => 'Situaciju si opisao/la sa dobrom dozom distance. To može pomoći da je sagledaš mirnije i jasnije.';
@@ -329,7 +353,7 @@ class AppLocalizationsSr extends AppLocalizations {
   String get startBreathing => 'Dodirnite da započnete vežbu';
 
   @override
-  String get beginWhenReady => '';
+  String get beginWhenReady => 'Počni kada budeš spreman/spremna';
 
   @override
   String get getReady => 'Pripremi se';
@@ -346,8 +370,100 @@ class AppLocalizationsSr extends AppLocalizations {
   String get profile => 'Profil';
 
   @override
+  String get language => 'Jezik';
+
+  @override
+  String get languageEnglish => 'Engleski';
+
+  @override
+  String get languageSerbian => 'Srpski';
+
+  @override
+  String get profileLanguageSaveHint => 'Promena jezika će biti primenjena nakon čuvanja izmena.';
+
+  @override
   String get dailySession => 'Dnevna vežba';
 
   @override
   String get close => 'Zatvori';
+
+  @override
+  String get onboardingStoryHook => 'Verovatno primećujete nerazumevanje između ljudi u našoj okolini.\n\nĆerka se posvađa sa majkom. Ogovaramo i odbacujemo kolege. Politički neistomišljenici ni ne pričaju.\n\nDa li mora da bude tako?';
+
+  @override
+  String get onboardingStorySkill => 'Ne mora.\n\nMožemo da razumemo drugog i da im pomognemo da razumeju nas. Ovo je veština koju vežbamo kao mišić.\n\nIstraživanja pokazuju da ljudi koji treniraju ove sposobnosti lakše rešavaju sukobe i osećaju se povezanije sa svojim ljudima.';
+
+  @override
+  String get onboardingStoryHabit => 'Svaki dan po deset minuta.\n\nPonekad kratka situacija kroz koju vežbate da razumete šta neko drugi misli i oseća. Ponekad osvrt na sopstveni dan iz pozicije mudrog posmatrača.\n\nMala navika koja vremenom menja način na koji vidite ljude i način na koji oni vide vas.';
+
+  @override
+  String get onboardingStoryBack => 'Nazad';
+
+  @override
+  String get onboardingStoryContinue => 'Nastavite';
+
+  @override
+  String get onboardingChooseLanguageTitle => 'Izaberite jezik';
+
+  @override
+  String get aboutApp => 'O aplikaciji';
+
+  @override
+  String get onboardingStoryReferenceButton => 'Uvodna priča';
+
+  @override
+  String get onboardingStoryReferenceTitle => 'Uvodna priča';
+
+  @override
+  String get onboardingStoryReferenceIntro => 'Ovo je uvodna priča koju korisnik vidi pri prvom korišćenju aplikacije.';
+
+  @override
+  String onboardingStorySectionTitle(int number) {
+    return 'Poruka $number';
+  }
+
+  @override
+  String get onboardingLabel => 'PRVI KORAK';
+
+  @override
+  String get onboardingHookChoiceTitle => 'A sada, hajde da probate jednu takvu vežbu. Da li bi radije da sagledate tuđu situaciju ili da sagledate svoju iz tuđe perspektive?';
+
+  @override
+  String get onboardingHookChoiceSelfTitle => 'Da sagledam svoju situaciju iz tuđe perspektive';
+
+  @override
+  String get onboardingHookChoiceOthersTitle => 'Da sagledam tuđu situaciju';
+
+  @override
+  String get onboardingDistancedJournalDescription => 'Pišete o sopstvenoj situaciji kao mudar posmatrač. Tako pravite korak unazad i jasnije vidite sebe i svoje izbore.';
+
+  @override
+  String get onboardingPerspectiveScenarioDescription => 'Prolazite kroz kratku situaciju i pokušavate da razumete šta druga osoba misli i oseća.';
+
+  @override
+  String get profileDeleteAccountTitle => 'Brisanje naloga';
+
+  @override
+  String get profileDeleteAccountLearnMore => 'Saznajte više: https://api.sagledaj.com/account-deletion';
+
+  @override
+  String get profileDeleteAccountAction => 'Obrišite';
+
+  @override
+  String get profileDeleteAccountCancel => 'Otkaži';
+
+  @override
+  String get profileDeleteAccountConfirmTitle => 'Obrisati nalog?';
+
+  @override
+  String get profileDeleteAccountConfirmMessage => 'Ovo će trajno obrisati vaš Sagledaj nalog i odjaviti vas. Ovu akciju nije moguće poništiti.';
+
+  @override
+  String get profileDeleteAccountSuccess => 'Nalog je obrisan.';
+
+  @override
+  String get profileDeleteAccountError => 'Brisanje naloga trenutno nije uspelo. Pokušaj ponovo.';
+
+  @override
+  String get profileDeleteAccountInfoOpenFailed => 'Nije moguće otvoriti link.';
 }

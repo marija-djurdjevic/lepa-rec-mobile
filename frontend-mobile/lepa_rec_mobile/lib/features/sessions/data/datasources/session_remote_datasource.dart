@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../../core/network/api_client.dart';
+import '../dtos/answer_perspective_scenario_question_dto.dart';
+import '../dtos/answer_perspective_scenario_reveal_result_dto.dart';
 import '../dtos/complete_primer_dto.dart';
 import '../dtos/daily_session_state_dto.dart';
 import '../dtos/distanced_journal_exercise_dto.dart';
@@ -58,6 +62,10 @@ class SubmitDistancedJournalResultDto {
 class SessionRemoteDataSource {
   static const String _baseEndpoint = '/sessions';
 
+  String _normalizeLang(String? lang) {
+    return lang == 'en' ? 'en' : 'sr';
+  }
+
   Future<DailySessionStateDto> getTodaySession() async {
     const path = '$_baseEndpoint/today';
 
@@ -102,11 +110,16 @@ class SessionRemoteDataSource {
     }
   }
 
-  Future<List<PrimerStatementDto>> getRandomPrimerStatements() async {
+  Future<List<PrimerStatementDto>> getRandomPrimerStatements({
+    String? lang,
+  }) async {
     const path = '/practice/affirmation-values/random-statements';
 
     try {
-      final response = await ApiClient.dio.get(path);
+      final response = await ApiClient.dio.get(
+        path,
+        queryParameters: {'lang': _normalizeLang(lang)},
+      );
 
       final List<dynamic> jsonList = response.data as List<dynamic>;
       final statements = jsonList
@@ -123,13 +136,37 @@ class SessionRemoteDataSource {
 
   Future<GrowthMessageDto> getRandomGrowthMessage({
     GrowthMessageType? type,
+    String? selectedStatementId,
+    List<String>? developedSkillIds,
+    String? lang,
   }) async {
     const path = '/practice/growth-messages/random';
 
     try {
+      final queryParameters = <String, dynamic>{
+        'lang': _normalizeLang(lang),
+      };
+      if (type != null) {
+        queryParameters['type'] = type.apiValue;
+      }
+      if (selectedStatementId != null && selectedStatementId.trim().isNotEmpty) {
+        queryParameters['selectedStatementId'] = selectedStatementId;
+      }
+      if (developedSkillIds != null && developedSkillIds.isNotEmpty) {
+        final normalizedSkillIds = developedSkillIds
+            .map((id) => id.trim())
+            .where((id) => id.isNotEmpty)
+            .toSet()
+            .toList();
+        if (normalizedSkillIds.isNotEmpty) {
+          queryParameters['developedSkillIds'] = normalizedSkillIds;
+        }
+      }
+
       final response = await ApiClient.dio.get(
         path,
-        queryParameters: type == null ? null : {'type': type.apiValue},
+        queryParameters: queryParameters.isEmpty ? null : queryParameters,
+        options: Options(listFormat: ListFormat.multi),
       );
 
       final message = GrowthMessageDto.fromJson(
@@ -142,13 +179,20 @@ class SessionRemoteDataSource {
     }
   }
 
-  Future<DailySessionStateDto> recordExercise(String exerciseName) async {
+  Future<DailySessionStateDto> recordExercise({
+    required String exerciseId,
+    required String type,
+  }) async {
     const path = '$_baseEndpoint/exercises/record';
+    final typeValue = _mapRecordExerciseType(type);
 
     try {
-      final response = await ApiClient.dio.post(
-        path,
-        data: {'exerciseName': exerciseName},
+      final response = await _postRecordExercise(
+        path: path,
+        payload: {
+          'exerciseId': exerciseId,
+          'type': typeValue,
+        },
       );
 
       final dto = DailySessionStateDto.fromJson(
@@ -156,8 +200,60 @@ class SessionRemoteDataSource {
       );
 
       return dto;
+    } on DioException catch (e) {
+      // Compatibility fallbacks for different backend binding signatures.
+      if (e.response?.statusCode == 400) {
+        final fallbackPayloads = <Map<String, dynamic>>[
+          {
+            'dto': {
+              'exerciseId': exerciseId,
+              'type': typeValue,
+            },
+          },
+          {
+            'exerciseId': exerciseId,
+            'type': type,
+          },
+        ];
+
+        for (final payload in fallbackPayloads) {
+          try {
+            final response = await _postRecordExercise(
+              path: path,
+              payload: payload,
+            );
+            final dto = DailySessionStateDto.fromJson(
+              response.data as Map<String, dynamic>,
+            );
+            return dto;
+          } on DioException {
+            // try next fallback
+          }
+        }
+      }
+      rethrow;
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<Response<dynamic>> _postRecordExercise({
+    required String path,
+    required Map<String, dynamic> payload,
+  }) {
+    return ApiClient.dio.post(path, data: payload);
+  }
+
+  int _mapRecordExerciseType(String type) {
+    switch (type) {
+      case 'DistancedJournal':
+        return 0;
+      case 'DistancedJournalReflection':
+        return 1;
+      case 'PerspectiveScenario':
+        return 2;
+      default:
+        return 0;
     }
   }
 
@@ -177,15 +273,62 @@ class SessionRemoteDataSource {
     }
   }
 
-  Future<TodayPracticePlanDto> getTodaysPracticePlan() async {
+  Future<TodayPracticePlanDto> getTodaysPracticePlan({
+    String? lang,
+  }) async {
     const path = '$_baseEndpoint/today-plan';
+    final resolvedLang = _normalizeLang(lang);
 
     try {
-      final response = await ApiClient.dio.get(path);
+      final response = await ApiClient.dio.get(
+        path,
+        queryParameters: {'lang': resolvedLang},
+      );
+      final raw = response.data as Map<String, dynamic>;
+
+      if (kDebugMode) {
+        final rawKeys = raw.keys.toList()..sort();
+        debugPrint('[today-plan][remote][raw-keys] $rawKeys');
+        debugPrint(
+          '[today-plan][remote][raw-completion] '
+          'isDistancedJournalCompleted=${raw['isDistancedJournalCompleted']} '
+          'distancedJournalCompleted=${raw['distancedJournalCompleted']} '
+          'isJournalCompleted=${raw['isJournalCompleted']} '
+          'journalCompleted=${raw['journalCompleted']} '
+          'isReflectionCompleted=${raw['isReflectionCompleted']} '
+          'reflectionCompleted=${raw['reflectionCompleted']} '
+          'isPerspectiveScenarioCompleted=${raw['isPerspectiveScenarioCompleted']} '
+          'perspectiveScenarioCompleted=${raw['perspectiveScenarioCompleted']}',
+        );
+      }
 
       final dto = TodayPracticePlanDto.fromJson(
-        response.data as Map<String, dynamic>,
+        raw,
       );
+
+      if (kDebugMode) {
+        final firstJournal = dto.distancedJournalChoices.isNotEmpty
+            ? dto.distancedJournalChoices.first
+            : null;
+        final firstScenario = dto.perspectiveScenarioChoices.isNotEmpty
+            ? dto.perspectiveScenarioChoices.first
+            : null;
+        final firstQuestion =
+            (firstScenario != null && firstScenario.questions.isNotEmpty)
+            ? firstScenario.questions.first
+            : null;
+
+        debugPrint(
+          '[L10N][today-plan] lang=$resolvedLang '
+          'journalOpening="${firstJournal?.openingQuestion ?? ''}" '
+          'journalContent="${firstJournal?.content ?? ''}" '
+          'journalFollowUp="${firstJournal?.followUpQuestion ?? ''}" '
+          'scenarioText="${firstScenario?.scenarioText ?? ''}" '
+          'questionText="${firstQuestion?.questionText ?? ''}" '
+          'reflectionChallenge="${dto.reflectionPrompt?.challengeContent ?? ''}" '
+          'reflectionQuestion="${dto.reflectionPrompt?.reflectionQuestion ?? ''}"',
+        );
+      }
 
       return dto;
     } catch (e) {
@@ -195,6 +338,7 @@ class SessionRemoteDataSource {
 
   Future<DistancedJournalExerciseDto> startDistancedJournalExercise(
     StartDistancedJournalExerciseDto startRequest,
+    String? lang,
   ) async {
     const path = '/DistancedJournals/start';
 
@@ -203,6 +347,7 @@ class SessionRemoteDataSource {
       final response = await ApiClient.dio.post(
         path,
         data: startRequest.toJson(),
+        queryParameters: {'lang': _normalizeLang(lang)},
       );
 
       final dto = DistancedJournalExerciseDto.fromJson(
@@ -221,12 +366,14 @@ class SessionRemoteDataSource {
 
   Future<SubmitDistancedJournalResultDto> submitDistancedJournalAnswer(
     SubmitDistancedJournalAnswerDto submitRequest,
+    String? lang,
   ) async {
     debugPrint('[DistancedJournal][Remote] POST /DistancedJournals/submit');
     try {
       final response = await ApiClient.dio.post(
         '/DistancedJournals/submit',
         data: submitRequest.toJson(),
+        queryParameters: {'lang': _normalizeLang(lang)},
       );
 
       final dto = SubmitDistancedJournalResultDto.fromJson(
@@ -235,8 +382,22 @@ class SessionRemoteDataSource {
       debugPrint('[DistancedJournal][Remote] SUBMIT OK');
       return dto;
     } on DioException catch (e) {
+      if (e.response?.statusCode == 404 || e.response?.statusCode == 405) {
+        final fallbackResponse = await ApiClient.dio.post(
+          '/DistancedJournals/answer',
+          data: submitRequest.toJson(),
+          queryParameters: {'lang': _normalizeLang(lang)},
+        );
+        final fallbackDto = SubmitDistancedJournalResultDto.fromJson(
+          fallbackResponse.data as Map<String, dynamic>,
+        );
+        debugPrint(
+          '[DistancedJournal][Remote] SUBMIT FALLBACK TO /answer OK',
+        );
+        return fallbackDto;
+      }
       debugPrint(
-        '[DistancedJournal][Remote] SUBMIT ERROR '
+        '[DistancedJournal][Remote] ANSWER ERROR '
         'status=${e.response?.statusCode} message=${e.message} '
         'data=${e.response?.data}',
       );
@@ -255,7 +416,21 @@ class SessionRemoteDataSource {
         String? followUpAnswer,
         String? reflection,
         required List<String> photoPaths,
+        String? lang,
       }) async {
+    final photoSizes = <String, int>{};
+    for (final photoPath in photoPaths) {
+      try {
+        photoSizes[photoPath.split(RegExp(r'[\\\\/]+')).last] =
+            await File(photoPath).length();
+      } catch (_) {
+        photoSizes[photoPath.split(RegExp(r'[\\\\/]+')).last] = -1;
+      }
+    }
+    final totalPhotoBytes = photoSizes.values
+        .where((size) => size > 0)
+        .fold<int>(0, (sum, size) => sum + size);
+
     debugPrint(
       '[DistancedJournal][Remote] POST /DistancedJournals/submit-with-photos '
       'photos=${photoPaths.length}',
@@ -267,7 +442,8 @@ class SessionRemoteDataSource {
       'mainAnswer=${mainAnswer == null ? 'null' : mainAnswer.length} '
       'followUpAnswer=${followUpAnswer == null ? 'null' : followUpAnswer.length} '
       'reflection=${reflection == null ? 'null' : reflection.length} '
-      'photoFiles=${photoPaths.map((p) => p.split(RegExp(r'[\\\\/]+')).last).toList()}',
+      'totalPhotoBytes=$totalPhotoBytes '
+      'photoFiles=${photoSizes.entries.map((entry) => '${entry.key}:${entry.value}').toList()}',
     );
     final formData = FormData.fromMap({
       'exerciseId': exerciseId,
@@ -289,6 +465,7 @@ class SessionRemoteDataSource {
       final response = await ApiClient.dio.post(
         '/DistancedJournals/submit-with-photos',
         data: formData,
+        queryParameters: {'lang': _normalizeLang(lang)},
         options: Options(contentType: 'multipart/form-data'),
       );
 
@@ -299,7 +476,7 @@ class SessionRemoteDataSource {
       return dto;
     } on DioException catch (e) {
       debugPrint(
-        '[DistancedJournal][Remote] SUBMIT-WITH-PHOTOS ERROR '
+        '[DistancedJournal][Remote] ANSWER-WITH-PHOTOS ERROR '
         'status=${e.response?.statusCode} message=${e.message} '
         'data=${e.response?.data}',
       );
@@ -312,11 +489,16 @@ class SessionRemoteDataSource {
 
   Future<void> submitReflectionAnswer(
     SubmitReflectionAnswerDto submitRequest,
+    String? lang,
   ) async {
     const path = '/DistancedJournals/reflection';
 
     try {
-      await ApiClient.dio.post(path, data: submitRequest.toJson());
+      await ApiClient.dio.post(
+        path,
+        data: submitRequest.toJson(),
+        queryParameters: {'lang': _normalizeLang(lang)},
+      );
     } catch (e) {
       rethrow;
     }
@@ -324,6 +506,7 @@ class SessionRemoteDataSource {
 
   Future<PerspectiveScenarioExerciseDto> startPerspectiveScenario(
     StartPerspectiveScenarioDto startRequest,
+    String? lang,
   ) async {
     const path = '/PerspectiveScenarios/start';
 
@@ -331,6 +514,7 @@ class SessionRemoteDataSource {
       final response = await ApiClient.dio.post(
         path,
         data: startRequest.toJson(),
+        queryParameters: {'lang': _normalizeLang(lang)},
       );
 
       return PerspectiveScenarioExerciseDto.fromJson(
@@ -343,6 +527,7 @@ class SessionRemoteDataSource {
 
   Future<SubmitPerspectiveScenarioResultDto> submitPerspectiveScenario(
     SubmitPerspectiveScenarioAnswerDto submitRequest,
+    String? lang,
   ) async {
     const path = '/PerspectiveScenarios/submit';
 
@@ -350,13 +535,40 @@ class SessionRemoteDataSource {
       final response = await ApiClient.dio.post(
         path,
         data: submitRequest.toJson(),
+        queryParameters: {'lang': _normalizeLang(lang)},
       );
-
-      return SubmitPerspectiveScenarioResultDto.fromJson(
+      final dto = SubmitPerspectiveScenarioResultDto.fromJson(
         response.data as Map<String, dynamic>,
       );
+      if (kDebugMode) {
+        final data = response.data as Map<String, dynamic>;
+        debugPrint(
+          '[PerspectiveScenario][Remote] SUBMIT OK '
+          'reveals=${dto.reveals.length} '
+          'keys=${data.keys.join(',')}',
+        );
+      }
+      return dto;
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<AnswerPerspectiveScenarioRevealResultDto>
+      answerPerspectiveScenarioAndReveal(
+    AnswerPerspectiveScenarioQuestionDto answerRequest,
+    String? lang,
+  ) async {
+    const path = '/PerspectiveScenarios/answer-and-reveal';
+
+    final response = await ApiClient.dio.post(
+      path,
+      data: answerRequest.toJson(),
+      queryParameters: {'lang': _normalizeLang(lang)},
+    );
+
+    return AnswerPerspectiveScenarioRevealResultDto.fromJson(
+      response.data as Map<String, dynamic>,
+    );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import '../constants/app_constants.dart';
+import '../config/api_environment.dart';
 
 class DioClient {
   final Dio dio;
@@ -7,7 +7,7 @@ class DioClient {
   DioClient()
       : dio = Dio(
           BaseOptions(
-            baseUrl: AppConstants.apiBaseUrl,
+            baseUrl: ApiEnvironment.baseUrl,
             connectTimeout: const Duration(seconds: 10),
             receiveTimeout: const Duration(seconds: 10),
           ), 

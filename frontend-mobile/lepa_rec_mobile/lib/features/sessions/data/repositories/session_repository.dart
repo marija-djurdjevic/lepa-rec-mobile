@@ -1,4 +1,6 @@
 import '../datasources/session_remote_datasource.dart';
+import '../dtos/answer_perspective_scenario_question_dto.dart';
+import '../dtos/answer_perspective_scenario_reveal_result_dto.dart';
 import '../dtos/complete_primer_dto.dart';
 import '../dtos/daily_session_state_dto.dart';
 import '../dtos/distanced_journal_exercise_dto.dart';
@@ -27,28 +29,42 @@ class SessionRepository {
   Future<void> completePrimerWithData(CompletePrimerDto primerData) =>
       _remote.completePrimerWithData(primerData);
 
-  Future<DailySessionStateDto> recordExercise(String exerciseName) =>
-      _remote.recordExercise(exerciseName);
+  Future<DailySessionStateDto> recordExercise({
+    required String exerciseId,
+    required String type,
+  }) => _remote.recordExercise(exerciseId: exerciseId, type: type);
 
   Future<DailySessionStateDto> completeSession() => _remote.completeSession();
 
-  Future<List<PrimerStatementDto>> getRandomPrimerStatements() =>
-      _remote.getRandomPrimerStatements();
+  Future<List<PrimerStatementDto>> getRandomPrimerStatements({
+    String? lang,
+  }) => _remote.getRandomPrimerStatements(lang: lang);
 
   Future<GrowthMessageDto> getRandomGrowthMessage({
     GrowthMessageType? type,
-  }) => _remote.getRandomGrowthMessage(type: type);
+    String? selectedStatementId,
+    List<String>? developedSkillIds,
+    String? lang,
+  }) => _remote.getRandomGrowthMessage(
+    type: type,
+    selectedStatementId: selectedStatementId,
+    developedSkillIds: developedSkillIds,
+    lang: lang,
+  );
 
-  Future<TodayPracticePlanDto> getTodaysPracticePlan() =>
-      _remote.getTodaysPracticePlan();
+  Future<TodayPracticePlanDto> getTodaysPracticePlan({
+    String? lang,
+  }) => _remote.getTodaysPracticePlan(lang: lang);
 
   Future<DistancedJournalExerciseDto> startDistancedJournalExercise(
     StartDistancedJournalExerciseDto startRequest,
-  ) => _remote.startDistancedJournalExercise(startRequest);
+    String? lang,
+  ) => _remote.startDistancedJournalExercise(startRequest, lang);
 
   Future<SubmitDistancedJournalResultDto> submitDistancedJournalAnswer(
     SubmitDistancedJournalAnswerDto submitRequest,
-  ) => _remote.submitDistancedJournalAnswer(submitRequest);
+    String? lang,
+  ) => _remote.submitDistancedJournalAnswer(submitRequest, lang);
 
   Future<SubmitDistancedJournalResultDto>
       submitDistancedJournalAnswerWithPhotos({
@@ -58,6 +74,7 @@ class SessionRepository {
         String? followUpAnswer,
         String? reflection,
         required List<String> photoPaths,
+        String? lang,
       }) =>
           _remote.submitDistancedJournalAnswerWithPhotos(
             exerciseId: exerciseId,
@@ -66,17 +83,27 @@ class SessionRepository {
             followUpAnswer: followUpAnswer,
             reflection: reflection,
             photoPaths: photoPaths,
+            lang: lang,
           );
 
   Future<void> submitReflectionAnswer(
     SubmitReflectionAnswerDto submitRequest,
-  ) => _remote.submitReflectionAnswer(submitRequest);
+    String? lang,
+  ) => _remote.submitReflectionAnswer(submitRequest, lang);
 
   Future<PerspectiveScenarioExerciseDto> startPerspectiveScenario(
     StartPerspectiveScenarioDto startRequest,
-  ) => _remote.startPerspectiveScenario(startRequest);
+    String? lang,
+  ) => _remote.startPerspectiveScenario(startRequest, lang);
 
   Future<SubmitPerspectiveScenarioResultDto> submitPerspectiveScenario(
     SubmitPerspectiveScenarioAnswerDto submitRequest,
-  ) => _remote.submitPerspectiveScenario(submitRequest);
+    String? lang,
+  ) => _remote.submitPerspectiveScenario(submitRequest, lang);
+
+  Future<AnswerPerspectiveScenarioRevealResultDto>
+      answerPerspectiveScenarioAndReveal(
+    AnswerPerspectiveScenarioQuestionDto answerRequest,
+    String? lang,
+  ) => _remote.answerPerspectiveScenarioAndReveal(answerRequest, lang);
 }

@@ -31,17 +31,32 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
   String? _errorMessage;
   List<PrimerStatementDto> _statements = [];
   String? _selectedStatementId;
+  String? _activePracticeLang;
 
   @override
   void initState() {
     super.initState();
     _sessionRepository = SessionRepository();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentLang = _currentPracticeLang();
+    if (_activePracticeLang == currentLang) return;
+    _activePracticeLang = currentLang;
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
     _loadStatements();
   }
 
   Future<void> _loadStatements() async {
     try {
-      final statements = await _sessionRepository.getRandomPrimerStatements();
+      final statements = await _sessionRepository.getRandomPrimerStatements(
+        lang: _currentPracticeLang(),
+      );
 
       if (!mounted) return;
 
@@ -216,6 +231,10 @@ class _ValueStatementPageState extends State<ValueStatementPage> {
         ),
       ),
     );
+  }
+
+  String _currentPracticeLang() {
+    return Localizations.localeOf(context).languageCode == 'en' ? 'en' : 'sr';
   }
 }
 

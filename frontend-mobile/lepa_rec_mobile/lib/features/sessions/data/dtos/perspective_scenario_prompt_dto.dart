@@ -15,18 +15,20 @@ class PerspectiveScenarioPromptDto {
 
   factory PerspectiveScenarioPromptDto.fromJson(Map<String, dynamic> json) {
     final questionsJson = json['questions'] as List<dynamic>? ?? [];
+    final questions = questionsJson
+        .map(
+          (item) => PerspectiveScenarioQuestionDto.fromJson(
+            item as Map<String, dynamic>,
+          ),
+        )
+        .toList()
+      ..sort((a, b) => a.order.compareTo(b.order));
 
     return PerspectiveScenarioPromptDto(
       id: _toString(json['id']) ?? '',
       scenarioText: json['scenarioText'] as String? ?? '',
       challengeLevel: _mapChallengeLevel(json['challengeLevel']),
-      questions: questionsJson
-          .map(
-            (item) => PerspectiveScenarioQuestionDto.fromJson(
-              item as Map<String, dynamic>,
-            ),
-          )
-          .toList(),
+      questions: questions,
     );
   }
 

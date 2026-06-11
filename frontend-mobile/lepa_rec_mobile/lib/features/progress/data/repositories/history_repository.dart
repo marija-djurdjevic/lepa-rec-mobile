@@ -1,4 +1,5 @@
 import '../datasources/history_remote_datasource.dart';
+import 'package:flutter/foundation.dart';
 import '../dtos/perspective_scenario_challenge_dto.dart';
 import '../models/history_item.dart';
 import '../../../sessions/data/dtos/distanced_journal_challenge_dto.dart';
@@ -11,16 +12,19 @@ class HistoryRepository {
 
   final HistoryRemoteDataSource _remote;
 
-  static List<DistancedJournalChallengeDto>? _cachedJournalChallenges;
-  static List<PerspectiveScenarioChallengeDto>? _cachedScenarioChallenges;
-  static DateTime? _cacheTimestamp;
+  static final Map<String, List<DistancedJournalChallengeDto>>
+      _cachedJournalChallengesByLang = {};
+  static final Map<String, List<PerspectiveScenarioChallengeDto>>
+      _cachedScenarioChallengesByLang = {};
+  static final Map<String, DateTime> _cacheTimestampByLang = {};
   static const Duration _cacheTtl = Duration(hours: 12);
 
-  Future<List<HistoryItem>> getHistory() async {
-    final challengeBundle = await _getChallenges();
+  Future<List<HistoryItem>> getHistory({String? lang}) async {
+    final resolvedLang = _normalizeLang(lang);
+    final challengeBundle = await _getChallenges(resolvedLang);
     final results = await Future.wait([
-      _remote.getDistancedJournalExercises(),
-      _remote.getPerspectiveScenarioExercises(),
+      _remote.getDistancedJournalExercises(lang: resolvedLang),
+      _remote.getPerspectiveScenarioExercises(lang: resolvedLang),
     ]);
 
     final journalExercises = results[0] as List<DistancedJournalExerciseDto>;
@@ -41,36 +45,67 @@ class HistoryRepository {
       (a, b) => b.submittedAt.compareTo(a.submittedAt),
     );
 
-    return historyItems;
+    final dedupedHistoryItems = _dedupeByExerciseId(historyItems);
+
+    debugPrint(
+      '[History][Repo] journalRaw=${journalExercises.length} '
+      'journalCompleted=${journalExercises.where((e) => e.isCompleted).length} '
+      'scenarioRaw=${scenarioExercises.length} '
+      'scenarioCompleted=${scenarioExercises.where((e) => e.isCompleted).length} '
+      'mergedItems=${historyItems.length} '
+      'dedupedItems=${dedupedHistoryItems.length}',
+    );
+
+    return dedupedHistoryItems;
   }
 
-  Future<_ChallengeBundle> _getChallenges() async {
-    if (_isCacheValid()) {
+  List<HistoryItem> _dedupeByExerciseId(List<HistoryItem> items) {
+    final byKey = <String, HistoryItem>{};
+    for (final item in items) {
+      final key = '${item.type}:${item.exerciseId}';
+      final existing = byKey[key];
+      if (existing == null || item.submittedAt.isAfter(existing.submittedAt)) {
+        byKey[key] = item;
+      }
+    }
+    final result = byKey.values.toList()
+      ..sort((a, b) => b.submittedAt.compareTo(a.submittedAt));
+    return result;
+  }
+
+  Future<_ChallengeBundle> _getChallenges(String lang) async {
+    if (_isCacheValid(lang)) {
       return _ChallengeBundle(
-        journalChallenges: _cachedJournalChallenges ?? const [],
-        scenarioChallenges: _cachedScenarioChallenges ?? const [],
+        journalChallenges: _cachedJournalChallengesByLang[lang] ?? const [],
+        scenarioChallenges: _cachedScenarioChallengesByLang[lang] ?? const [],
       );
     }
 
     final results = await Future.wait([
-      _remote.getDistancedJournalChallenges(),
-      _remote.getPerspectiveScenarioChallenges(),
+      _remote.getDistancedJournalChallenges(lang: lang),
+      _remote.getPerspectiveScenarioChallenges(lang: lang),
     ]);
 
-    _cachedJournalChallenges = results[0] as List<DistancedJournalChallengeDto>;
-    _cachedScenarioChallenges =
+    _cachedJournalChallengesByLang[lang] =
+        results[0] as List<DistancedJournalChallengeDto>;
+    _cachedScenarioChallengesByLang[lang] =
         results[1] as List<PerspectiveScenarioChallengeDto>;
-    _cacheTimestamp = DateTime.now();
+    _cacheTimestampByLang[lang] = DateTime.now();
 
     return _ChallengeBundle(
-      journalChallenges: _cachedJournalChallenges ?? const [],
-      scenarioChallenges: _cachedScenarioChallenges ?? const [],
+      journalChallenges: _cachedJournalChallengesByLang[lang] ?? const [],
+      scenarioChallenges: _cachedScenarioChallengesByLang[lang] ?? const [],
     );
   }
 
-  bool _isCacheValid() {
-    if (_cacheTimestamp == null) return false;
-    final age = DateTime.now().difference(_cacheTimestamp!);
+  String _normalizeLang(String? lang) {
+    return lang == 'en' ? 'en' : 'sr';
+  }
+
+  bool _isCacheValid(String lang) {
+    final timestamp = _cacheTimestampByLang[lang];
+    if (timestamp == null) return false;
+    final age = DateTime.now().difference(timestamp);
     return age < _cacheTtl;
   }
 
@@ -94,16 +129,33 @@ class HistoryRepository {
               exerciseId: exercise.id,
               challengeId: exercise.challengeId,
               submittedAt: submittedAt,
-              promptText: challenge?.content ?? 'Prompt unavailable',
-              followUpPrompt: challenge?.followUpQuestion,
+              promptText: _composeHistoryPrompt(challenge),
+              followUpPrompt: challenge?.followUpPromptText(),
               mainAnswer: exercise.mainAnswer,
               followUpAnswer: exercise.followUpAnswer,
               reflection: exercise.reflection,
+              reflectionQuestion: _extractReflectionQuestion(challenge),
               photoUrls: exercise.photoUrls,
             );
           },
         )
         .toList();
+  }
+
+  String? _extractReflectionQuestion(DistancedJournalChallengeDto? challenge) {
+    return challenge?.reflectionPromptText();
+  }
+
+  String _composeHistoryPrompt(DistancedJournalChallengeDto? challenge) {
+    if (challenge == null) return 'Prompt unavailable';
+    final content = challenge.content.trim();
+    final opening = challenge.openingPromptText().trim();
+    if (content.isNotEmpty && opening.isNotEmpty && content != opening) {
+      return '$content\n\n$opening';
+    }
+    if (content.isNotEmpty) return content;
+    if (opening.isNotEmpty) return opening;
+    return 'Prompt unavailable';
   }
 
   List<HistoryItem> _mapScenarioHistory(
@@ -130,6 +182,10 @@ class HistoryRepository {
             final questionTextMap = {
               for (final question in questions) question.id: question.text,
             };
+            final questionRevealMap = {
+              for (final question in (challenge?.questions ?? const []))
+                question.id: question.reveal,
+            };
             final answers = exercise.answers
                 .map(
                   (answer) => HistoryAnswer(
@@ -137,6 +193,7 @@ class HistoryRepository {
                     questionText:
                         questionTextMap[answer.questionId] ?? 'Question',
                     answerText: answer.answerText,
+                    revealText: questionRevealMap[answer.questionId],
                   ),
                 )
                 .toList();
@@ -148,7 +205,7 @@ class HistoryRepository {
               challengeId: exercise.challengeId,
               submittedAt: submittedAt,
               promptText: challenge?.scenarioText ?? 'Prompt unavailable',
-              reveal: challenge?.reveal,
+              reveal: null,
               questions: questions,
               answers: answers,
             );
