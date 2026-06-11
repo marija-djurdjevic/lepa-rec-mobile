@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import '../constants/app_constants.dart';
+import '../config/api_environment.dart';
 import 'auth_interceptor.dart';
 
 class ApiClient {
@@ -9,7 +9,7 @@ class ApiClient {
 
   static final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: AppConstants.apiBaseUrl,
+      baseUrl: ApiEnvironment.baseUrl,
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       headers: {'Content-Type': 'application/json'},
@@ -53,10 +53,12 @@ class ApiClient {
           },
           onError: (error, handler) {
             if (_shouldLog(error.requestOptions.path)) {
+              final responseData = error.response?.data;
               debugPrint(
                 '[API][ERR] ${error.response?.statusCode ?? '-'} '
                 '${error.requestOptions.method} ${error.requestOptions.uri} '
-                '${error.message}',
+                '${error.message} '
+                'response=${responseData ?? '-'}',
               );
             }
             handler.next(error);
@@ -71,7 +73,9 @@ class ApiClient {
     return lower.contains('/practice') ||
         lower.contains('/sessions') ||
         lower.contains('/distancedjournals') ||
-        lower.contains('/perspectivescenarios');
+        lower.contains('/perspectivescenarios') ||
+        lower.contains('/auth') ||
+        lower.contains('/onboarding');
   }
 
   static bool _shouldAttachLang(String path) {

@@ -31,6 +31,11 @@ class AuthLocalDataSource {
     return token;
   }
 
+  Future<String?> readUserId() async {
+    final userId = await _storage.read(key: _userIdKey);
+    return userId;
+  }
+
   Future<void> clearSession() async {
     await _storage.delete(key: _accessTokenKey);
     await _storage.delete(key: _refreshTokenKey);

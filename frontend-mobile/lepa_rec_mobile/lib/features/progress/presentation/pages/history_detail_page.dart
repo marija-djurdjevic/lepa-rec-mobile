@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_spacing.dart';
-import '../../../../core/constants/app_constants.dart';
+import '../../../../core/config/api_environment.dart';
 import '../../../../core/localization/localization_extension.dart';
 import '../../../auth/data/datasources/auth_local_datasource.dart';
 import '../../data/models/history_item.dart';
@@ -43,12 +43,15 @@ class HistoryDetailPage extends StatelessWidget {
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildPromptSection(context),
-                const SizedBox(height: AppSpacing.lg),
-                _buildAnswerSection(context),
-                const SizedBox(height: AppSpacing.lg),
-              ],
+              children: item.type == HistoryItemType.perspectiveScenario
+                  ? [
+                      _buildPerspectiveHistory(context),
+                      const SizedBox(height: AppSpacing.lg),
+                    ]
+                  : [
+                      _buildDistancedJournalHistory(context),
+                      const SizedBox(height: AppSpacing.lg),
+                    ],
             ),
           ),
         ),
@@ -65,138 +68,400 @@ class HistoryDetailPage extends StatelessWidget {
     }
   }
 
-  Widget _buildPromptSection(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: Container(
-        padding: const EdgeInsets.all(AppSpacing.md),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF2F4F0).withValues(alpha: 0.75),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: const Color(0xFF6B9B6E).withValues(alpha: 0.18),
-            width: 1.2,
+  Widget _buildDistancedJournalHistory(BuildContext context) {
+    final promptParts = _distancedJournalPromptParts();
+    final followUpPrompt = item.followUpPrompt?.trim();
+    final mainAnswer = item.mainAnswer?.trim();
+    final followUpAnswer = item.followUpAnswer?.trim();
+    final reflection = item.reflection?.trim();
+    final hasPhotos = item.photoUrls.isNotEmpty;
+    final hasMainText = mainAnswer != null && mainAnswer.isNotEmpty;
+    final hasFollowUpText = followUpAnswer != null && followUpAnswer.isNotEmpty;
+    final hasAnyTextAnswer = hasMainText || hasFollowUpText;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildPromptCard(context, text: promptParts.contextText),
+        const SizedBox(height: AppSpacing.lg),
+        if (!hasAnyTextAnswer && hasPhotos) ...[
+          _buildPhotoQuestionsCard(
+            context,
+            openingQuestion: promptParts.questionText,
+            followUpQuestion: followUpPrompt,
           ),
+          const SizedBox(height: AppSpacing.md),
+        ] else if (promptParts.questionText.isNotEmpty || hasMainText) ...[
+          _buildQuestionAnswerRevealCard(
+            context,
+            questionText: promptParts.questionText,
+            answerText: hasMainText ? mainAnswer : _answerUnavailable(context),
+            revealText: null,
+            showQuestion: promptParts.questionText.isNotEmpty,
+            useResponsePanels: false,
+          ),
+          const SizedBox(height: AppSpacing.md),
+        ],
+        if (followUpPrompt != null &&
+            followUpPrompt.isNotEmpty &&
+            hasAnyTextAnswer) ...[
+          _buildQuestionAnswerRevealCard(
+            context,
+            questionText: followUpPrompt,
+            answerText: hasFollowUpText
+                ? followUpAnswer
+                : _answerUnavailable(context),
+            revealText: null,
+            useResponsePanels: false,
+          ),
+          const SizedBox(height: AppSpacing.md),
+        ],
+        if (reflection != null && reflection.isNotEmpty) ...[
+          _buildQuestionAnswerRevealCard(
+            context,
+            questionText:
+                (item.reflectionQuestion?.trim().isNotEmpty ?? false)
+                ? item.reflectionQuestion!.trim()
+                : context.l10n.reflectionFreshQuestion,
+            answerText: reflection,
+            revealText: null,
+            useResponsePanels: false,
+          ),
+          const SizedBox(height: AppSpacing.md),
+        ],
+        if (item.photoUrls.isNotEmpty) _buildPhotoCard(item.photoUrls),
+      ],
+    );
+  }
+
+  Widget _buildPhotoQuestionsCard(
+    BuildContext context, {
+    required String openingQuestion,
+    required String? followUpQuestion,
+  }) {
+    final trimmedOpening = openingQuestion.trim();
+    final trimmedFollowUp = followUpQuestion?.trim() ?? '';
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.92),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: const Color(0xFFDCE8D8),
+          width: 1.2,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              item.safePromptText,
-              style: GoogleFonts.quicksand(
-                fontSize: 13,
-                fontWeight: FontWeight.w400,
-                color: Colors.grey[600],
-                height: 1.4,
-              ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.045),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (trimmedOpening.isNotEmpty) ...[
+            _buildQuestionHeader(
+              context,
+              trimmedOpening,
+              useAnswerColor: true,
             ),
-            if (item.followUpPrompt != null &&
-                item.followUpPrompt!.trim().isNotEmpty) ...[
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                item.followUpPrompt!,
-                style: GoogleFonts.quicksand(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.grey[600],
-                  height: 1.4,
-                ),
-              ),
-            ],
-            if (item.questions.isNotEmpty) ...[
-              const SizedBox(height: AppSpacing.sm),
-              for (final question in item.questions) ...[
-                Text(
-                  question.text.trim().isEmpty ? 'Question' : question.text,
-                  style: GoogleFonts.quicksand(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.grey[600],
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.xs),
-              ],
-            ],
           ],
-        ),
+          if (trimmedOpening.isNotEmpty && trimmedFollowUp.isNotEmpty)
+            const SizedBox(height: AppSpacing.md),
+          if (trimmedFollowUp.isNotEmpty) ...[
+            _buildQuestionHeader(
+              context,
+              trimmedFollowUp,
+              useAnswerColor: true,
+            ),
+          ],
+        ],
       ),
     );
   }
 
-  Widget _buildAnswerSection(BuildContext context) {
-    return SizedBox(
+  Widget _buildPerspectiveHistory(BuildContext context) {
+    final answerByQuestionId = {
+      for (final answer in item.answers) answer.questionId: answer,
+    };
+    final orderedAnswers = <HistoryAnswer>[
+      for (final question in item.questions)
+        if (answerByQuestionId[question.id] != null)
+          answerByQuestionId[question.id]!,
+      for (final answer in item.answers)
+        if (!item.questions.any((question) => question.id == answer.questionId))
+          answer,
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildPromptCard(context, text: item.safePromptText),
+        const SizedBox(height: AppSpacing.lg),
+        if (orderedAnswers.isEmpty)
+          _buildQuestionAnswerRevealCard(
+            context,
+            questionText: _questionUnavailable(context),
+            answerText: _answerUnavailable(context),
+            revealText: null,
+            useQuestionAnswerTextOnly: true,
+          )
+        else
+          for (final entry in orderedAnswers.asMap().entries) ...[
+            _buildQuestionAnswerRevealCard(
+              context,
+              questionText: entry.value.questionText,
+              answerText: entry.value.answerText,
+              revealText: entry.value.revealText,
+              useQuestionAnswerTextOnly: true,
+            ),
+            if (entry.key != orderedAnswers.length - 1)
+              const SizedBox(height: AppSpacing.md),
+          ],
+      ],
+    );
+  }
+
+  Widget _buildPromptCard(
+    BuildContext context, {
+    required String text,
+  }) {
+    return Container(
       width: double.infinity,
-      child: Container(
-        padding: const EdgeInsets.all(AppSpacing.md),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF2F4F0).withValues(alpha: 0.75),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: const Color(0xFF6B9B6E).withValues(alpha: 0.18),
-            width: 1.2,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE7F2E3),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: const Color(0xFF6B9B6E).withValues(alpha: 0.28),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 14,
+            offset: const Offset(0, 5),
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (item.type == HistoryItemType.distancedJournal) ...[
-              if (item.mainAnswer != null &&
-                  item.mainAnswer!.trim().isNotEmpty)
-                _buildAnswerText(item.mainAnswer)
-              else if (item.photoUrls.isEmpty)
-                _buildAnswerText(item.mainAnswer),
-              if (item.followUpAnswer != null &&
-                  item.followUpAnswer!.trim().isNotEmpty) ...[
-                const SizedBox(height: AppSpacing.sm),
-                _buildAnswerText(item.followUpAnswer),
-              ],
-              if (item.reflection != null &&
-                  item.reflection!.trim().isNotEmpty) ...[
-                const SizedBox(height: AppSpacing.md),
-                Text(
-                  context.l10n.reflectionAfterTimeLabel,
-                  style: GoogleFonts.quicksand(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF6B9B6E),
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                _buildAnswerText(item.reflection),
-              ],
-              if (item.photoUrls.isNotEmpty) ...[
-                const SizedBox(height: AppSpacing.md),
-                _buildPhotoGallery(item.photoUrls),
-              ],
-            ] else ...[
-              if (item.answers.isEmpty)
-                _buildAnswerText('Answer unavailable'),
-              for (final answer in item.answers) ...[
-                _buildAnswerText(answer.answerText),
-                const SizedBox(height: AppSpacing.sm),
-              ],
-            ],
-          ],
-        ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            text.trim().isEmpty ? item.safePromptText : text.trim(),
+            style: GoogleFonts.quicksand(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF3E5A42),
+              height: 1.45,
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildAnswerText(String? value) {
-    final text = value == null || value.trim().isEmpty
-        ? 'Answer unavailable'
-        : value.trim();
+  Widget _buildQuestionAnswerRevealCard(
+    BuildContext context, {
+    required String questionText,
+    required String answerText,
+    required String? revealText,
+    bool showQuestion = true,
+    bool useResponsePanels = true,
+    bool useQuestionAnswerTextOnly = false,
+  }) {
+    final reveal = revealText?.trim();
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.92),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: const Color(0xFFDCE8D8),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.045),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (showQuestion) ...[
+            _buildQuestionHeader(
+              context,
+              questionText,
+              useAnswerColor: !useResponsePanels || useQuestionAnswerTextOnly,
+            ),
+            const SizedBox(height: AppSpacing.md),
+          ],
+          if (useQuestionAnswerTextOnly)
+            _buildHistoryText(
+              answerText.trim().isEmpty
+                  ? _answerUnavailable(context)
+                  : answerText.trim(),
+            )
+          else if (useResponsePanels)
+            _buildResponsePanel(
+              text: answerText.trim().isEmpty
+                  ? _answerUnavailable(context)
+                  : answerText.trim(),
+              color: const Color(0xFFF5F7F3),
+              borderColor: const Color(0xFFE0E7DE),
+            )
+          else
+            _buildHistoryText(
+              answerText.trim().isEmpty
+                  ? _answerUnavailable(context)
+                  : answerText.trim(),
+            ),
+          if (reveal != null && reveal.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.md),
+            if (useResponsePanels)
+              _buildResponsePanel(
+                text: reveal,
+                color: const Color(0xFFEAF5E7),
+                borderColor: const Color(0xFFBBD8B9),
+              )
+            else
+              _buildHistoryText(reveal),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuestionHeader(
+    BuildContext context,
+    String questionText,
+    {bool useAnswerColor = false}
+  ) {
+    return Text(
+      questionText.trim().isEmpty
+          ? _questionUnavailable(context)
+          : questionText.trim(),
+      style: GoogleFonts.quicksand(
+        fontSize: 15,
+        fontWeight: useAnswerColor ? FontWeight.w500 : FontWeight.w400,
+        color: useAnswerColor
+            ? const Color(0xFF485348)
+            : const Color(0xFF7F8D7E),
+        height: 1.35,
+      ),
+    );
+  }
+
+  Widget _buildHistoryText(String text) {
     return Text(
       text,
       style: GoogleFonts.quicksand(
         fontSize: 13,
-        fontWeight: FontWeight.w400,
-        color: Colors.grey[600],
-        height: 1.4,
+        fontWeight: FontWeight.w500,
+        color: const Color(0xFF485348),
+        height: 1.45,
       ),
     );
+  }
+
+  _DistancedJournalPromptParts _distancedJournalPromptParts() {
+    final text = item.safePromptText;
+    final paragraphs = text
+        .split(RegExp(r'\n\s*\n'))
+        .map((part) => part.trim())
+        .where((part) => part.isNotEmpty)
+        .toList();
+
+    if (paragraphs.length > 1) {
+      final question = paragraphs.last;
+      final contextText = paragraphs.take(paragraphs.length - 1).join('\n\n');
+      return _DistancedJournalPromptParts(
+        contextText: contextText,
+        questionText: question,
+      );
+    }
+
+    final questionStart = text.lastIndexOf('?');
+    if (questionStart > 0 && questionStart < text.length - 1) {
+      return _DistancedJournalPromptParts(
+        contextText: text.substring(0, questionStart + 1).trim(),
+        questionText: text.substring(questionStart + 1).trim(),
+      );
+    }
+
+    return _DistancedJournalPromptParts(
+      contextText: text,
+      questionText: '',
+    );
+  }
+
+  Widget _buildPhotoCard(List<String> urls) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.92),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: const Color(0xFFDCE8D8),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.045),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: _buildPhotoGallery(urls),
+    );
+  }
+
+  Widget _buildResponsePanel({
+    required String text,
+    required Color color,
+    required Color borderColor,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: borderColor, width: 1),
+      ),
+      child: Text(
+        text,
+        style: GoogleFonts.quicksand(
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
+          color: const Color(0xFF485348),
+          height: 1.45,
+        ),
+      ),
+    );
+  }
+
+  bool _isEnglish(BuildContext context) {
+    return Localizations.localeOf(context).languageCode == 'en';
+  }
+
+  String _answerUnavailable(BuildContext context) {
+    return _isEnglish(context) ? 'Answer unavailable' : 'Odgovor nije dostupan';
+  }
+
+  String _questionUnavailable(BuildContext context) {
+    return _isEnglish(context) ? 'Question unavailable' : 'Pitanje nije dostupno';
   }
 
   Widget _buildPhotoGallery(List<String> urls) {
@@ -256,7 +521,7 @@ class HistoryDetailPage extends StatelessWidget {
       return trimmed;
     }
 
-    final base = Uri.parse(AppConstants.apiBaseUrl);
+    final base = Uri.parse(ApiEnvironment.baseUrl);
     final origin =
         '${base.scheme}://${base.host}${base.hasPort ? ':${base.port}' : ''}';
     if (trimmed.startsWith('/')) {
@@ -282,6 +547,16 @@ class HistoryDetailPage extends StatelessWidget {
       ),
     );
   }
+}
+
+class _DistancedJournalPromptParts {
+  final String contextText;
+  final String questionText;
+
+  const _DistancedJournalPromptParts({
+    required this.contextText,
+    required this.questionText,
+  });
 }
 
 class _PhotoViewerPage extends StatefulWidget {

@@ -21,6 +21,7 @@ class HomeShell extends StatefulWidget {
 
 class _HomeShellState extends State<HomeShell> {
   int _currentIndex = 0;
+  int _progressRefreshTick = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +36,7 @@ class _HomeShellState extends State<HomeShell> {
             key: ValueKey('dashboard-$currentLanguageCode'),
           ),
           ProgressPage(
-            key: ValueKey('progress-$currentLanguageCode'),
+            key: ValueKey('progress-$currentLanguageCode-$_progressRefreshTick'),
           ),
           ProfilePage(
             key: ValueKey('profile-$currentLanguageCode'),
@@ -44,46 +45,52 @@ class _HomeShellState extends State<HomeShell> {
           ),
         ],
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 10,
-              offset: const Offset(0, -4),
-            ),
-          ],
-        ),
-        child: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            if (index == _currentIndex) return;
-            setState(() => _currentIndex = index);
-          },
-          showUnselectedLabels: true,
-          selectedLabelStyle: const TextStyle(fontSize: 12),
-          unselectedLabelStyle: const TextStyle(fontSize: 12),
-          selectedFontSize: 12,
-          unselectedFontSize: 12,
-          showSelectedLabels: true,
-          items: [
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.psychology_outlined),
-              activeIcon: const Icon(Icons.psychology),
-              label: context.l10n.dashboard,
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.history_outlined),
-              activeIcon: const Icon(Icons.history),
-              label: context.l10n.progress,
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.person_outline),
-              activeIcon: const Icon(Icons.person),
-              label: context.l10n.profile,
-            ),
-          ],
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.08),
+                blurRadius: 10,
+                offset: const Offset(0, -4),
+              ),
+            ],
+          ),
+          child: BottomNavigationBar(
+            currentIndex: _currentIndex,
+            onTap: (index) {
+              if (index == _currentIndex) return;
+              if (index == 1) {
+                _progressRefreshTick++;
+              }
+              setState(() => _currentIndex = index);
+            },
+            showUnselectedLabels: true,
+            selectedLabelStyle: const TextStyle(fontSize: 12),
+            unselectedLabelStyle: const TextStyle(fontSize: 12),
+            selectedFontSize: 12,
+            unselectedFontSize: 12,
+            showSelectedLabels: true,
+            items: [
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.psychology_outlined),
+                activeIcon: const Icon(Icons.psychology),
+                label: context.l10n.dashboard,
+              ),
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.history_outlined),
+                activeIcon: const Icon(Icons.history),
+                label: context.l10n.progress,
+              ),
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.person_outline),
+                activeIcon: const Icon(Icons.person),
+                label: context.l10n.profile,
+              ),
+            ],
+          ),
         ),
       ),
     );

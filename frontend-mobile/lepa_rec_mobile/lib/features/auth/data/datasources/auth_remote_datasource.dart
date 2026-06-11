@@ -20,6 +20,23 @@ class AuthRemoteDataSource {
     return AuthResponse.fromJson(response.data as Map<String, dynamic>);
   }
 
+  Future<AuthResponse> login({
+    required String email,
+    required String password,
+  }) async {
+    const endpoint = '/auth/login';
+
+    final response = await _dio.post(
+      endpoint,
+      data: <String, dynamic>{
+        'email': email,
+        'password': password,
+      },
+    );
+
+    return AuthResponse.fromJson(response.data as Map<String, dynamic>);
+  }
+
   Future<AuthResponse> refresh(String refreshToken) async {
   const endpoint = '/auth/refresh';
 
@@ -29,6 +46,37 @@ class AuthRemoteDataSource {
   );
 
   return AuthResponse.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  Future<AuthResponse> registerWithOnboarding({
+    required String email,
+    required String password,
+    required String onboardingSessionId,
+    required String firstName,
+    required String lastName,
+    required bool notificationEnabled,
+    required String? notificationTimeLocal,
+    required String timeZoneId,
+  }) async {
+    const endpoint = '/auth/register-with-onboarding';
+
+    final response = await _dio.post(
+      endpoint,
+      data: <String, dynamic>{
+        'email': email,
+        'password': password,
+        'onboardingSessionId': onboardingSessionId,
+        'profile': <String, dynamic>{
+          'firstName': firstName,
+          'lastName': lastName,
+          'notificationEnabled': notificationEnabled,
+          'notificationTimeLocal': notificationTimeLocal,
+          'timeZoneId': timeZoneId,
+        },
+      },
+    );
+
+    return AuthResponse.fromJson(response.data as Map<String, dynamic>);
   }
 
 }

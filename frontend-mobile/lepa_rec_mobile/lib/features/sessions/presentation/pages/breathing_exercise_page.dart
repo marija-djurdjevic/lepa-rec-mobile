@@ -37,7 +37,6 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
   static const int _breathOutDuration = 4;
   static const int _pauseDuration = 4;
   static const int _preStartCountdownDuration = 3;
-  static const double _centerContentHeight = 120;
 
   int _currentRound = 0;
   BreathingPhase _currentPhase = BreathingPhase.breathIn;
@@ -209,7 +208,7 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
     });
 
     _completionTimer?.cancel();
-    _completionTimer = Timer(const Duration(milliseconds: 900), () {
+    _completionTimer = Timer(const Duration(milliseconds: 500), () {
       if (!mounted) return;
       widget.onComplete();
     });
@@ -252,67 +251,83 @@ class _BreathingExercisePageState extends State<BreathingExercisePage>
             ),
             const SizedBox(height: AppSpacing.xl),
             Expanded(
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Transform.translate(
-                    offset: const Offset(0, -8),
-                    child: AnimatedScale(
-                    duration: const Duration(milliseconds: 2000),
-                    curve: Curves.easeInOutCubic,
-                    scale: _isIdle ? 1.0 : 1.28,
-                    child: AnimatedOpacity(
-                      duration: const Duration(milliseconds: 2000),
-                      curve: Curves.easeInOutCubic,
-                      opacity: _isIdle ? 1 : 0,
-                      child: CustomPaint(
-                        size: const Size(280, 280),
-                        painter: _BreathingLinesPainter(),
-                      ),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final circleSize = math.min(
+                    280.0,
+                    math.min(
+                      constraints.maxWidth - 32,
+                      constraints.maxHeight * 0.58,
                     ),
-                  ),
-                  ),
-                  Transform.translate(
-                    offset: const Offset(0, -12),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                      SizedBox(
-                        width: 280,
-                        height: 280,
-                        child: Center(
-                          child: Transform.translate(
-                            offset: Offset(0, _isIdle ? 0 : 20),
-                            child: BreathingCircle(
-                              animation: _breathingController,
-                              phase: _currentPhase,
-                              previousPhase: _previousPhase,
-                              phaseBlend: _phaseBlendController,
-                              isIdle: _isIdle,
-                              onTap: _isIdle ? _onStartPressed : null,
-                              idleText: context.l10n.startBreathing,
+                  ).clamp(180.0, 280.0);
+                  final centerContentHeight =
+                      (constraints.maxHeight * 0.22).clamp(72.0, 120.0);
+                  final spacingBetween =
+                      (constraints.maxHeight * 0.05).clamp(12.0, 28.0);
+
+                  return Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Transform.translate(
+                        offset: const Offset(0, -8),
+                        child: AnimatedScale(
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.easeInOutCubic,
+                          scale: _isIdle ? 1.0 : 1.28,
+                          child: AnimatedOpacity(
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.easeInOutCubic,
+                            opacity: _isIdle ? 1 : 0,
+                            child: CustomPaint(
+                              size: Size(circleSize, circleSize),
+                              painter: _BreathingLinesPainter(),
                             ),
                           ),
                         ),
                       ),
-                        const SizedBox(height: AppSpacing.xxl + AppSpacing.md),
-                        Transform.translate(
-                          offset: const Offset(0, 24),
-                          child: SizedBox(
-                            height: _centerContentHeight,
-                            child: Center(
-                              child: AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 400),
-                                child: _buildCenterContent(),
+                      Transform.translate(
+                        offset: const Offset(0, -12),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              width: circleSize,
+                              height: circleSize,
+                              child: Center(
+                                child: Transform.translate(
+                                  offset: Offset(0, _isIdle ? 0 : 20),
+                                  child: BreathingCircle(
+                                    animation: _breathingController,
+                                    phase: _currentPhase,
+                                    previousPhase: _previousPhase,
+                                    phaseBlend: _phaseBlendController,
+                                    isIdle: _isIdle,
+                                    onTap: _isIdle ? _onStartPressed : null,
+                                    idleText: context.l10n.startBreathing,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                            SizedBox(height: spacingBetween),
+                            Transform.translate(
+                              offset: const Offset(0, 12),
+                              child: SizedBox(
+                                height: centerContentHeight,
+                                child: Center(
+                                  child: AnimatedSwitcher(
+                                    duration: const Duration(milliseconds: 400),
+                                    child: _buildCenterContent(),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                ],
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
             if (_hasStarted || _isPreStartCountdownActive)

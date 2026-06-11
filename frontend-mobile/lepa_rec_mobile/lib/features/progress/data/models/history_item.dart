@@ -11,11 +11,13 @@ class HistoryAnswer {
   final String questionId;
   final String questionText;
   final String answerText;
+  final String? revealText;
 
   const HistoryAnswer({
     required this.questionId,
     required this.questionText,
     required this.answerText,
+    this.revealText,
   });
 }
 
@@ -35,6 +37,7 @@ class HistoryItem {
   final String? mainAnswer;
   final String? followUpAnswer;
   final String? reflection;
+  final String? reflectionQuestion;
   final List<String> photoUrls;
   final List<HistoryAnswer> answers;
 
@@ -47,6 +50,7 @@ class HistoryItem {
     this.mainAnswer,
     this.followUpAnswer,
     this.reflection,
+    this.reflectionQuestion,
     this.photoUrls = const [],
   })  : type = HistoryItemType.distancedJournal,
         reveal = null,
@@ -66,6 +70,7 @@ class HistoryItem {
         mainAnswer = null,
         followUpAnswer = null,
         reflection = null,
+        reflectionQuestion = null,
         photoUrls = const [];
 
   String get safePromptText => promptText.trim().isEmpty

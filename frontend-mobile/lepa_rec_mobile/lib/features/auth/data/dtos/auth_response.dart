@@ -4,6 +4,7 @@ class AuthResponse {
   final DateTime expiresAt;
   final String userId;
   final String role;
+  final bool onboardingCompleted;
 
   AuthResponse({
     required this.accessToken,
@@ -11,6 +12,7 @@ class AuthResponse {
     required this.expiresAt,
     required this.userId,
     required this.role,
+    required this.onboardingCompleted,
   });
 
   factory AuthResponse.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class AuthResponse {
       expiresAt: DateTime.parse(json['expiresAt'] as String),
       userId: json['userId'] as String,
       role: (json['role'] as String?) ?? '',
+      onboardingCompleted: json['onboardingCompleted'] as bool? ?? false,
     );
   }
 }
