@@ -290,6 +290,22 @@
     "@perspectiveRevealSubtitle":  {
                                        "description":  "Subtitle for the perspective scenario reveal screen"
                                    },
+    "perspectiveGuideTitle":  "Let\u0027s look at it from another angle.",
+    "@perspectiveGuideTitle":  {
+                                   "description":  "Title shown when a perspective scenario answer needs guidance"
+                               },
+    "perspectiveGuideIntro":  "Consider this question, then try again.",
+    "@perspectiveGuideIntro":  {
+                                  "description":  "Intro text shown above a Socratic guide question"
+                              },
+    "perspectiveTryAgainLabel":  "Try again",
+    "@perspectiveTryAgainLabel":  {
+                                      "description":  "Label above the retry answer input after guidance"
+                                  },
+    "perspectiveScenarioSubmitGenericError":  "Something went wrong. Please try again.",
+    "@perspectiveScenarioSubmitGenericError":  {
+                                                  "description":  "Generic learner-facing error when perspective scenario answer submission fails"
+                                              },
     "errorSubmittingPerspectiveScenario":  "Error submitting perspective scenario: {error}",
     "@errorSubmittingPerspectiveScenario":  {
                                                 "description":  "Error message when submitting a perspective scenario fails",

@@ -290,6 +290,22 @@
   "@perspectiveRevealSubtitle": {
     "description": "Podnaslov za ekran otkrivanja perspektive"
   },
+  "perspectiveGuideTitle": "Pogledajmo iz drugog ugla.",
+  "@perspectiveGuideTitle": {
+    "description": "Naslov kada odgovor na scenario perspektive treba dodatno usmerenje"
+  },
+  "perspectiveGuideIntro": "Razmisli o ovom pitanju, pa pokušaj ponovo.",
+  "@perspectiveGuideIntro": {
+    "description": "Uvodni tekst iznad pomoćnog pitanja"
+  },
+  "perspectiveTryAgainLabel": "Pokušaj ponovo",
+  "@perspectiveTryAgainLabel": {
+    "description": "Labela iznad polja za novi pokušaj nakon usmerenja"
+  },
+  "perspectiveScenarioSubmitGenericError": "Nešto je pošlo naopako. Pokušajte ponovo.",
+  "@perspectiveScenarioSubmitGenericError": {
+    "description": "Generička poruka greške pri slanju odgovora na scenario perspektive"
+  },
   "errorSubmittingPerspectiveScenario": "Greška pri slanju scenarija perspektive: {error}",
   "@errorSubmittingPerspectiveScenario": {
     "description": "Poruka greške pri slanju scenarija perspektive",

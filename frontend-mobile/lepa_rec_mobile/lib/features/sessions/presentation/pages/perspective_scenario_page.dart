@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +44,8 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
   final Map<String, String> _answersByQuestionId = {};
   final Map<String, String> _revealsByQuestionId = {};
   final Map<int, String> _revealsByOrder = {};
+  final Map<String, String> _guideQuestionsByQuestionId = {};
+  final Map<String, String> _feedbackByQuestionId = {};
 
   @override
   void initState() {
@@ -59,8 +63,9 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final currentLang =
-        Localizations.localeOf(context).languageCode == 'en' ? 'en' : 'sr';
+    final currentLang = Localizations.localeOf(context).languageCode == 'en'
+        ? 'en'
+        : 'sr';
     if (_activePracticeLang == currentLang) return;
     _activePracticeLang = currentLang;
     _startScenario();
@@ -83,6 +88,8 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
       _answersByQuestionId.clear();
       _revealsByQuestionId.clear();
       _revealsByOrder.clear();
+      _guideQuestionsByQuestionId.clear();
+      _feedbackByQuestionId.clear();
     });
 
     try {
@@ -175,17 +182,20 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
 
     setState(() {
       _isSubmitting = true;
+      _showValidationErrors = false;
     });
 
     try {
-      final response = await _sessionRepository.answerPerspectiveScenarioAndReveal(
-        AnswerPerspectiveScenarioQuestionDto(
-          exerciseId: _exercise!.id,
-          questionId: question.id,
-          answerText: answerText,
-        ),
-        _activePracticeLang ?? 'sr',
-      );
+      final response = await _sessionRepository
+          .answerPerspectiveScenarioAndReveal(
+            AnswerPerspectiveScenarioQuestionDto(
+              exerciseId: _exercise!.id,
+              questionId: question.id,
+              answerText: answerText,
+              idempotencyKey: _newIdempotencyKey(),
+            ),
+            _activePracticeLang ?? 'sr',
+          );
 
       if (!mounted) return;
 
@@ -206,6 +216,9 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
       final revealText = response.reveal?.reveal.trim();
       final revealQuestionId = response.reveal?.questionId;
       final revealOrder = response.reveal?.order;
+      final guideText = response.guideQuestion?.question.trim();
+      final feedbackText = response.feedback?.trim();
+      final questionIsFinal = response.isFinalStatus;
 
       if (response.isExerciseCompleted) {
         try {
@@ -219,13 +232,29 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
       }
 
       setState(() {
-        if (revealText != null &&
+        if (response.needsGuidance) {
+          if (guideText != null && guideText.isNotEmpty) {
+            _guideQuestionsByQuestionId[question.id] = guideText;
+          }
+          _answerControllers[index].clear();
+        }
+        if (questionIsFinal) {
+          _guideQuestionsByQuestionId.remove(question.id);
+        }
+        if (questionIsFinal &&
+            feedbackText != null &&
+            feedbackText.isNotEmpty) {
+          _feedbackByQuestionId[question.id] = feedbackText;
+        }
+        if (questionIsFinal &&
+            revealText != null &&
             revealText.isNotEmpty &&
             revealQuestionId != null &&
             revealQuestionId.isNotEmpty) {
           _revealsByQuestionId[revealQuestionId] = revealText;
         }
-        if (revealText != null &&
+        if (questionIsFinal &&
+            revealText != null &&
             revealText.isNotEmpty &&
             revealOrder != null &&
             revealOrder > 0) {
@@ -235,10 +264,16 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
         _isSubmitting = false;
       });
 
-      if ((revealText == null || revealText.isEmpty) && kDebugMode) {
+      if (response.needsGuidance && kDebugMode) {
+        debugPrint(
+          '[PerspectiveScenario][UI] answer needs guidance '
+          'questionId=${question.id} '
+          'guideIteration=${response.guideIterationCount}',
+        );
+      } else if ((revealText == null || revealText.isEmpty) && kDebugMode) {
         debugPrint(
           '[PerspectiveScenario][UI] answer_and_reveal returned empty reveal '
-          'questionId=${question.id}',
+          'questionId=${question.id} status=${response.status}',
         );
       }
 
@@ -258,9 +293,7 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            context.l10n.errorSubmittingPerspectiveScenario(e.toString()),
-          ),
+          content: Text(context.l10n.perspectiveScenarioSubmitGenericError),
           backgroundColor: Colors.red[600],
         ),
       );
@@ -273,13 +306,20 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            context.l10n.errorSubmittingPerspectiveScenario(e.toString()),
-          ),
+          content: Text(context.l10n.perspectiveScenarioSubmitGenericError),
           backgroundColor: Colors.red[600],
         ),
       );
     }
+  }
+
+  String _newIdempotencyKey() {
+    final random = Random.secure();
+    final randomPart = List.generate(
+      4,
+      (_) => random.nextInt(1 << 32).toRadixString(16).padLeft(8, '0'),
+    ).join();
+    return '${DateTime.now().microsecondsSinceEpoch}-$randomPart';
   }
 
   Future<void> _finishScenario() async {
@@ -455,10 +495,7 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
-                      _getLevelLabel(
-                        widget.prompt.challengeLevel,
-                        context,
-                      ),
+                      _getLevelLabel(widget.prompt.challengeLevel, context),
                       style: GoogleFonts.quicksand(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
@@ -516,9 +553,7 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
                                   ? context.l10n.conclude
                                   : _hasRevealForQuestion(_orderedQuestions[i])
                                   ? context.l10n.continueToNext
-                                  : _isLastQuestion(i)
-                                  ? context.l10n.wrapUp
-                                  : context.l10n.continueToNext,
+                                  : context.l10n.submit,
                               style: GoogleFonts.quicksand(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
@@ -543,6 +578,8 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
     final isReadOnly =
         _isFlowSubmitted || _revealsByQuestionId.containsKey(question.id);
     final revealText = _findRevealForQuestion(question);
+    final guideText = _guideQuestionsByQuestionId[question.id];
+    final feedbackText = _feedbackByQuestionId[question.id];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -556,7 +593,25 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
             height: 1.4,
           ),
         ),
+        if (guideText != null && guideText.trim().isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.md),
+          _buildGuideCard(guideText),
+        ],
         const SizedBox(height: AppSpacing.sm),
+        if (!isReadOnly)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+            child: Text(
+              guideText != null && guideText.trim().isNotEmpty
+                  ? context.l10n.perspectiveTryAgainLabel
+                  : context.l10n.yourAnswer,
+              style: GoogleFonts.quicksand(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF6B9B6E),
+              ),
+            ),
+          ),
         DecoratedBox(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
@@ -641,9 +696,77 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
           ),
         if (revealText != null && revealText.trim().isNotEmpty) ...[
           const SizedBox(height: AppSpacing.md),
-          _buildRevealCard(revealText),
+          _buildRevealCard(revealText, feedbackText: feedbackText),
         ],
       ],
+    );
+  }
+
+  Widget _buildGuideCard(String guideQuestion) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFF6B9B6E).withValues(alpha: 0.45),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(
+                Icons.lightbulb_outline,
+                size: 22,
+                color: Color(0xFF6B9B6E),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text(
+                  context.l10n.perspectiveGuideTitle,
+                  style: GoogleFonts.quicksand(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF6B9B6E),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            context.l10n.perspectiveGuideIntro,
+            style: GoogleFonts.quicksand(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[600],
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            guideQuestion,
+            style: GoogleFonts.quicksand(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFF2F3A2F),
+              height: 1.45,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -738,17 +861,14 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
     return _revealsByOrder[question.order];
   }
 
-  Widget _buildRevealCard(String reveal) {
+  Widget _buildRevealCard(String reveal, {String? feedbackText}) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         color: const Color(0xFF6B9B6E).withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFF6B9B6E),
-          width: 1.2,
-        ),
+        border: Border.all(color: const Color(0xFF6B9B6E), width: 1.2),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -791,6 +911,29 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
               height: 1.5,
             ),
           ),
+          if (feedbackText != null && feedbackText.trim().isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.md),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(AppSpacing.md),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.72),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0xFF6B9B6E).withValues(alpha: 0.25),
+                ),
+              ),
+              child: Text(
+                feedbackText,
+                style: GoogleFonts.quicksand(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF4E6752),
+                  height: 1.45,
+                ),
+              ),
+            ),
+          ],
           const SizedBox(height: AppSpacing.sm),
           Text(
             context.l10n.perspectiveRevealHint,
@@ -826,8 +969,8 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
       case 'lako':
         return const Color(0xFF8BBF8F);
       case 'medium':
-        case 'umereno':
-          return const Color(0xFF5C9A6B);
+      case 'umereno':
+        return const Color(0xFF5C9A6B);
       case 'hard':
       case 'tesko':
         return const Color(0xFF3E7A52);
@@ -842,8 +985,8 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
       case 'lako':
         return context.l10n.levelEasy;
       case 'medium':
-        case 'umereno':
-          return context.l10n.levelMedium;
+      case 'umereno':
+        return context.l10n.levelMedium;
       case 'hard':
       case 'tesko':
         return context.l10n.levelHard;
