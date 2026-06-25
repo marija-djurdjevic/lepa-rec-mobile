@@ -290,6 +290,26 @@
   "@perspectiveRevealSubtitle": {
     "description": "Podnaslov za ekran otkrivanja perspektive"
   },
+  "perspectiveGuideTitle": "Pogledajmo iz drugog ugla.",
+  "@perspectiveGuideTitle": {
+    "description": "Naslov kada odgovor na scenario perspektive treba dodatno usmerenje"
+  },
+  "perspectiveGuideIntro": "Razmislite o ovom pitanju, pa pokušajte još jednom da odgovorite na pitanje iznad.",
+  "@perspectiveGuideIntro": {
+    "description": "Uvodni tekst iznad pomoćnog pitanja"
+  },
+  "perspectiveGuidedAnswerHint": "Napišite novi odgovor na pitanje iznad...",
+  "@perspectiveGuidedAnswerHint": {
+    "description": "Placeholder za polje odgovora nakon prikazivanja pomoćnog pitanja u scenariju perspektive"
+  },
+  "perspectiveTryAgainLabel": "Pokušaj ponovo",
+  "@perspectiveTryAgainLabel": {
+    "description": "Labela iznad polja za novi pokušaj nakon usmerenja"
+  },
+  "perspectiveScenarioSubmitGenericError": "Nešto je pošlo naopako. Pokušajte ponovo.",
+  "@perspectiveScenarioSubmitGenericError": {
+    "description": "Generička poruka greške pri slanju odgovora na scenario perspektive"
+  },
   "errorSubmittingPerspectiveScenario": "Greška pri slanju scenarija perspektive: {error}",
   "@errorSubmittingPerspectiveScenario": {
     "description": "Poruka greške pri slanju scenarija perspektive",
@@ -424,6 +444,18 @@
   "@distancedJournalHint": {
     "description": "Pomocni tekst za distancirani dnevnik"
   },
+  "distancedJournalPersonaLabel": "Danas pišem kao",
+  "@distancedJournalPersonaLabel": {
+    "description": "Labela za opcionalno ime za jedan zapis u distanciranom dnevniku"
+  },
+  "distancedJournalPersonaHint": "npr. Nora, A, Posmatrač",
+  "@distancedJournalPersonaHint": {
+    "description": "Placeholder za opcionalno ime za jedan zapis u distanciranom dnevniku"
+  },
+  "distancedJournalPersonaHelper": "Koristite bilo koje ime za ovaj zapis. Možete ga promeniti svaki put.",
+  "@distancedJournalPersonaHelper": {
+    "description": "Pomocni tekst za opcionalno ime za jedan zapis u distanciranom dnevniku"
+  },
   "reflectionRequired": "Molim te podeli tvoj osvrt",
   "@reflectionRequired": {
     "description": "Poruka greške pri validaciji kada je polje osvrtanja prazno"
@@ -431,6 +463,34 @@
   "reflectionSubmittedSuccessfully": "Osvrt je uspešno poslat!",
   "@reflectionSubmittedSuccessfully": {
     "description": "Poruka uspeha nakon slanja osvrtanja"
+  },
+  "generatedReflectionOfferTitle": "Da li želite da odgovorite na još jedno pitanje?",
+  "@generatedReflectionOfferTitle": {
+    "description": "Naslov za opcioni dodatni dnevnički osvrt"
+  },
+  "generatedReflectionOfferBody": "Mogu da Vam prikažem jedno kratko pitanje na osnovu onoga što ste napisali. Potpuno je opciono.",
+  "@generatedReflectionOfferBody": {
+    "description": "Tekst za ponudu opcionog dodatnog dnevničkog pitanja"
+  },
+  "generatedReflectionShowQuestion": "Prikažite pitanje",
+  "@generatedReflectionShowQuestion": {
+    "description": "Tekst dugmeta za prikaz opcionog dodatnog dnevničkog pitanja"
+  },
+  "generatedReflectionSkip": "Preskočite",
+  "@generatedReflectionSkip": {
+    "description": "Tekst dugmeta za preskakanje opcionog dodatnog dnevničkog pitanja"
+  },
+  "generatedReflectionQuestionTitle": "Još jedno pitanje",
+  "@generatedReflectionQuestionTitle": {
+    "description": "Naslov iznad opcionog dodatnog dnevničkog pitanja"
+  },
+  "generatedReflectionAnswerHint": "Napišite nekoliko reči ako želite...",
+  "@generatedReflectionAnswerHint": {
+    "description": "Placeholder za odgovor na opciono dodatno dnevničko pitanje"
+  },
+  "generatedReflectionSaveAnswer": "Sačuvajte odgovor",
+  "@generatedReflectionSaveAnswer": {
+    "description": "Tekst dugmeta za čuvanje odgovora na opciono dodatno dnevničko pitanje"
   },
   "journalFeedbackTitle": "Povratna poruka",
 "@journalFeedbackTitle": {

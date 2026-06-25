@@ -1,8 +1,13 @@
+import 'dart:math';
+
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lepa_rec_mobile/core/constants/app_spacing.dart';
 import 'package:lepa_rec_mobile/core/localization/localization_extension.dart';
 import 'package:lepa_rec_mobile/features/onboarding/data/datasources/onboarding_remote_datasource.dart';
+import 'package:lepa_rec_mobile/features/onboarding/data/dtos/onboarding_perspective_answer_reveal_response.dart';
 import 'package:lepa_rec_mobile/features/onboarding/presentation/models/onboarding_perspective_question_args.dart';
 import 'package:lepa_rec_mobile/features/sessions/data/dtos/perspective_scenario_question_dto.dart';
 
@@ -20,6 +25,8 @@ class _OnboardingPerspectiveQuestionPageState
   final _scrollController = ScrollController();
   final _answersByQuestionId = <String, String>{};
   final _revealsByQuestionId = <String, String>{};
+  final _guideQuestionsByQuestionId = <String, String>{};
+  final _feedbackByQuestionId = <String, String>{};
 
   List<PerspectiveScenarioQuestionDto> _questions = const [];
   List<TextEditingController> _controllers = const [];
@@ -62,7 +69,25 @@ class _OnboardingPerspectiveQuestionPageState
       }
     }
 
+    if (kDebugMode) {
+      final questionDebug = _questions
+          .map(
+            (q) =>
+                '#${q.order}(id=${q.id}, text="${_logText(q.questionText)}")',
+          )
+          .join(', ');
+      debugPrint(
+        '[OnboardingPerspective][UI] start '
+        'sessionId=${args.onboardingSessionId} '
+        'exerciseId=${args.exerciseId} '
+        'challengeId=${args.challenge.id} '
+        'questions=${_questions.length} [$questionDebug]',
+      );
+    }
+
     _revealsByQuestionId.clear();
+    _guideQuestionsByQuestionId.clear();
+    _feedbackByQuestionId.clear();
     _visibleQuestionCount = _questions.isEmpty ? 0 : 1;
     _initializedExerciseId = args.exerciseId;
     _isExerciseCompleted = false;
@@ -121,24 +146,64 @@ class _OnboardingPerspectiveQuestionPageState
       _submitting = true;
       _showValidationErrors = false;
       _error = null;
+      _guideQuestionsByQuestionId.remove(question.id);
     });
 
     try {
-      final response = await _remote.answerPerspectiveAndReveal(
+      final idempotencyKey = _newIdempotencyKey();
+      if (kDebugMode) {
+        debugPrint(
+          '[OnboardingPerspective][UI][Answer] '
+          'sessionId=${args.onboardingSessionId} '
+          'exerciseId=${args.exerciseId} '
+          'challengeId=${args.challenge.id} '
+          'questionOrder=${question.order} '
+          'questionId=${question.id} '
+          'question="${_logText(question.questionText)}" '
+          'answer="${_logText(answer)}"',
+        );
+      }
+
+      final response = await _answerAndRevealStream(
         onboardingSessionId: args.onboardingSessionId,
         exerciseId: args.exerciseId,
         questionId: question.id,
         answerText: answer,
+        idempotencyKey: idempotencyKey,
         lang: _isEnglish ? 'en' : 'sr',
       );
 
       if (!mounted) return;
+      if (response.needsGuidance && kDebugMode) {
+        debugPrint(
+          '[OnboardingPerspective][UI] answer needs guidance '
+          'questionId=${question.id} '
+          'guideIteration=${response.guideIterationCount} '
+          'guideQuestion="${_logText(response.guideQuestion ?? '')}"',
+        );
+      }
       setState(() {
-        _answersByQuestionId[question.id] = answer;
-        if (response.reveal.trim().isNotEmpty) {
+        if (response.needsGuidance) {
+          final guideQuestion = response.guideQuestion?.trim();
+          if (guideQuestion != null && guideQuestion.isNotEmpty) {
+            _guideQuestionsByQuestionId[question.id] = guideQuestion;
+          }
+          _controllers[index].clear();
+        }
+        if (response.isFinalStatus) {
+          _answersByQuestionId[question.id] = answer;
+          _guideQuestionsByQuestionId.remove(question.id);
+        }
+        if (response.isFinalStatus && response.reveal.trim().isNotEmpty) {
           _revealsByQuestionId[question.id] = response.reveal.trim();
         }
-        _isExerciseCompleted = response.isExerciseCompleted;
+        final feedback = response.feedback?.trim();
+        if (response.isFinalStatus && feedback != null && feedback.isNotEmpty) {
+          _feedbackByQuestionId[question.id] = feedback;
+        }
+        if (response.isFinalStatus) {
+          _isExerciseCompleted = response.isExerciseCompleted;
+        }
         _submitting = false;
       });
       _scrollToBottom();
@@ -153,11 +218,58 @@ class _OnboardingPerspectiveQuestionPageState
     }
   }
 
+  Future<OnboardingPerspectiveAnswerRevealResponse> _answerAndRevealStream({
+    required String onboardingSessionId,
+    required String exerciseId,
+    required String questionId,
+    required String answerText,
+    required String idempotencyKey,
+    required String lang,
+  }) async {
+    try {
+      return await _remote.answerPerspectiveAndRevealStream(
+        onboardingSessionId: onboardingSessionId,
+        exerciseId: exerciseId,
+        questionId: questionId,
+        answerText: answerText,
+        idempotencyKey: idempotencyKey,
+        lang: lang,
+        onGuideTextChanged: (guideText) {
+          if (!mounted || guideText.trim().isEmpty) return;
+          setState(() {
+            _guideQuestionsByQuestionId[questionId] = guideText;
+          });
+          _scrollToBottom();
+        },
+      );
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404 || e.response?.statusCode == 405) {
+        return _remote.answerPerspectiveAndReveal(
+          onboardingSessionId: onboardingSessionId,
+          exerciseId: exerciseId,
+          questionId: questionId,
+          answerText: answerText,
+          idempotencyKey: idempotencyKey,
+          lang: lang,
+        );
+      }
+      rethrow;
+    }
+  }
+
+  String _newIdempotencyKey() {
+    final random = Random.secure();
+    final randomPart = List.generate(
+      4,
+      (_) => random.nextInt(1 << 32).toRadixString(16).padLeft(8, '0'),
+    ).join();
+    return '${DateTime.now().microsecondsSinceEpoch}-$randomPart';
+  }
+
   void _goToRegistration() {
-    Navigator.of(context).pushNamedAndRemoveUntil(
-      '/onboarding/register',
-      (route) => false,
-    );
+    Navigator.of(
+      context,
+    ).pushNamedAndRemoveUntil('/onboarding/register', (route) => false);
   }
 
   bool _hasText(int index) => _controllers[index].text.trim().isNotEmpty;
@@ -275,26 +387,17 @@ class _OnboardingPerspectiveQuestionPageState
               ),
             ),
           ),
-          if (_submitting)
-            Container(
-              color: Colors.black.withValues(alpha: 0.25),
-              child: const Center(child: CircularProgressIndicator()),
-            ),
         ],
       ),
     );
   }
 
   String _buttonLabel(int index) {
-    if (_isExerciseCompleted && _isLastQuestion(index)) {
+    if (_isLastQuestion(index) &&
+        (_isExerciseCompleted || _hasRevealForQuestion(_questions[index]))) {
       return context.l10n.conclude;
     }
-    if (_hasRevealForQuestion(_questions[index])) {
-      return _isLastQuestion(index)
-          ? context.l10n.conclude
-          : context.l10n.continueToNext;
-    }
-    return _isLastQuestion(index) ? context.l10n.wrapUp : context.l10n.continueToNext;
+    return context.l10n.wrapUp;
   }
 
   Widget _buildScenarioCard(OnboardingPerspectiveQuestionArgs args) {
@@ -304,7 +407,11 @@ class _OnboardingPerspectiveQuestionPageState
         color: const Color(0xFFE7F2E3),
         borderRadius: BorderRadius.circular(16),
         boxShadow: const [
-          BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 3)),
+          BoxShadow(
+            color: Color(0x14000000),
+            blurRadius: 8,
+            offset: Offset(0, 3),
+          ),
         ],
       ),
       child: Column(
@@ -344,6 +451,8 @@ class _OnboardingPerspectiveQuestionPageState
     final question = _questions[index];
     final controller = _controllers[index];
     final reveal = _revealsByQuestionId[question.id];
+    final guideQuestion = _guideQuestionsByQuestionId[question.id];
+    final feedback = _feedbackByQuestionId[question.id];
     final hasError = _showValidationErrors && controller.text.trim().isEmpty;
     final isReadOnly = _submitting || _hasRevealForQuestion(question);
 
@@ -359,6 +468,10 @@ class _OnboardingPerspectiveQuestionPageState
             height: 1.35,
           ),
         ),
+        if (guideQuestion != null && guideQuestion.trim().isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.md),
+          _buildGuideCard(guideQuestion),
+        ],
         const SizedBox(height: AppSpacing.lg),
         TextField(
           controller: controller,
@@ -371,9 +484,12 @@ class _OnboardingPerspectiveQuestionPageState
             }
           },
           decoration: InputDecoration(
-            hintText: context.l10n.shareYourThoughts,
+            hintText: guideQuestion != null && guideQuestion.trim().isNotEmpty
+                ? context.l10n.perspectiveGuidedAnswerHint
+                : context.l10n.shareYourThoughts,
             hintStyle: GoogleFonts.quicksand(
               color: const Color(0xFF9AA99B),
+              fontSize: 13,
               fontWeight: FontWeight.w500,
             ),
             filled: true,
@@ -394,9 +510,81 @@ class _OnboardingPerspectiveQuestionPageState
           ),
         if (reveal != null && reveal.trim().isNotEmpty) ...[
           const SizedBox(height: AppSpacing.md),
+          if (feedback != null && feedback.trim().isNotEmpty) ...[
+            _buildFeedbackText(feedback),
+            const SizedBox(height: AppSpacing.md),
+          ],
           _buildRevealCard(reveal),
         ],
       ],
+    );
+  }
+
+  Widget _buildGuideCard(String guideQuestion) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFF6B9B6E).withValues(alpha: 0.45),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(
+                Icons.lightbulb_outline,
+                size: 22,
+                color: Color(0xFF6B9B6E),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text(
+                  context.l10n.perspectiveGuideTitle,
+                  style: GoogleFonts.quicksand(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF6B9B6E),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            context.l10n.perspectiveGuideIntro,
+            style: GoogleFonts.quicksand(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[600],
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            guideQuestion,
+            style: GoogleFonts.quicksand(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF4E6650),
+              height: 1.35,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -410,6 +598,18 @@ class _OnboardingPerspectiveQuestionPageState
             ? const Color(0xFF6B9B6E)
             : const Color(0xFFD9E5D7),
         width: focused ? 1.4 : 1,
+      ),
+    );
+  }
+
+  Widget _buildFeedbackText(String feedbackText) {
+    return Text(
+      feedbackText,
+      style: GoogleFonts.quicksand(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        color: const Color(0xFF4E6752),
+        height: 1.45,
       ),
     );
   }
@@ -511,5 +711,9 @@ class _OnboardingPerspectiveQuestionPageState
       default:
         return level;
     }
+  }
+
+  String _logText(String value) {
+    return value.trim().replaceAll(RegExp(r'\s+'), ' ');
   }
 }

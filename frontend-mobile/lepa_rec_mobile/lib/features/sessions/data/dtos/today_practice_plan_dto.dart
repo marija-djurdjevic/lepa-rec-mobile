@@ -1,5 +1,6 @@
 import 'distanced_journal_challenge_dto.dart';
 import 'perspective_scenario_prompt_dto.dart';
+import 'reward_progress_dto.dart';
 import 'today_practice_task_dto.dart';
 import 'package:flutter/foundation.dart';
 
@@ -11,6 +12,7 @@ class TodayPracticePlanDto {
   final bool isDistancedJournalCompleted;
   final bool isReflectionCompleted;
   final bool isPerspectiveScenarioCompleted;
+  final RewardProgressDto? currentReward;
 
   TodayPracticePlanDto({
     this.reflectionPrompt,
@@ -20,6 +22,7 @@ class TodayPracticePlanDto {
     this.isDistancedJournalCompleted = false,
     this.isReflectionCompleted = false,
     this.isPerspectiveScenarioCompleted = false,
+    this.currentReward,
   });
 
   factory TodayPracticePlanDto.fromJson(Map<String, dynamic> json) {
@@ -54,6 +57,12 @@ class TodayPracticePlanDto {
           ),
         )
         .toList();
+    final currentRewardJson = json['currentReward'] is Map<String, dynamic>
+        ? json['currentReward'] as Map<String, dynamic>
+        : null;
+    final currentReward = currentRewardJson != null
+        ? RewardProgressDto.fromJson(currentRewardJson)
+        : null;
 
     if (kDebugMode) {
       for (int i = 0; i < distancedJournalChoices.length; i++) {
@@ -73,29 +82,20 @@ class TodayPracticePlanDto {
       );
     }
 
-    final isDistancedJournalCompleted = _readBoolByKeys(
-      json,
-      const [
-        'isDistancedJournalCompleted',
-        'distancedJournalCompleted',
-        'isJournalCompleted',
-        'journalCompleted',
-      ],
-    );
-    final isReflectionCompleted = _readBoolByKeys(
-      json,
-      const [
-        'isReflectionCompleted',
-        'reflectionCompleted',
-      ],
-    );
-    final isPerspectiveScenarioCompleted = _readBoolByKeys(
-      json,
-      const [
-        'isPerspectiveScenarioCompleted',
-        'perspectiveScenarioCompleted',
-      ],
-    );
+    final isDistancedJournalCompleted = _readBoolByKeys(json, const [
+      'isDistancedJournalCompleted',
+      'distancedJournalCompleted',
+      'isJournalCompleted',
+      'journalCompleted',
+    ]);
+    final isReflectionCompleted = _readBoolByKeys(json, const [
+      'isReflectionCompleted',
+      'reflectionCompleted',
+    ]);
+    final isPerspectiveScenarioCompleted = _readBoolByKeys(json, const [
+      'isPerspectiveScenarioCompleted',
+      'perspectiveScenarioCompleted',
+    ]);
 
     if (kDebugMode) {
       debugPrint(
@@ -115,13 +115,39 @@ class TodayPracticePlanDto {
       isDistancedJournalCompleted: isDistancedJournalCompleted,
       isReflectionCompleted: isReflectionCompleted,
       isPerspectiveScenarioCompleted: isPerspectiveScenarioCompleted,
+      currentReward: currentReward,
     );
   }
 
-  static bool _readBoolByKeys(
-    Map<String, dynamic> json,
-    List<String> keys,
-  ) {
+  TodayPracticePlanDto copyWith({
+    DistancedJournalReflectionPromptDto? reflectionPrompt,
+    List<DistancedJournalChallengeDto>? distancedJournalChoices,
+    List<PerspectiveScenarioPromptDto>? perspectiveScenarioChoices,
+    bool? shouldShowPerspectiveScenario,
+    bool? isDistancedJournalCompleted,
+    bool? isReflectionCompleted,
+    bool? isPerspectiveScenarioCompleted,
+    RewardProgressDto? currentReward,
+  }) {
+    return TodayPracticePlanDto(
+      reflectionPrompt: reflectionPrompt ?? this.reflectionPrompt,
+      distancedJournalChoices:
+          distancedJournalChoices ?? this.distancedJournalChoices,
+      perspectiveScenarioChoices:
+          perspectiveScenarioChoices ?? this.perspectiveScenarioChoices,
+      shouldShowPerspectiveScenario:
+          shouldShowPerspectiveScenario ?? this.shouldShowPerspectiveScenario,
+      isDistancedJournalCompleted:
+          isDistancedJournalCompleted ?? this.isDistancedJournalCompleted,
+      isReflectionCompleted:
+          isReflectionCompleted ?? this.isReflectionCompleted,
+      isPerspectiveScenarioCompleted:
+          isPerspectiveScenarioCompleted ?? this.isPerspectiveScenarioCompleted,
+      currentReward: currentReward ?? this.currentReward,
+    );
+  }
+
+  static bool _readBoolByKeys(Map<String, dynamic> json, List<String> keys) {
     for (final key in keys) {
       final value = json[key];
       final parsed = _parseBoolLike(value);
@@ -153,6 +179,7 @@ class TodayPracticePlanDto {
     'isDistancedJournalCompleted': isDistancedJournalCompleted,
     'isReflectionCompleted': isReflectionCompleted,
     'isPerspectiveScenarioCompleted': isPerspectiveScenarioCompleted,
+    'currentReward': currentReward?.toJson(),
   };
 
   @override
@@ -163,5 +190,6 @@ class TodayPracticePlanDto {
       'shouldShowPerspectiveScenario: $shouldShowPerspectiveScenario, '
       'isDistancedJournalCompleted: $isDistancedJournalCompleted, '
       'isReflectionCompleted: $isReflectionCompleted, '
-      'isPerspectiveScenarioCompleted: $isPerspectiveScenarioCompleted)';
+      'isPerspectiveScenarioCompleted: $isPerspectiveScenarioCompleted, '
+      'currentReward: $currentReward)';
 }

@@ -38,6 +38,8 @@ class HistoryItem {
   final String? followUpAnswer;
   final String? reflection;
   final String? reflectionQuestion;
+  final String? generatedReflectionQuestion;
+  final String? generatedReflectionAnswer;
   final List<String> photoUrls;
   final List<HistoryAnswer> answers;
 
@@ -51,11 +53,13 @@ class HistoryItem {
     this.followUpAnswer,
     this.reflection,
     this.reflectionQuestion,
+    this.generatedReflectionQuestion,
+    this.generatedReflectionAnswer,
     this.photoUrls = const [],
-  })  : type = HistoryItemType.distancedJournal,
-        reveal = null,
-        questions = const [],
-        answers = const [];
+  }) : type = HistoryItemType.distancedJournal,
+       reveal = null,
+       questions = const [],
+       answers = const [];
 
   const HistoryItem.perspectiveScenario({
     required this.exerciseId,
@@ -65,15 +69,16 @@ class HistoryItem {
     required this.questions,
     required this.answers,
     this.reveal,
-  })  : type = HistoryItemType.perspectiveScenario,
-        followUpPrompt = null,
-        mainAnswer = null,
-        followUpAnswer = null,
-        reflection = null,
-        reflectionQuestion = null,
-        photoUrls = const [];
+  }) : type = HistoryItemType.perspectiveScenario,
+       followUpPrompt = null,
+       mainAnswer = null,
+       followUpAnswer = null,
+       reflection = null,
+       reflectionQuestion = null,
+       generatedReflectionQuestion = null,
+       generatedReflectionAnswer = null,
+       photoUrls = const [];
 
-  String get safePromptText => promptText.trim().isEmpty
-      ? 'Prompt unavailable'
-      : promptText.trim();
+  String get safePromptText =>
+      promptText.trim().isEmpty ? 'Prompt unavailable' : promptText.trim();
 }

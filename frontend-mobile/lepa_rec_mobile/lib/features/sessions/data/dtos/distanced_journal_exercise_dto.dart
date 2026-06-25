@@ -7,6 +7,8 @@ class DistancedJournalExerciseDto {
   final String? mainAnswer;
   final String? followUpAnswer;
   final String? reflection;
+  final String? generatedReflectionQuestion;
+  final String? generatedReflectionAnswer;
   final List<String> photoUrls;
   final DateTime? submittedAt;
   final bool isCompleted;
@@ -18,6 +20,8 @@ class DistancedJournalExerciseDto {
     this.mainAnswer,
     this.followUpAnswer,
     this.reflection,
+    this.generatedReflectionQuestion,
+    this.generatedReflectionAnswer,
     this.photoUrls = const [],
     this.submittedAt,
     required this.isCompleted,
@@ -31,10 +35,12 @@ class DistancedJournalExerciseDto {
       mainAnswer: json['mainAnswer'] as String?,
       followUpAnswer: json['followUpAnswer'] as String?,
       reflection: json['reflection'] as String?,
-      photoUrls:
-          (json['photoUrls'] as List<dynamic>? ?? const [])
-              .map((value) => _normalizePhotoUrl(value.toString()))
-              .toList(),
+      generatedReflectionQuestion:
+          json['generatedReflectionQuestion'] as String?,
+      generatedReflectionAnswer: json['generatedReflectionAnswer'] as String?,
+      photoUrls: (json['photoUrls'] as List<dynamic>? ?? const [])
+          .map((value) => _normalizePhotoUrl(value.toString()))
+          .toList(),
       submittedAt: json['submittedAt'] != null
           ? DateTime.parse(json['submittedAt'] as String)
           : null,
@@ -65,6 +71,8 @@ class DistancedJournalExerciseDto {
     'mainAnswer': mainAnswer,
     'followUpAnswer': followUpAnswer,
     'reflection': reflection,
+    'generatedReflectionQuestion': generatedReflectionQuestion,
+    'generatedReflectionAnswer': generatedReflectionAnswer,
     'photoUrls': photoUrls,
     'submittedAt': submittedAt?.toIso8601String(),
     'isCompleted': isCompleted,

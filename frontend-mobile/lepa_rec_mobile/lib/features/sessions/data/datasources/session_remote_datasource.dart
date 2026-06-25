@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import '../../../../core/network/api_client.dart';
 import '../dtos/answer_perspective_scenario_question_dto.dart';
 import '../dtos/answer_perspective_scenario_reveal_result_dto.dart';
+import '../dtos/complete_session_result_dto.dart';
 import '../dtos/complete_primer_dto.dart';
 import '../dtos/daily_session_state_dto.dart';
 import '../dtos/distanced_journal_exercise_dto.dart';
@@ -18,6 +20,7 @@ import '../dtos/start_distanced_journal_exercise_dto.dart';
 import '../dtos/submit_perspective_scenario_answer_dto.dart';
 import '../dtos/submit_perspective_scenario_result_dto.dart';
 import '../dtos/submit_distanced_journal_answer_dto.dart';
+import '../dtos/submit_generated_distanced_journal_reflection_dto.dart';
 import '../dtos/submit_reflection_answer_dto.dart';
 import '../dtos/today_practice_plan_dto.dart';
 
@@ -101,10 +104,7 @@ class SessionRemoteDataSource {
   Future<void> completePrimerWithData(CompletePrimerDto primerData) async {
     const path = '$_baseEndpoint/primer/complete';
     try {
-      await ApiClient.dio.post(
-        path,
-        data: primerData.toJson(),
-      );
+      await ApiClient.dio.post(path, data: primerData.toJson());
     } catch (e) {
       rethrow;
     }
@@ -143,13 +143,12 @@ class SessionRemoteDataSource {
     const path = '/practice/growth-messages/random';
 
     try {
-      final queryParameters = <String, dynamic>{
-        'lang': _normalizeLang(lang),
-      };
+      final queryParameters = <String, dynamic>{'lang': _normalizeLang(lang)};
       if (type != null) {
         queryParameters['type'] = type.apiValue;
       }
-      if (selectedStatementId != null && selectedStatementId.trim().isNotEmpty) {
+      if (selectedStatementId != null &&
+          selectedStatementId.trim().isNotEmpty) {
         queryParameters['selectedStatementId'] = selectedStatementId;
       }
       if (developedSkillIds != null && developedSkillIds.isNotEmpty) {
@@ -189,10 +188,7 @@ class SessionRemoteDataSource {
     try {
       final response = await _postRecordExercise(
         path: path,
-        payload: {
-          'exerciseId': exerciseId,
-          'type': typeValue,
-        },
+        payload: {'exerciseId': exerciseId, 'type': typeValue},
       );
 
       final dto = DailySessionStateDto.fromJson(
@@ -205,15 +201,9 @@ class SessionRemoteDataSource {
       if (e.response?.statusCode == 400) {
         final fallbackPayloads = <Map<String, dynamic>>[
           {
-            'dto': {
-              'exerciseId': exerciseId,
-              'type': typeValue,
-            },
+            'dto': {'exerciseId': exerciseId, 'type': typeValue},
           },
-          {
-            'exerciseId': exerciseId,
-            'type': type,
-          },
+          {'exerciseId': exerciseId, 'type': type},
         ];
 
         for (final payload in fallbackPayloads) {
@@ -257,13 +247,13 @@ class SessionRemoteDataSource {
     }
   }
 
-  Future<DailySessionStateDto> completeSession() async {
+  Future<CompleteSessionResultDto> completeSession() async {
     const path = '$_baseEndpoint/complete';
 
     try {
       final response = await ApiClient.dio.post(path);
 
-      final dto = DailySessionStateDto.fromJson(
+      final dto = CompleteSessionResultDto.fromJson(
         response.data as Map<String, dynamic>,
       );
 
@@ -273,9 +263,7 @@ class SessionRemoteDataSource {
     }
   }
 
-  Future<TodayPracticePlanDto> getTodaysPracticePlan({
-    String? lang,
-  }) async {
+  Future<TodayPracticePlanDto> getTodaysPracticePlan({String? lang}) async {
     const path = '$_baseEndpoint/today-plan';
     final resolvedLang = _normalizeLang(lang);
 
@@ -302,9 +290,7 @@ class SessionRemoteDataSource {
         );
       }
 
-      final dto = TodayPracticePlanDto.fromJson(
-        raw,
-      );
+      final dto = TodayPracticePlanDto.fromJson(raw);
 
       if (kDebugMode) {
         final firstJournal = dto.distancedJournalChoices.isNotEmpty
@@ -354,9 +340,7 @@ class SessionRemoteDataSource {
         response.data as Map<String, dynamic>,
       );
 
-      debugPrint(
-        '[DistancedJournal][Remote] START OK id=${dto.id}',
-      );
+      debugPrint('[DistancedJournal][Remote] START OK id=${dto.id}');
       return dto;
     } catch (e) {
       debugPrint('[DistancedJournal][Remote] START ERROR $e');
@@ -391,9 +375,7 @@ class SessionRemoteDataSource {
         final fallbackDto = SubmitDistancedJournalResultDto.fromJson(
           fallbackResponse.data as Map<String, dynamic>,
         );
-        debugPrint(
-          '[DistancedJournal][Remote] SUBMIT FALLBACK TO /answer OK',
-        );
+        debugPrint('[DistancedJournal][Remote] SUBMIT FALLBACK TO /answer OK');
         return fallbackDto;
       }
       debugPrint(
@@ -409,20 +391,21 @@ class SessionRemoteDataSource {
   }
 
   Future<SubmitDistancedJournalResultDto>
-      submitDistancedJournalAnswerWithPhotos({
-        required String exerciseId,
-        required DateTime sessionDate,
-        String? mainAnswer,
-        String? followUpAnswer,
-        String? reflection,
-        required List<String> photoPaths,
-        String? lang,
-      }) async {
+  submitDistancedJournalAnswerWithPhotos({
+    required String exerciseId,
+    required DateTime sessionDate,
+    String? mainAnswer,
+    String? followUpAnswer,
+    String? reflection,
+    required List<String> photoPaths,
+    String? lang,
+  }) async {
     final photoSizes = <String, int>{};
     for (final photoPath in photoPaths) {
       try {
-        photoSizes[photoPath.split(RegExp(r'[\\\\/]+')).last] =
-            await File(photoPath).length();
+        photoSizes[photoPath.split(RegExp(r'[\\\\/]+')).last] = await File(
+          photoPath,
+        ).length();
       } catch (_) {
         photoSizes[photoPath.split(RegExp(r'[\\\\/]+')).last] = -1;
       }
@@ -451,6 +434,7 @@ class SessionRemoteDataSource {
       if (mainAnswer != null) 'mainAnswer': mainAnswer,
       if (followUpAnswer != null) 'followUpAnswer': followUpAnswer,
       if (reflection != null) 'reflection': reflection,
+      'language': _normalizeLang(lang),
       if (photoPaths.isNotEmpty)
         'photos': [
           for (final photoPath in photoPaths)
@@ -498,6 +482,27 @@ class SessionRemoteDataSource {
         path,
         data: submitRequest.toJson(),
         queryParameters: {'lang': _normalizeLang(lang)},
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<DistancedJournalExerciseDto> submitGeneratedDistancedJournalReflection(
+    SubmitGeneratedDistancedJournalReflectionDto submitRequest,
+    String? lang,
+  ) async {
+    const path = '/DistancedJournals/generated-reflection';
+
+    try {
+      final response = await ApiClient.dio.post(
+        path,
+        data: submitRequest.toJson(),
+        queryParameters: {'lang': _normalizeLang(lang)},
+      );
+
+      return DistancedJournalExerciseDto.fromJson(
+        response.data as Map<String, dynamic>,
       );
     } catch (e) {
       rethrow;
@@ -555,7 +560,7 @@ class SessionRemoteDataSource {
   }
 
   Future<AnswerPerspectiveScenarioRevealResultDto>
-      answerPerspectiveScenarioAndReveal(
+  answerPerspectiveScenarioAndReveal(
     AnswerPerspectiveScenarioQuestionDto answerRequest,
     String? lang,
   ) async {
@@ -567,8 +572,139 @@ class SessionRemoteDataSource {
       queryParameters: {'lang': _normalizeLang(lang)},
     );
 
-    return AnswerPerspectiveScenarioRevealResultDto.fromJson(
+    final dto = AnswerPerspectiveScenarioRevealResultDto.fromJson(
       response.data as Map<String, dynamic>,
     );
+    if (kDebugMode) {
+      debugPrint(
+        '[PerspectiveScenario][Remote][AnswerGrade] '
+        'status=${dto.status} '
+        'grade=${dto.grade} '
+        'issues=${dto.issues} '
+        'strengths=${dto.strengths} '
+        'feedback=${dto.feedback ?? '-'}',
+      );
+    }
+    return dto;
   }
+
+  Future<AnswerPerspectiveScenarioRevealResultDto>
+  answerPerspectiveScenarioAndRevealStream(
+    AnswerPerspectiveScenarioQuestionDto answerRequest,
+    String? lang, {
+    required void Function(String guideText) onGuideTextChanged,
+  }) async {
+    const path = '/PerspectiveScenarios/answer-and-reveal/stream';
+
+    final response = await ApiClient.dio.post<ResponseBody>(
+      path,
+      data: answerRequest.toJson(),
+      queryParameters: {'lang': _normalizeLang(lang)},
+      options: Options(
+        headers: {'Accept': 'text/event-stream'},
+        responseType: ResponseType.stream,
+        receiveTimeout: const Duration(minutes: 2),
+      ),
+    );
+
+    final stream = response.data?.stream;
+    if (stream == null) {
+      throw Exception('Perspective scenario stream did not return a body.');
+    }
+
+    return _parsePerspectiveScenarioAnswerStream(
+      stream.cast<List<int>>().transform(utf8.decoder),
+      onGuideTextChanged: onGuideTextChanged,
+    );
+  }
+
+  Future<AnswerPerspectiveScenarioRevealResultDto>
+  _parsePerspectiveScenarioAnswerStream(
+    Stream<String> stream, {
+    required void Function(String guideText) onGuideTextChanged,
+  }) async {
+    var buffer = '';
+    var guideText = '';
+
+    await for (final chunk in stream) {
+      buffer += chunk.replaceAll('\r\n', '\n');
+
+      final rawEvents = buffer.split('\n\n');
+      buffer = rawEvents.removeLast();
+
+      for (final rawEvent in rawEvents) {
+        final parsedEvent = _parseSseEvent(rawEvent);
+        if (parsedEvent == null) continue;
+
+        final eventName = parsedEvent.name;
+        final data = jsonDecode(parsedEvent.data) as Map<String, dynamic>;
+
+        switch (eventName) {
+          case 'grade':
+            if (kDebugMode) {
+              debugPrint(
+                '[PerspectiveScenario][Remote][Grade] ${jsonEncode(data)}',
+              );
+            }
+            break;
+          case 'guide_chunk':
+            final chunkText = data['chunk'] as String? ?? '';
+            if (chunkText.isEmpty) break;
+            guideText += chunkText;
+            onGuideTextChanged(guideText);
+            break;
+          case 'final':
+            final result = data['result'] is Map<String, dynamic>
+                ? data['result'] as Map<String, dynamic>
+                : data;
+            final dto = AnswerPerspectiveScenarioRevealResultDto.fromJson(
+              result,
+            );
+            if (kDebugMode) {
+              debugPrint(
+                '[PerspectiveScenario][Remote][FinalGrade] '
+                'status=${dto.status} '
+                'grade=${dto.grade} '
+                'issues=${dto.issues} '
+                'strengths=${dto.strengths} '
+                'feedback=${dto.feedback ?? '-'}',
+              );
+            }
+            return dto;
+          case 'error':
+            throw Exception('Perspective scenario streaming error.');
+          default:
+            break;
+        }
+      }
+    }
+
+    throw Exception('Perspective scenario stream ended before final result.');
+  }
+
+  _SseEvent? _parseSseEvent(String rawEvent) {
+    String? eventName;
+    final dataLines = <String>[];
+
+    for (final line in rawEvent.split('\n')) {
+      if (line.startsWith('event:')) {
+        eventName = line.substring('event:'.length).trim();
+      } else if (line.startsWith('data:')) {
+        dataLines.add(line.substring('data:'.length).trimLeft());
+      }
+    }
+
+    if (eventName == null || dataLines.isEmpty) {
+      return null;
+    }
+
+    return _SseEvent(eventName, dataLines.join('\n'));
+  }
+}
+
+class _SseEvent {
+  final String name;
+  final String data;
+
+  const _SseEvent(this.name, this.data);
 }

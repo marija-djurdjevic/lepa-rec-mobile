@@ -241,7 +241,7 @@
     "@answerEachScenarioQuestion":  {
                                         "description":  "Helper text for the perspective scenario questionnaire"
                                     },
-    "perspectiveScenarioDisclaimer":  "We will ask you questions about the shown scene. The goal is not to guess every exact detail in the background of the story, but to get as close as possible to understanding other people's perspectives, needs, and wishes that shaped their reactions and emotions. Every thoughtful answer is good, even when it differs in details from the background story we will reveal at the end.",
+    "perspectiveScenarioDisclaimer":  "You will answer questions about the shown scene. The goal is not to guess every detail, but to understand the perspectives, needs, and emotions of the people involved. Every thoughtful answer is good, even when it differs from the background story we will reveal at the end.",
     "@perspectiveScenarioDisclaimer":  {
                                            "description":  "Disclaimer shown under scenario text to explain task goal"
                                        },
@@ -278,7 +278,7 @@
                                                                     }
                                                      }
                                 },
-    "perspectiveRevealTitle":  "Whatâ€™s Behind the Scenes?",
+    "perspectiveRevealTitle":  "What's Behind the Scenes?",
     "@perspectiveRevealTitle":  {
                                     "description":  "Title for the perspective scenario reveal screen"
                                 },
@@ -290,6 +290,26 @@
     "@perspectiveRevealSubtitle":  {
                                        "description":  "Subtitle for the perspective scenario reveal screen"
                                    },
+    "perspectiveGuideTitle":  "Let\u0027s look at it from another angle.",
+    "@perspectiveGuideTitle":  {
+                                   "description":  "Title shown when a perspective scenario answer needs guidance"
+                               },
+    "perspectiveGuideIntro":  "Think about this question, then try answering the question above once more.",
+    "@perspectiveGuideIntro":  {
+                                  "description":  "Intro text shown above a Socratic guide question"
+                              },
+    "perspectiveGuidedAnswerHint": "Write a new answer to the question above...",
+    "@perspectiveGuidedAnswerHint": {
+                                  "description": "Placeholder for the answer input after a perspective scenario guide question is shown"
+                              },
+    "perspectiveTryAgainLabel":  "Try again",
+    "@perspectiveTryAgainLabel":  {
+                                      "description":  "Label above the retry answer input after guidance"
+                                  },
+    "perspectiveScenarioSubmitGenericError":  "Something went wrong. Please try again.",
+    "@perspectiveScenarioSubmitGenericError":  {
+                                                  "description":  "Generic learner-facing error when perspective scenario answer submission fails"
+                                              },
     "errorSubmittingPerspectiveScenario":  "Error submitting perspective scenario: {error}",
     "@errorSubmittingPerspectiveScenario":  {
                                                 "description":  "Error message when submitting a perspective scenario fails",
@@ -425,6 +445,18 @@
     "@distancedJournalHint":  {
                                   "description":  "Helper text for distanced journal prompt"
                               },
+    "distancedJournalPersonaLabel": "Today, I'm writing as",
+    "@distancedJournalPersonaLabel": {
+        "description": "Label for the optional per-entry distanced journal persona name"
+    },
+    "distancedJournalPersonaHint": "e.g. Nora, A., The Observer",
+    "@distancedJournalPersonaHint": {
+        "description": "Placeholder for the optional per-entry distanced journal persona name"
+    },
+    "distancedJournalPersonaHelper": "Use any name for this entry. It can change every time.",
+    "@distancedJournalPersonaHelper": {
+        "description": "Helper text explaining the optional per-entry distanced journal persona name"
+    },
     "journalFeedbackTitle":  "Reflection Feedback",
     "@journalFeedbackTitle":  {
                                   "description":  "Title for the journal feedback screen"
@@ -457,6 +489,34 @@
     "@reflectionSubmittedSuccessfully":  {
                                              "description":  "Success message after submitting reflection"
                                          },
+    "generatedReflectionOfferTitle":  "Would you like to answer one more question?",
+    "@generatedReflectionOfferTitle":  {
+                                           "description":  "Title for the optional generated journal reflection offer"
+                                       },
+    "generatedReflectionOfferBody":  "I can show you one short question based on what you wrote. It is optional.",
+    "@generatedReflectionOfferBody":  {
+                                          "description":  "Body text for the optional generated journal reflection offer"
+                                      },
+    "generatedReflectionShowQuestion":  "Show question",
+    "@generatedReflectionShowQuestion":  {
+                                             "description":  "Button label to reveal the optional generated journal reflection question"
+                                         },
+    "generatedReflectionSkip":  "Skip",
+    "@generatedReflectionSkip":  {
+                                     "description":  "Button label to skip the optional generated journal reflection"
+                                 },
+    "generatedReflectionQuestionTitle":  "One more question",
+    "@generatedReflectionQuestionTitle":  {
+                                              "description":  "Title above the optional generated journal reflection question"
+                                          },
+    "generatedReflectionAnswerHint":  "Write a few words if you want...",
+    "@generatedReflectionAnswerHint":  {
+                                           "description":  "Input hint for the optional generated journal reflection answer"
+                                       },
+    "generatedReflectionSaveAnswer":  "Save answer",
+    "@generatedReflectionSaveAnswer":  {
+                                           "description":  "Button label to save the optional generated journal reflection answer"
+                                       },
     "startBreathing":  "Tap to begin the exercise",
     "@startBreathing":  {
                             "description":  "Text shown inside the breathing circle before the exercise starts"
