@@ -6,28 +6,17 @@ import 'package:flutter/foundation.dart';
 import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/widgets/app_top_bar.dart';
-import '../../../auth/data/datasources/auth_local_datasource.dart';
+import '../../../rewards/data/repositories/reward_repository.dart';
 import '../../data/dtos/distanced_journal_challenge_dto.dart';
 import '../../data/dtos/perspective_scenario_prompt_dto.dart';
+import '../../data/dtos/reward_progress_dto.dart';
 import '../../data/dtos/today_practice_plan_dto.dart';
 import '../../data/dtos/today_practice_task_dto.dart';
 import '../../data/repositories/session_repository.dart';
 import 'distanced_journal_page.dart';
 import 'perspective_scenario_page.dart';
 import 'reflection_page.dart';
-
-const List<String> _dailyRewardAssets = <String>[
-  'assets/images/rewards/reward_01.png',
-  'assets/images/rewards/reward_02.png',
-  'assets/images/rewards/reward_03.png',
-  'assets/images/rewards/reward_04.png',
-  'assets/images/rewards/reward_05.png',
-  'assets/images/rewards/reward_06.png',
-  'assets/images/rewards/reward_07.png',
-  'assets/images/rewards/reward_08.png',
-  'assets/images/rewards/reward_09.png',
-  'assets/images/rewards/reward_10.png',
-];
+import '../widgets/reward_mosaic_image.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -38,12 +27,12 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   late final SessionRepository _sessionRepository;
-  late final AuthLocalDataSource _authLocal;
+  late final RewardRepository _rewardRepository;
   late DashboardViewState _viewState;
 
   bool _isCompletingSession = false;
+  bool _isSavingReward = false;
   String? _activePracticeLang;
-  String? _currentUserId;
   bool _distancedJournalCompletedLocally = false;
   bool _reflectionCompletedLocally = false;
   bool _perspectiveScenarioCompletedLocally = false;
@@ -64,17 +53,8 @@ class _DashboardPageState extends State<DashboardPage> {
   void initState() {
     super.initState();
     _sessionRepository = SessionRepository();
-    _authLocal = AuthLocalDataSource();
+    _rewardRepository = RewardRepository();
     _viewState = DashboardViewState(isLoading: true);
-    _loadCurrentUserId();
-  }
-
-  Future<void> _loadCurrentUserId() async {
-    final userId = await _authLocal.readUserId();
-    if (!mounted) return;
-    setState(() {
-      _currentUserId = userId;
-    });
   }
 
   @override
@@ -110,7 +90,15 @@ class _DashboardPageState extends State<DashboardPage> {
         return;
       }
 
-      await _sessionRepository.completeSession();
+      final result = await _sessionRepository.completeSession();
+      final reward = result.currentReward;
+      if (reward != null && mounted && _viewState.todayPlan != null) {
+        setState(() {
+          _viewState = _viewState.copyWith(
+            todayPlan: _viewState.todayPlan!.copyWith(currentReward: reward),
+          );
+        });
+      }
     } catch (_) {
       // namjerno ne rušimo UX ako complete session ne uspije
     } finally {
@@ -219,8 +207,7 @@ class _DashboardPageState extends State<DashboardPage> {
         _distancedJournalCompletedLocally &&
         _distancedJournalCompletedDateKey == todayKey;
     final reflectionCompletedLocally =
-        _reflectionCompletedLocally &&
-        _reflectionCompletedDateKey == todayKey;
+        _reflectionCompletedLocally && _reflectionCompletedDateKey == todayKey;
     final perspectiveCompletedLocally =
         _perspectiveScenarioCompletedLocally &&
         _perspectiveScenarioCompletedDateKey == todayKey;
@@ -238,16 +225,16 @@ class _DashboardPageState extends State<DashboardPage> {
         !perspectiveCompletedLocally &&
         plan.isPerspectiveScenarioCompleted;
 
-    final reflectionPrompt = shouldKeepReflectionActive &&
-            plan.reflectionPrompt == null
+    final reflectionPrompt =
+        shouldKeepReflectionActive && plan.reflectionPrompt == null
         ? _lastReflectionPromptToday
         : plan.reflectionPrompt;
-    final distancedJournalChoices = shouldKeepJournalActive &&
-            plan.distancedJournalChoices.isEmpty
+    final distancedJournalChoices =
+        shouldKeepJournalActive && plan.distancedJournalChoices.isEmpty
         ? _lastDistancedJournalChoicesToday
         : plan.distancedJournalChoices;
-    final perspectiveScenarioChoices = shouldKeepPerspectiveActive &&
-            plan.perspectiveScenarioChoices.isEmpty
+    final perspectiveScenarioChoices =
+        shouldKeepPerspectiveActive && plan.perspectiveScenarioChoices.isEmpty
         ? _lastPerspectiveScenarioChoicesToday
         : plan.perspectiveScenarioChoices;
 
@@ -273,6 +260,7 @@ class _DashboardPageState extends State<DashboardPage> {
       isDistancedJournalCompleted: isDistancedJournalCompleted,
       isReflectionCompleted: isReflectionCompleted,
       isPerspectiveScenarioCompleted: isPerspectiveScenarioCompleted,
+      currentReward: plan.currentReward,
     );
   }
 
@@ -355,43 +343,58 @@ class _DashboardPageState extends State<DashboardPage> {
     }
   }
 
+  Future<void> _handleSaveReward(RewardProgressDto reward) async {
+    if (_isSavingReward ||
+        !reward.isCompleted ||
+        reward.savedAt != null ||
+        reward.rewardProgressId.trim().isEmpty) {
+      return;
+    }
+
+    setState(() {
+      _isSavingReward = true;
+    });
+
+    try {
+      final savedReward = await _rewardRepository.saveReward(
+        reward.rewardProgressId,
+      );
+      if (!mounted || _viewState.todayPlan == null) return;
+      setState(() {
+        _viewState = _viewState.copyWith(
+          todayPlan: _viewState.todayPlan!.copyWith(currentReward: savedReward),
+        );
+      });
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            Localizations.localeOf(context).languageCode == 'en'
+                ? 'Could not save picture right now.'
+                : 'Nismo uspjeli sačuvati sliku.',
+          ),
+        ),
+      );
+    } finally {
+      if (!mounted) return;
+      setState(() {
+        _isSavingReward = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F9F3),
-      appBar: AppTopBar(
-        title: context.l10n.dashboard,
-      ),
+      appBar: AppTopBar(title: context.l10n.dashboard),
       body: _buildBody(),
     );
   }
 
   String _currentPracticeLang() {
     return Localizations.localeOf(context).languageCode == 'en' ? 'en' : 'sr';
-  }
-
-  String _rewardAssetForToday() {
-    final userId = (_currentUserId != null && _currentUserId!.trim().isNotEmpty)
-        ? _currentUserId!.trim()
-        : 'guest';
-    final dayIndex = _daysSinceEpoch();
-    final userOffset = _stableHash(userId) % _dailyRewardAssets.length;
-    final rewardIndex = (userOffset + dayIndex) % _dailyRewardAssets.length;
-    return _dailyRewardAssets[rewardIndex];
-  }
-
-  int _daysSinceEpoch() {
-    final today = DateTime.now();
-    final normalized = DateTime(today.year, today.month, today.day);
-    return normalized.difference(DateTime(2024, 1, 1)).inDays;
-  }
-
-  int _stableHash(String input) {
-    var hash = 0;
-    for (final codeUnit in input.codeUnits) {
-      hash = ((hash * 31) + codeUnit) & 0x7fffffff;
-    }
-    return hash;
   }
 
   Widget _buildBody() {
@@ -491,8 +494,10 @@ class _DashboardPageState extends State<DashboardPage> {
       child: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(child: const SizedBox(height: AppSpacing.lg)),
-          if (showDailyReward)
-            SliverToBoxAdapter(child: _buildDailyRewardCard()),
+          if (showDailyReward && plan.currentReward != null)
+            SliverToBoxAdapter(
+              child: _buildDailyRewardCard(plan.currentReward!),
+            ),
           if (!showDailyReward) ...[
             if (plan.reflectionPrompt != null && !plan.isReflectionCompleted)
               SliverToBoxAdapter(
@@ -528,7 +533,7 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildDailyRewardCard() {
+  Widget _buildDailyRewardCard(RewardProgressDto reward) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       child: Container(
@@ -553,26 +558,120 @@ class _DashboardPageState extends State<DashboardPage> {
           children: [
             AspectRatio(
               aspectRatio: 9 / 14,
-              child: Image.asset(
-                _rewardAssetForToday(),
-                fit: BoxFit.cover,
+              child: RewardMosaicImage(
+                assetPath: reward.assetPath,
+                unlockedPiecesCount: reward.unlockedPiecesCount,
+                previousUnlockedPiecesCount: reward.previousUnlockedPiecesCount,
+                playPieceUnlockAnimation: reward.shouldPlayUnlockAnimation,
+                playCompletionAnimation:
+                    reward.shouldPlayUnlockAnimation && reward.isCompleted,
               ),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
-              child: Text(
-                context.l10n.dailyChallengeReward,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.quicksand(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF4E6752),
-                  height: 1.45,
-                ),
+              child: Column(
+                children: [
+                  Text(
+                    context.l10n.dailyChallengeReward,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.quicksand(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF4E6752),
+                      height: 1.45,
+                    ),
+                  ),
+                  if (reward.isCompleted) ...[
+                    const SizedBox(height: 16),
+                    _buildRewardSaveAction(reward),
+                  ],
+                ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildRewardSaveAction(RewardProgressDto reward) {
+    final isSaved = reward.savedAt != null;
+    final canSave =
+        !isSaved &&
+        !_isSavingReward &&
+        reward.rewardProgressId.trim().isNotEmpty;
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFFAEF),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: const Color(0xFFE4B84E).withValues(alpha: 0.45),
+          width: 1.2,
+        ),
+      ),
+      child: Column(
+        children: [
+          if (isSaved)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.check_circle_rounded,
+                  color: Color(0xFFC0932D),
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  Localizations.localeOf(context).languageCode == 'en'
+                      ? 'Saved to gallery'
+                      : 'Sačuvano u galeriji',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.quicksand(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF5A4A2B),
+                  ),
+                ),
+              ],
+            )
+          else
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: canSave ? () => _handleSaveReward(reward) : null,
+                icon: _isSavingReward
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.bookmark_add_rounded, size: 18),
+                label: Text(
+                  _isSavingReward
+                      ? (Localizations.localeOf(context).languageCode == 'en'
+                            ? 'Saving...'
+                            : 'Čuvanje...')
+                      : (Localizations.localeOf(context).languageCode == 'en'
+                            ? 'Save to gallery'
+                            : 'Sačuvajte u galeriju'),
+                ),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: const Color(0xFF8A671E),
+                  side: const BorderSide(color: Color(0xFFD2A53B), width: 1.3),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  textStyle: GoogleFonts.quicksand(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -598,83 +697,82 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ],
           ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 36,
-                      height: 36,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .secondary
-                              .withValues(alpha: 0.25),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.lightbulb_outline,
-                            color: Color(0xFF6B9B6E),
-                            size: 20,
-                          ),
-                        ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 36,
+                    height: 36,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.secondary.withValues(alpha: 0.25),
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: SizedBox(
-                        height: 36,
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            context.l10n.reflection,
-                            style: GoogleFonts.quicksand(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFF6B9B6E),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 36,
-                      child: Center(
+                      child: const Center(
                         child: Icon(
-                          Icons.arrow_forward_ios,
-                          color: const Color(0xFF6B9B6E),
-                          size: 16,
+                          Icons.lightbulb_outline,
+                          color: Color(0xFF6B9B6E),
+                          size: 20,
                         ),
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  context.l10n.reflectionFreshEyes,
-                  style: GoogleFonts.quicksand(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: const Color(0xFF6B9B6E),
-                    height: 1.4,
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  _reflectionCardText(reflection),
-                  style: GoogleFonts.quicksand(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey[600],
-                    height: 1.4,
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: SizedBox(
+                      height: 36,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          context.l10n.reflection,
+                          style: GoogleFonts.quicksand(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF6B9B6E),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
+                  SizedBox(
+                    height: 36,
+                    child: Center(
+                      child: Icon(
+                        Icons.arrow_forward_ios,
+                        color: const Color(0xFF6B9B6E),
+                        size: 16,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Text(
+                context.l10n.reflectionFreshEyes,
+                style: GoogleFonts.quicksand(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xFF6B9B6E),
+                  height: 1.4,
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _reflectionCardText(reflection),
+                style: GoogleFonts.quicksand(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey[600],
+                  height: 1.4,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -709,10 +807,9 @@ class _DashboardPageState extends State<DashboardPage> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .secondary
-                          .withValues(alpha: 0.25),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.secondary.withValues(alpha: 0.25),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Center(
@@ -762,16 +859,14 @@ class _DashboardPageState extends State<DashboardPage> {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Theme.of(context)
-                .colorScheme
-                .secondary
-                .withValues(alpha: 0.15),
+            color: Theme.of(
+              context,
+            ).colorScheme.secondary.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: Theme.of(context)
-                  .colorScheme
-                  .secondary
-                  .withValues(alpha: 0.45),
+              color: Theme.of(
+                context,
+              ).colorScheme.secondary.withValues(alpha: 0.45),
               width: 1,
             ),
           ),
@@ -860,10 +955,9 @@ class _DashboardPageState extends State<DashboardPage> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .secondary
-                          .withValues(alpha: 0.25),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.secondary.withValues(alpha: 0.25),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Center(
@@ -911,16 +1005,14 @@ class _DashboardPageState extends State<DashboardPage> {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Theme.of(context)
-                .colorScheme
-                .secondary
-                .withValues(alpha: 0.15),
+            color: Theme.of(
+              context,
+            ).colorScheme.secondary.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: Theme.of(context)
-                  .colorScheme
-                  .secondary
-                  .withValues(alpha: 0.45),
+              color: Theme.of(
+                context,
+              ).colorScheme.secondary.withValues(alpha: 0.45),
               width: 1,
             ),
           ),
@@ -1160,8 +1252,8 @@ class _DashboardPageState extends State<DashboardPage> {
       case 'lako':
         return const Color(0xFF8BBF8F);
       case 'medium':
-        case 'umereno':
-          return const Color(0xFF5C9A6B);
+      case 'umereno':
+        return const Color(0xFF5C9A6B);
       case 'hard':
       case 'tesko':
       case 'teško':
@@ -1177,8 +1269,8 @@ class _DashboardPageState extends State<DashboardPage> {
       case 'lako':
         return context.l10n.levelEasy;
       case 'medium':
-        case 'umereno':
-          return context.l10n.levelMedium;
+      case 'umereno':
+        return context.l10n.levelMedium;
       case 'hard':
       case 'tesko':
       case 'teško':

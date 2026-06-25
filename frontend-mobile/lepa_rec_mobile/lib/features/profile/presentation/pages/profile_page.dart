@@ -7,8 +7,10 @@ import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/widgets/app_top_bar.dart';
 import '../../../auth/data/datasources/auth_local_datasource.dart';
+import '../../../sessions/data/dtos/reward_progress_dto.dart';
 import '../../data/datasources/profile_remote_datasource.dart';
 import '../../data/dtos/profile_me_dto.dart';
+import 'profile_gallery_page.dart';
 import 'onboarding_story_reference_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -56,6 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _saving = false;
   bool _deletingAccount = false;
   bool _isEditingPersonalInfo = false;
+  final List<RewardProgressDto> _galleryRewards = const [];
   String? _error;
   String? _success;
 
@@ -449,6 +452,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     _sectionCard(
+                      title: isEnglish ? 'Gallery' : 'Galerija',
+                      child: _buildGallerySection(isEnglish),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    _sectionCard(
                       title: isEnglish ? 'Personal info' : 'Lični podaci',
                       trailing: IconButton(
                         tooltip: isEnglish
@@ -596,7 +604,10 @@ class _ProfilePageState extends State<ProfilePage> {
                               minimumSize: const Size(0, 36),
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             ),
-                            icon: const Icon(Icons.menu_book_outlined, size: 18),
+                            icon: const Icon(
+                              Icons.menu_book_outlined,
+                              size: 18,
+                            ),
                             label: Text(
                               context.l10n.onboardingStoryReferenceButton,
                               style: GoogleFonts.quicksand(
@@ -614,9 +625,14 @@ class _ProfilePageState extends State<ProfilePage> {
                               minimumSize: const Size(0, 36),
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             ),
-                            icon: const Icon(Icons.privacy_tip_outlined, size: 18),
+                            icon: const Icon(
+                              Icons.privacy_tip_outlined,
+                              size: 18,
+                            ),
                             label: Text(
-                              isEnglish ? 'Privacy Policy' : 'Politika privatnosti',
+                              isEnglish
+                                  ? 'Privacy Policy'
+                                  : 'Politika privatnosti',
                               style: GoogleFonts.quicksand(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
@@ -747,7 +763,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: Text(
                           _saving
                               ? (isEnglish ? 'Saving...' : 'Čuvanje...')
-                              : (isEnglish ? 'Save changes' : 'Sačuvajte izmene'),
+                              : (isEnglish
+                                    ? 'Save changes'
+                                    : 'Sačuvajte izmene'),
                           style: GoogleFonts.quicksand(
                             fontSize: 17,
                             fontWeight: FontWeight.w700,
@@ -788,6 +806,219 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
         ],
       ),
+    );
+  }
+
+  Widget _buildGallerySection(bool isEnglish) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const ProfileGalleryPage()),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        decoration: BoxDecoration(
+          color: _surfaceSoft,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: _border),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: _primary.withValues(alpha: 0.13),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.collections_bookmark_outlined,
+                color: _primary,
+                size: 22,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    isEnglish ? 'Saved pictures' : 'Sačuvane slike',
+                    style: GoogleFonts.quicksand(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: _textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right_rounded, color: _primary, size: 26),
+          ],
+        ),
+      ),
+    );
+
+    if (_galleryRewards.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.lg,
+        ),
+        decoration: BoxDecoration(
+          color: _surfaceSoft,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: _border),
+        ),
+        child: Column(
+          children: [
+            const Icon(
+              Icons.collections_bookmark_outlined,
+              color: _primary,
+              size: 30,
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              isEnglish
+                  ? 'Saved pictures will appear here.'
+                  : 'Sačuvane slike će se pojaviti ovdje.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.quicksand(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: _textMuted,
+                height: 1.35,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: _galleryRewards.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 0.7,
+      ),
+      itemBuilder: (context, index) {
+        final reward = _galleryRewards[index];
+        return InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: () => _openGalleryReward(reward),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: _surfaceSoft,
+                border: Border.all(color: _border),
+              ),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  _rewardImage(reward, fit: BoxFit.cover),
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 7,
+                      ),
+                      color: Colors.black.withValues(alpha: 0.32),
+                      child: Text(
+                        _formatGalleryDate(
+                          reward.savedAt ?? reward.completedAt,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.quicksand(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _rewardImage(RewardProgressDto reward, {required BoxFit fit}) {
+    final imageUrl = reward.imageUrl;
+    if (imageUrl != null && imageUrl.trim().isNotEmpty) {
+      return Image.network(
+        imageUrl,
+        fit: fit,
+        errorBuilder: (_, __, ___) => _brokenGalleryImage(),
+      );
+    }
+
+    return Image.asset(
+      reward.assetPath,
+      fit: fit,
+      errorBuilder: (_, __, ___) => _brokenGalleryImage(),
+    );
+  }
+
+  Widget _brokenGalleryImage() {
+    return const ColoredBox(
+      color: _surfaceSoft,
+      child: Center(child: Icon(Icons.broken_image_outlined, color: _primary)),
+    );
+  }
+
+  String _formatGalleryDate(DateTime? date) {
+    if (date == null) return '';
+    final local = date.toLocal();
+    final day = local.day.toString().padLeft(2, '0');
+    final month = local.month.toString().padLeft(2, '0');
+    return '$day.$month.${local.year}.';
+  }
+
+  void _openGalleryReward(RewardProgressDto reward) {
+    showDialog<void>(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(18),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Stack(
+              children: [
+                InteractiveViewer(
+                  minScale: 0.8,
+                  maxScale: 3,
+                  child: _rewardImage(reward, fit: BoxFit.contain),
+                ),
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: IconButton.filled(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const Icon(Icons.close_rounded),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

@@ -204,7 +204,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get perspectiveScenarioDisclaimer =>
-      'We will ask you questions about the shown scene. The goal is not to guess every exact detail in the background of the story, but to get as close as possible to understanding other people\'s perspectives, needs, and wishes that shaped their reactions and emotions. Every thoughtful answer is good, even when it differs in details from the background story we will reveal at the end.';
+      'You will answer questions about the shown scene. The goal is not to guess every detail, but to understand the perspectives, needs, and emotions of the people involved. Every thoughtful answer is good, even when it differs from the background story we will reveal at the end.';
 
   @override
   String get perspectiveDisclaimerWhatWeDo =>
@@ -234,7 +234,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get perspectiveRevealTitle => 'Whatâ€™s Behind the Scenes?';
+  String get perspectiveRevealTitle => 'What\'s Behind the Scenes?';
 
   @override
   String get perspectiveRevealHint =>
@@ -248,7 +248,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get perspectiveGuideTitle => 'Let\'s look at it from another angle.';
 
   @override
-  String get perspectiveGuideIntro => 'Consider this question, then try again.';
+  String get perspectiveGuideIntro =>
+      'Think about this question, then try answering the question above once more.';
+
+  @override
+  String get perspectiveGuidedAnswerHint =>
+      'Write a new answer to the question above...';
 
   @override
   String get perspectiveTryAgainLabel => 'Try again';
@@ -364,6 +369,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'Use â€œheâ€, â€œsheâ€, or your name instead of â€œIâ€.';
 
   @override
+  String get distancedJournalPersonaLabel => 'Today, I\'m writing as';
+
+  @override
+  String get distancedJournalPersonaHint => 'e.g. Nora, A., The Observer';
+
+  @override
+  String get distancedJournalPersonaHelper =>
+      'Use any name for this entry. It can change every time.';
+
+  @override
   String get journalFeedbackTitle => 'Reflection Feedback';
 
   @override
@@ -391,6 +406,30 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get reflectionSubmittedSuccessfully =>
       'Reflection submitted successfully!';
+
+  @override
+  String get generatedReflectionOfferTitle =>
+      'Would you like to answer one more question?';
+
+  @override
+  String get generatedReflectionOfferBody =>
+      'I can show you one short question based on what you wrote. It is optional.';
+
+  @override
+  String get generatedReflectionShowQuestion => 'Show question';
+
+  @override
+  String get generatedReflectionSkip => 'Skip';
+
+  @override
+  String get generatedReflectionQuestionTitle => 'One more question';
+
+  @override
+  String get generatedReflectionAnswerHint =>
+      'Write a few words if you want...';
+
+  @override
+  String get generatedReflectionSaveAnswer => 'Save answer';
 
   @override
   String get startBreathing => 'Tap to begin the exercise';

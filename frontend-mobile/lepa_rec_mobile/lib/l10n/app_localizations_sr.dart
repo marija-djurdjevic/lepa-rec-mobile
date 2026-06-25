@@ -250,7 +250,11 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String get perspectiveGuideIntro =>
-      'Razmisli o ovom pitanju, pa pokušaj ponovo.';
+      'Razmislite o ovom pitanju, pa pokušajte još jednom da odgovorite na pitanje iznad.';
+
+  @override
+  String get perspectiveGuidedAnswerHint =>
+      'Napišite novi odgovor na pitanje iznad...';
 
   @override
   String get perspectiveTryAgainLabel => 'Pokušaj ponovo';
@@ -365,6 +369,16 @@ class AppLocalizationsSr extends AppLocalizations {
       'Koristite „on“, „ona“ ili svoje ime umesto „ja“';
 
   @override
+  String get distancedJournalPersonaLabel => 'Danas pišem kao';
+
+  @override
+  String get distancedJournalPersonaHint => 'npr. Nora, A, Posmatrač';
+
+  @override
+  String get distancedJournalPersonaHelper =>
+      'Koristite bilo koje ime za ovaj zapis. Možete ga promeniti svaki put.';
+
+  @override
   String get journalFeedbackTitle => 'Povratna poruka';
 
   @override
@@ -391,6 +405,30 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String get reflectionSubmittedSuccessfully => 'Osvrt je uspešno poslat!';
+
+  @override
+  String get generatedReflectionOfferTitle =>
+      'Da li želite da odgovorite na još jedno pitanje?';
+
+  @override
+  String get generatedReflectionOfferBody =>
+      'Mogu da Vam prikažem jedno kratko pitanje na osnovu onoga što ste napisali. Potpuno je opciono.';
+
+  @override
+  String get generatedReflectionShowQuestion => 'Prikažite pitanje';
+
+  @override
+  String get generatedReflectionSkip => 'Preskočite';
+
+  @override
+  String get generatedReflectionQuestionTitle => 'Još jedno pitanje';
+
+  @override
+  String get generatedReflectionAnswerHint =>
+      'Napišite nekoliko reči ako želite...';
+
+  @override
+  String get generatedReflectionSaveAnswer => 'Sačuvajte odgovor';
 
   @override
   String get startBreathing => 'Dodirnite da započnete vežbu';

@@ -28,6 +28,7 @@ class DashboardViewState {
       (todayPlan!.reflectionPrompt == null &&
           todayPlan!.distancedJournalChoices.isEmpty &&
           todayPlan!.perspectiveScenarioChoices.isEmpty &&
+          todayPlan!.currentReward == null &&
           !todayPlan!.isDistancedJournalCompleted &&
           !todayPlan!.isReflectionCompleted &&
           !todayPlan!.isPerspectiveScenarioCompleted);

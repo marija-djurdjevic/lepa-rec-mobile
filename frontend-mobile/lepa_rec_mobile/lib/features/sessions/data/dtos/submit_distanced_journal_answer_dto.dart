@@ -1,10 +1,12 @@
 class SubmitDistancedJournalAnswerDto {
   final String exerciseId;
+
   /// Informational only; the backend ignores this field.
   final DateTime sessionDate;
   final String mainAnswer;
   final String followUpAnswer;
   final String? reflection;
+  final String? language;
 
   SubmitDistancedJournalAnswerDto({
     required this.exerciseId,
@@ -12,6 +14,7 @@ class SubmitDistancedJournalAnswerDto {
     required this.mainAnswer,
     required this.followUpAnswer,
     this.reflection,
+    this.language,
   });
 
   Map<String, dynamic> toJson() => {
@@ -20,6 +23,7 @@ class SubmitDistancedJournalAnswerDto {
     'mainAnswer': mainAnswer,
     'followUpAnswer': followUpAnswer,
     'reflection': reflection,
+    if (language != null) 'language': language,
   };
 
   @override

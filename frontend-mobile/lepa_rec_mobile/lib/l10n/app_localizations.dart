@@ -437,7 +437,7 @@ abstract class AppLocalizations {
   /// Disclaimer shown under scenario text to explain task goal
   ///
   /// In en, this message translates to:
-  /// **'We will ask you questions about the shown scene. The goal is not to guess every exact detail in the background of the story, but to get as close as possible to understanding other people\'s perspectives, needs, and wishes that shaped their reactions and emotions. Every thoughtful answer is good, even when it differs in details from the background story we will reveal at the end.'**
+  /// **'You will answer questions about the shown scene. The goal is not to guess every detail, but to understand the perspectives, needs, and emotions of the people involved. Every thoughtful answer is good, even when it differs from the background story we will reveal at the end.'**
   String get perspectiveScenarioDisclaimer;
 
   /// First short line in perspective scenario disclaimer
@@ -485,7 +485,7 @@ abstract class AppLocalizations {
   /// Title for the perspective scenario reveal screen
   ///
   /// In en, this message translates to:
-  /// **'Whatâ€™s Behind the Scenes?'**
+  /// **'What\'s Behind the Scenes?'**
   String get perspectiveRevealTitle;
 
   /// Helper text shown below the reveal content
@@ -509,8 +509,14 @@ abstract class AppLocalizations {
   /// Intro text shown above a Socratic guide question
   ///
   /// In en, this message translates to:
-  /// **'Consider this question, then try again.'**
+  /// **'Think about this question, then try answering the question above once more.'**
   String get perspectiveGuideIntro;
+
+  /// Placeholder for the answer input after a perspective scenario guide question is shown
+  ///
+  /// In en, this message translates to:
+  /// **'Write a new answer to the question above...'**
+  String get perspectiveGuidedAnswerHint;
 
   /// Label above the retry answer input after guidance
   ///
@@ -704,6 +710,24 @@ abstract class AppLocalizations {
   /// **'Use â€œheâ€, â€œsheâ€, or your name instead of â€œIâ€.'**
   String get distancedJournalHint;
 
+  /// Label for the optional per-entry distanced journal persona name
+  ///
+  /// In en, this message translates to:
+  /// **'Today, I\'m writing as'**
+  String get distancedJournalPersonaLabel;
+
+  /// Placeholder for the optional per-entry distanced journal persona name
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Nora, A., The Observer'**
+  String get distancedJournalPersonaHint;
+
+  /// Helper text explaining the optional per-entry distanced journal persona name
+  ///
+  /// In en, this message translates to:
+  /// **'Use any name for this entry. It can change every time.'**
+  String get distancedJournalPersonaHelper;
+
   /// Title for the journal feedback screen
   ///
   /// In en, this message translates to:
@@ -751,6 +775,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reflection submitted successfully!'**
   String get reflectionSubmittedSuccessfully;
+
+  /// Title for the optional generated journal reflection offer
+  ///
+  /// In en, this message translates to:
+  /// **'Would you like to answer one more question?'**
+  String get generatedReflectionOfferTitle;
+
+  /// Body text for the optional generated journal reflection offer
+  ///
+  /// In en, this message translates to:
+  /// **'I can show you one short question based on what you wrote. It is optional.'**
+  String get generatedReflectionOfferBody;
+
+  /// Button label to reveal the optional generated journal reflection question
+  ///
+  /// In en, this message translates to:
+  /// **'Show question'**
+  String get generatedReflectionShowQuestion;
+
+  /// Button label to skip the optional generated journal reflection
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get generatedReflectionSkip;
+
+  /// Title above the optional generated journal reflection question
+  ///
+  /// In en, this message translates to:
+  /// **'One more question'**
+  String get generatedReflectionQuestionTitle;
+
+  /// Input hint for the optional generated journal reflection answer
+  ///
+  /// In en, this message translates to:
+  /// **'Write a few words if you want...'**
+  String get generatedReflectionAnswerHint;
+
+  /// Button label to save the optional generated journal reflection answer
+  ///
+  /// In en, this message translates to:
+  /// **'Save answer'**
+  String get generatedReflectionSaveAnswer;
 
   /// Text shown inside the breathing circle before the exercise starts
   ///

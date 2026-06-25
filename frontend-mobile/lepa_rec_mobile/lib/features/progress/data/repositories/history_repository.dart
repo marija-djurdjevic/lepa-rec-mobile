@@ -8,14 +8,14 @@ import '../../../sessions/data/dtos/perspective_scenario_exercise_dto.dart';
 
 class HistoryRepository {
   HistoryRepository({HistoryRemoteDataSource? remote})
-      : _remote = remote ?? HistoryRemoteDataSource();
+    : _remote = remote ?? HistoryRemoteDataSource();
 
   final HistoryRemoteDataSource _remote;
 
   static final Map<String, List<DistancedJournalChallengeDto>>
-      _cachedJournalChallengesByLang = {};
+  _cachedJournalChallengesByLang = {};
   static final Map<String, List<PerspectiveScenarioChallengeDto>>
-      _cachedScenarioChallengesByLang = {};
+  _cachedScenarioChallengesByLang = {};
   static final Map<String, DateTime> _cacheTimestampByLang = {};
   static const Duration _cacheTtl = Duration(hours: 12);
 
@@ -28,7 +28,8 @@ class HistoryRepository {
     ]);
 
     final journalExercises = results[0] as List<DistancedJournalExerciseDto>;
-    final scenarioExercises = results[1] as List<PerspectiveScenarioExerciseDto>;
+    final scenarioExercises =
+        results[1] as List<PerspectiveScenarioExerciseDto>;
 
     final historyItems = <HistoryItem>[
       ..._mapJournalHistory(
@@ -41,9 +42,7 @@ class HistoryRepository {
       ),
     ];
 
-    historyItems.sort(
-      (a, b) => b.submittedAt.compareTo(a.submittedAt),
-    );
+    historyItems.sort((a, b) => b.submittedAt.compareTo(a.submittedAt));
 
     final dedupedHistoryItems = _dedupeByExerciseId(historyItems);
 
@@ -117,29 +116,26 @@ class HistoryRepository {
       for (final challenge in challenges) challenge.id: challenge,
     };
 
-    return exercises
-        .where((exercise) => exercise.isCompleted)
-        .map(
-          (exercise) {
-            final challenge = challengeMap[exercise.challengeId];
-            final submittedAt =
-                exercise.submittedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+    return exercises.where((exercise) => exercise.isCompleted).map((exercise) {
+      final challenge = challengeMap[exercise.challengeId];
+      final submittedAt =
+          exercise.submittedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
 
-            return HistoryItem.distancedJournal(
-              exerciseId: exercise.id,
-              challengeId: exercise.challengeId,
-              submittedAt: submittedAt,
-              promptText: _composeHistoryPrompt(challenge),
-              followUpPrompt: challenge?.followUpPromptText(),
-              mainAnswer: exercise.mainAnswer,
-              followUpAnswer: exercise.followUpAnswer,
-              reflection: exercise.reflection,
-              reflectionQuestion: _extractReflectionQuestion(challenge),
-              photoUrls: exercise.photoUrls,
-            );
-          },
-        )
-        .toList();
+      return HistoryItem.distancedJournal(
+        exerciseId: exercise.id,
+        challengeId: exercise.challengeId,
+        submittedAt: submittedAt,
+        promptText: _composeHistoryPrompt(challenge),
+        followUpPrompt: challenge?.followUpPromptText(),
+        mainAnswer: exercise.mainAnswer,
+        followUpAnswer: exercise.followUpAnswer,
+        reflection: exercise.reflection,
+        reflectionQuestion: _extractReflectionQuestion(challenge),
+        generatedReflectionQuestion: exercise.generatedReflectionQuestion,
+        generatedReflectionAnswer: exercise.generatedReflectionAnswer,
+        photoUrls: exercise.photoUrls,
+      );
+    }).toList();
   }
 
   String? _extractReflectionQuestion(DistancedJournalChallengeDto? challenge) {
@@ -166,52 +162,44 @@ class HistoryRepository {
       for (final challenge in challenges) challenge.id: challenge,
     };
 
-    return exercises
-        .where((exercise) => exercise.isCompleted)
-        .map(
-          (exercise) {
-            final challenge = challengeMap[exercise.challengeId];
-            final questions = (challenge?.questions ?? const [])
-                .map(
-                  (question) => HistoryQuestion(
-                    id: question.id,
-                    text: question.questionText,
-                  ),
-                )
-                .toList();
-            final questionTextMap = {
-              for (final question in questions) question.id: question.text,
-            };
-            final questionRevealMap = {
-              for (final question in (challenge?.questions ?? const []))
-                question.id: question.reveal,
-            };
-            final answers = exercise.answers
-                .map(
-                  (answer) => HistoryAnswer(
-                    questionId: answer.questionId,
-                    questionText:
-                        questionTextMap[answer.questionId] ?? 'Question',
-                    answerText: answer.answerText,
-                    revealText: questionRevealMap[answer.questionId],
-                  ),
-                )
-                .toList();
-            final submittedAt =
-                exercise.submittedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+    return exercises.where((exercise) => exercise.isCompleted).map((exercise) {
+      final challenge = challengeMap[exercise.challengeId];
+      final questions = (challenge?.questions ?? const [])
+          .map(
+            (question) =>
+                HistoryQuestion(id: question.id, text: question.questionText),
+          )
+          .toList();
+      final questionTextMap = {
+        for (final question in questions) question.id: question.text,
+      };
+      final questionRevealMap = {
+        for (final question in (challenge?.questions ?? const []))
+          question.id: question.reveal,
+      };
+      final answers = exercise.answers
+          .map(
+            (answer) => HistoryAnswer(
+              questionId: answer.questionId,
+              questionText: questionTextMap[answer.questionId] ?? 'Question',
+              answerText: answer.answerText,
+              revealText: questionRevealMap[answer.questionId],
+            ),
+          )
+          .toList();
+      final submittedAt =
+          exercise.submittedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
 
-            return HistoryItem.perspectiveScenario(
-              exerciseId: exercise.id,
-              challengeId: exercise.challengeId,
-              submittedAt: submittedAt,
-              promptText: challenge?.scenarioText ?? 'Prompt unavailable',
-              reveal: null,
-              questions: questions,
-              answers: answers,
-            );
-          },
-        )
-        .toList();
+      return HistoryItem.perspectiveScenario(
+        exerciseId: exercise.id,
+        challengeId: exercise.challengeId,
+        submittedAt: submittedAt,
+        promptText: challenge?.scenarioText ?? 'Prompt unavailable',
+        reveal: null,
+        questions: questions,
+        answers: answers,
+      );
+    }).toList();
   }
 }
 
