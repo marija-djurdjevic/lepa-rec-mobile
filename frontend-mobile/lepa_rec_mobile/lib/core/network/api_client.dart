@@ -75,7 +75,8 @@ class ApiClient {
         lower.contains('/distancedjournals') ||
         lower.contains('/perspectivescenarios') ||
         lower.contains('/auth') ||
-        lower.contains('/onboarding');
+        lower.contains('/onboarding') ||
+        lower.contains('/rewards');
   }
 
   static bool _shouldAttachLang(String path) {

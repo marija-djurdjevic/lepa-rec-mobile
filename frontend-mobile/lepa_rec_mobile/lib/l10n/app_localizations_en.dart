@@ -27,7 +27,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get primerWelcomeTitle => 'Peace, practice, growth';
 
   @override
-  String get primerWelcomeDescription => 'Settle somewhere comfortable where no one will interrupt you. This is your time, you deserve it.';
+  String get primerWelcomeDescription =>
+      'Settle somewhere comfortable where no one will interrupt you. This is your time, you deserve it.';
 
   @override
   String get proceed => 'Begin preparation';
@@ -46,7 +47,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String breatheInForSeconds(int seconds) {
-    final intl.NumberFormat secondsNumberFormat = intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat secondsNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
     final String secondsString = secondsNumberFormat.format(seconds);
 
     return 'Breathe in for $secondsString seconds';
@@ -54,7 +56,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String breatheOutForSeconds(int seconds) {
-    final intl.NumberFormat secondsNumberFormat = intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat secondsNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
     final String secondsString = secondsNumberFormat.format(seconds);
 
     return 'Breathe out for $secondsString seconds';
@@ -73,7 +76,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sessionComplete => 'Great job!';
 
   @override
-  String get sessionCompleteMessage => 'You have completed your breathing exercise. You are doing amazing!';
+  String get sessionCompleteMessage =>
+      'You have completed your breathing exercise. You are doing amazing!';
 
   @override
   String get continueToNext => 'Continue';
@@ -118,7 +122,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retry => 'Retry';
 
   @override
-  String get errorRenderingGrowthMessage => 'Error rendering Growth Message page';
+  String get errorRenderingGrowthMessage =>
+      'Error rendering Growth Message page';
 
   @override
   String get errorInSessionFlowPage => 'Error in SessionFlowPage';
@@ -151,7 +156,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noTasksToday => 'No Tasks Today';
 
   @override
-  String get completedAllTasks => 'Great job! You\'ve completed all available tasks.';
+  String get completedAllTasks =>
+      'Great job! You\'ve completed all available tasks.';
 
   @override
   String get todaysPractice => 'Today\'s Challenge';
@@ -174,7 +180,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reflection => 'Journal Review';
 
   @override
-  String get reflectionFreshEyes => 'Review your journal entries with fresh eyes.';
+  String get reflectionFreshEyes =>
+      'Review your journal entries with fresh eyes.';
 
   @override
   String get perspectiveScenario => 'Seeing Others';
@@ -192,22 +199,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get levelHard => 'Hard';
 
   @override
-  String get answerEachScenarioQuestion => 'Answer each question before you reveal the final perspective.';
+  String get answerEachScenarioQuestion =>
+      'Answer each question before you reveal the final perspective.';
 
   @override
-  String get perspectiveScenarioDisclaimer => 'We will ask you questions about the shown scene. The goal is not to guess every exact detail in the background of the story, but to get as close as possible to understanding other people\'s perspectives, needs, and wishes that shaped their reactions and emotions. Every thoughtful answer is good, even when it differs in details from the background story we will reveal at the end.';
+  String get perspectiveScenarioDisclaimer =>
+      'You will answer questions about the shown scene. The goal is not to guess every detail, but to understand the perspectives, needs, and emotions of the people involved. Every thoughtful answer is good, even when it differs from the background story we will reveal at the end.';
 
   @override
-  String get perspectiveDisclaimerWhatWeDo => 'We will ask you questions about the shown scene.';
+  String get perspectiveDisclaimerWhatWeDo =>
+      'We will ask you questions about the shown scene.';
 
   @override
-  String get perspectiveDisclaimerNotGoal => 'The goal is not to guess every exact detail in the background story.';
+  String get perspectiveDisclaimerNotGoal =>
+      'The goal is not to guess every exact detail in the background story.';
 
   @override
-  String get perspectiveDisclaimerGoal => 'The goal is to understand people’s perspectives, needs, and wishes that shape their reactions and emotions.';
+  String get perspectiveDisclaimerGoal =>
+      'The goal is to understand people’s perspectives, needs, and wishes that shape their reactions and emotions.';
 
   @override
-  String get perspectiveDisclaimerAnswerGood => 'Every thoughtful answer is good, even when it differs from the background story we reveal at the end.';
+  String get perspectiveDisclaimerAnswerGood =>
+      'Every thoughtful answer is good, even when it differs from the background story we reveal at the end.';
 
   @override
   String get showMore => 'Show more';
@@ -221,13 +234,33 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get perspectiveRevealTitle => 'Whatâ€™s Behind the Scenes?';
+  String get perspectiveRevealTitle => 'What\'s Behind the Scenes?';
 
   @override
-  String get perspectiveRevealHint => 'Reflect on your answers and the assumptions you made.';
+  String get perspectiveRevealHint =>
+      'Reflect on your answers and the assumptions you made.';
 
   @override
-  String get perspectiveRevealSubtitle => 'Here is the revealed perspective from this scenario.';
+  String get perspectiveRevealSubtitle =>
+      'Here is the revealed perspective from this scenario.';
+
+  @override
+  String get perspectiveGuideTitle => 'Let\'s look at it from another angle.';
+
+  @override
+  String get perspectiveGuideIntro =>
+      'Think about this question, then try answering the question above once more.';
+
+  @override
+  String get perspectiveGuidedAnswerHint =>
+      'Write a new answer to the question above...';
+
+  @override
+  String get perspectiveTryAgainLabel => 'Try again';
+
+  @override
+  String get perspectiveScenarioSubmitGenericError =>
+      'Something went wrong. Please try again.';
 
   @override
   String errorSubmittingPerspectiveScenario(String error) {
@@ -241,7 +274,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chooseJournalChallenge => 'Choose one journal challenge for today';
 
   @override
-  String get selectAvailablePrompts => 'Select one of the available prompts that resonates with you. The difficulty levels help you find the right challenge.';
+  String get selectAvailablePrompts =>
+      'Select one of the available prompts that resonates with you. The difficulty levels help you find the right challenge.';
 
   @override
   String get journalCompletedToday => 'Journal completed for today';
@@ -253,19 +287,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scenarioCompletedToday => 'Scenario completed for today';
 
   @override
-  String get dailyChallengeReward => 'You completed today\'s challenge! Join us tomorrow for the next one.';
+  String get dailyChallengeReward =>
+      'You completed today\'s challenge! Join us tomorrow for the next one.';
 
   @override
   String get exerciseNotInitialized => 'Error: Exercise not initialized';
 
   @override
-  String get exerciseNotFoundOrOwned => 'This exercise isn\'t available or doesn\'t belong to you.';
+  String get exerciseNotFoundOrOwned =>
+      'This exercise isn\'t available or doesn\'t belong to you.';
 
   @override
-  String get missingPrimerData => 'Missing required primer data. Please restart the session.';
+  String get missingPrimerData =>
+      'Missing required primer data. Please restart the session.';
 
   @override
-  String get responseSubmittedSuccessfully => 'Response submitted successfully!';
+  String get responseSubmittedSuccessfully =>
+      'Response submitted successfully!';
 
   @override
   String errorSubmittingResponse(String error) {
@@ -282,7 +320,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorStartingExercise => 'Error Starting Exercise';
 
   @override
-  String get loadingPersonalizedMessage => 'Loading your personalized message...';
+  String get loadingPersonalizedMessage =>
+      'Loading your personalized message...';
 
   @override
   String errorCompletingPrimer(String error) {
@@ -299,13 +338,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reflectionPrompt => 'Do you have any new insights on this topic?';
 
   @override
-  String get reflectionGuidance => 'Revisit your journal entry with fresh eyes.';
+  String get reflectionGuidance =>
+      'Revisit your journal entry with fresh eyes.';
 
   @override
-  String get reflectionFreshQuestion => 'How do you feel about what you wrote? What are the new insights?';
+  String get reflectionFreshQuestion =>
+      'How do you feel about what you wrote? What are the new insights?';
 
   @override
-  String get reflectionAfterTimeLabel => 'After some time, you reflected like this:';
+  String get reflectionAfterTimeLabel =>
+      'After some time, you reflected like this:';
 
   @override
   String get yesterdaysTopic => 'Yesterday\'s Topic';
@@ -323,31 +365,71 @@ class AppLocalizationsEn extends AppLocalizations {
   String get todayReflection => 'Today\'s Journal Review';
 
   @override
-  String get distancedJournalHint => 'Use â€œheâ€, â€œsheâ€, or your name instead of â€œIâ€.';
+  String get distancedJournalHint =>
+      'Use â€œheâ€, â€œsheâ€, or your name instead of â€œIâ€.';
+
+  @override
+  String get distancedJournalPersonaLabel => 'Today, I\'m writing as';
+
+  @override
+  String get distancedJournalPersonaHint => 'e.g. Nora, A., The Observer';
+
+  @override
+  String get distancedJournalPersonaHelper =>
+      'Use any name for this entry. It can change every time.';
 
   @override
   String get journalFeedbackTitle => 'Reflection Feedback';
 
   @override
-  String get journalFeedbackSubtitle => 'Here is a gentle reflection on your journaling style';
+  String get journalFeedbackSubtitle =>
+      'Here is a gentle reflection on your journaling style';
 
   @override
   String get continueToDashboard => 'Continue';
 
   @override
-  String get goodDistancingFeedback => 'You described the situation with a good sense of distance. This can help you look at the experience more calmly.';
+  String get goodDistancingFeedback =>
+      'You described the situation with a good sense of distance. This can help you look at the experience more calmly.';
 
   @override
-  String get mixedDistancingFeedback => 'You already show some distance in the way you wrote. You can go even further by talking about yourself more from the outside.';
+  String get mixedDistancingFeedback =>
+      'You already show some distance in the way you wrote. You can go even further by talking about yourself more from the outside.';
 
   @override
-  String get needsMoreDistancingFeedback => 'Your response stayed quite close to the immediate experience. Next time, try describing the event more as if you were observing someone from the outside.';
+  String get needsMoreDistancingFeedback =>
+      'Your response stayed quite close to the immediate experience. Next time, try describing the event more as if you were observing someone from the outside.';
 
   @override
   String get reflectionRequired => 'Please share your reflection';
 
   @override
-  String get reflectionSubmittedSuccessfully => 'Reflection submitted successfully!';
+  String get reflectionSubmittedSuccessfully =>
+      'Reflection submitted successfully!';
+
+  @override
+  String get generatedReflectionOfferTitle =>
+      'Would you like to answer one more question?';
+
+  @override
+  String get generatedReflectionOfferBody =>
+      'I can show you one short question based on what you wrote. It is optional.';
+
+  @override
+  String get generatedReflectionShowQuestion => 'Show question';
+
+  @override
+  String get generatedReflectionSkip => 'Skip';
+
+  @override
+  String get generatedReflectionQuestionTitle => 'One more question';
+
+  @override
+  String get generatedReflectionAnswerHint =>
+      'Write a few words if you want...';
+
+  @override
+  String get generatedReflectionSaveAnswer => 'Save answer';
 
   @override
   String get startBreathing => 'Tap to begin the exercise';
@@ -379,7 +461,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageSerbian => 'Serbian';
 
   @override
-  String get profileLanguageSaveHint => 'Language change is applied after you save changes.';
+  String get profileLanguageSaveHint =>
+      'Language change is applied after you save changes.';
 
   @override
   String get dailySession => 'Daily Practice';
@@ -388,13 +471,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get close => 'Close';
 
   @override
-  String get onboardingStoryHook => 'You have probably noticed how often people misunderstand each other.\n\nA daughter argues with her mother. We gossip about and reject colleagues. Political opponents do not even talk.\n\nDoes it have to be that way?';
+  String get onboardingStoryHook =>
+      'You have probably noticed how often people misunderstand each other.\n\nA daughter argues with her mother. We gossip about and reject colleagues. Political opponents do not even talk.\n\nDoes it have to be that way?';
 
   @override
-  String get onboardingStorySkill => 'It does not.\n\nWe can understand others and help them understand us. But this is a skill we train like a muscle.\n\nResearch shows that people who practice these abilities resolve conflicts more easily and feel more connected to their people.';
+  String get onboardingStorySkill =>
+      'It does not.\n\nWe can understand others and help them understand us. But this is a skill we train like a muscle.\n\nResearch shows that people who practice these abilities resolve conflicts more easily and feel more connected to their people.';
 
   @override
-  String get onboardingStoryHabit => 'Ten minutes a day.\n\nSometimes a short scenario where you practice understanding what someone else thinks and feels. Sometimes a reflection on your own day from the position of a wise observer.\n\nA small habit that gradually changes how you see people and how they see you.';
+  String get onboardingStoryHabit =>
+      'Ten minutes a day.\n\nSometimes a short scenario where you practice understanding what someone else thinks and feels. Sometimes a reflection on your own day from the position of a wise observer.\n\nA small habit that gradually changes how you see people and how they see you.';
 
   @override
   String get onboardingStoryBack => 'Back';
@@ -415,7 +501,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingStoryReferenceTitle => 'Onboarding story';
 
   @override
-  String get onboardingStoryReferenceIntro => 'This is the intro story shown to users during their first app experience.';
+  String get onboardingStoryReferenceIntro =>
+      'This is the intro story shown to users during their first app experience.';
 
   @override
   String onboardingStorySectionTitle(int number) {
@@ -426,25 +513,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingLabel => 'FIRST STEP';
 
   @override
-  String get onboardingHookChoiceTitle => 'Now, let us try one exercise like that. Would you rather look at someone else\'s situation, or look at your own from someone else\'s perspective?';
+  String get onboardingHookChoiceTitle =>
+      'Now, let us try one exercise like that. Would you rather look at someone else\'s situation, or look at your own from someone else\'s perspective?';
 
   @override
-  String get onboardingHookChoiceSelfTitle => 'Look at my own situation from another perspective';
+  String get onboardingHookChoiceSelfTitle =>
+      'Look at my own situation from another perspective';
 
   @override
-  String get onboardingHookChoiceOthersTitle => 'Look at someone else\'s situation';
+  String get onboardingHookChoiceOthersTitle =>
+      'Look at someone else\'s situation';
 
   @override
-  String get onboardingDistancedJournalDescription => 'Write about your own situation as a wise observer. This helps you step back and see yourself and your choices more clearly.';
+  String get onboardingDistancedJournalDescription =>
+      'Write about your own situation as a wise observer. This helps you step back and see yourself and your choices more clearly.';
 
   @override
-  String get onboardingPerspectiveScenarioDescription => 'Go through a short scenario and try to understand what the other person thinks and feels.';
+  String get onboardingPerspectiveScenarioDescription =>
+      'Go through a short scenario and try to understand what the other person thinks and feels.';
 
   @override
   String get profileDeleteAccountTitle => 'Delete account';
 
   @override
-  String get profileDeleteAccountLearnMore => 'Learn more: https://api.sagledaj.com/account-deletion';
+  String get profileDeleteAccountLearnMore =>
+      'Learn more: https://api.sagledaj.com/account-deletion';
 
   @override
   String get profileDeleteAccountAction => 'Delete';
@@ -456,13 +549,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileDeleteAccountConfirmTitle => 'Delete account?';
 
   @override
-  String get profileDeleteAccountConfirmMessage => 'This will permanently delete your Sagledaj account and sign you out. This action cannot be undone.';
+  String get profileDeleteAccountConfirmMessage =>
+      'This will permanently delete your Sagledaj account and sign you out. This action cannot be undone.';
 
   @override
   String get profileDeleteAccountSuccess => 'Account deleted.';
 
   @override
-  String get profileDeleteAccountError => 'Could not delete account right now. Please try again.';
+  String get profileDeleteAccountError =>
+      'Could not delete account right now. Please try again.';
 
   @override
   String get profileDeleteAccountInfoOpenFailed => 'Could not open link.';

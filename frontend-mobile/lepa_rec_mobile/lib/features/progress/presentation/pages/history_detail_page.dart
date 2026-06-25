@@ -74,10 +74,16 @@ class HistoryDetailPage extends StatelessWidget {
     final mainAnswer = item.mainAnswer?.trim();
     final followUpAnswer = item.followUpAnswer?.trim();
     final reflection = item.reflection?.trim();
+    final generatedReflectionQuestion = item.generatedReflectionQuestion
+        ?.trim();
+    final generatedReflectionAnswer = item.generatedReflectionAnswer?.trim();
     final hasPhotos = item.photoUrls.isNotEmpty;
     final hasMainText = mainAnswer != null && mainAnswer.isNotEmpty;
     final hasFollowUpText = followUpAnswer != null && followUpAnswer.isNotEmpty;
     final hasAnyTextAnswer = hasMainText || hasFollowUpText;
+    final hasGeneratedReflection =
+        generatedReflectionAnswer != null &&
+        generatedReflectionAnswer.isNotEmpty;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -119,11 +125,24 @@ class HistoryDetailPage extends StatelessWidget {
         if (reflection != null && reflection.isNotEmpty) ...[
           _buildQuestionAnswerRevealCard(
             context,
-            questionText:
-                (item.reflectionQuestion?.trim().isNotEmpty ?? false)
+            questionText: (item.reflectionQuestion?.trim().isNotEmpty ?? false)
                 ? item.reflectionQuestion!.trim()
                 : context.l10n.reflectionFreshQuestion,
             answerText: reflection,
+            revealText: null,
+            useResponsePanels: false,
+          ),
+          const SizedBox(height: AppSpacing.md),
+        ],
+        if (hasGeneratedReflection) ...[
+          _buildQuestionAnswerRevealCard(
+            context,
+            questionText:
+                generatedReflectionQuestion != null &&
+                    generatedReflectionQuestion.isNotEmpty
+                ? generatedReflectionQuestion
+                : context.l10n.generatedReflectionQuestionTitle,
+            answerText: generatedReflectionAnswer,
             revealText: null,
             useResponsePanels: false,
           ),
@@ -148,10 +167,7 @@ class HistoryDetailPage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.92),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: const Color(0xFFDCE8D8),
-          width: 1.2,
-        ),
+        border: Border.all(color: const Color(0xFFDCE8D8), width: 1.2),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.045),
@@ -164,11 +180,7 @@ class HistoryDetailPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (trimmedOpening.isNotEmpty) ...[
-            _buildQuestionHeader(
-              context,
-              trimmedOpening,
-              useAnswerColor: true,
-            ),
+            _buildQuestionHeader(context, trimmedOpening, useAnswerColor: true),
           ],
           if (trimmedOpening.isNotEmpty && trimmedFollowUp.isNotEmpty)
             const SizedBox(height: AppSpacing.md),
@@ -226,10 +238,7 @@ class HistoryDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildPromptCard(
-    BuildContext context, {
-    required String text,
-  }) {
+  Widget _buildPromptCard(BuildContext context, {required String text}) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -282,10 +291,7 @@ class HistoryDetailPage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.92),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: const Color(0xFFDCE8D8),
-          width: 1.2,
-        ),
+        border: Border.all(color: const Color(0xFFDCE8D8), width: 1.2),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.045),
@@ -343,9 +349,9 @@ class HistoryDetailPage extends StatelessWidget {
 
   Widget _buildQuestionHeader(
     BuildContext context,
-    String questionText,
-    {bool useAnswerColor = false}
-  ) {
+    String questionText, {
+    bool useAnswerColor = false,
+  }) {
     return Text(
       questionText.trim().isEmpty
           ? _questionUnavailable(context)
@@ -398,10 +404,7 @@ class HistoryDetailPage extends StatelessWidget {
       );
     }
 
-    return _DistancedJournalPromptParts(
-      contextText: text,
-      questionText: '',
-    );
+    return _DistancedJournalPromptParts(contextText: text, questionText: '');
   }
 
   Widget _buildPhotoCard(List<String> urls) {
@@ -411,10 +414,7 @@ class HistoryDetailPage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.92),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: const Color(0xFFDCE8D8),
-          width: 1.2,
-        ),
+        border: Border.all(color: const Color(0xFFDCE8D8), width: 1.2),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.045),
@@ -461,7 +461,9 @@ class HistoryDetailPage extends StatelessWidget {
   }
 
   String _questionUnavailable(BuildContext context) {
-    return _isEnglish(context) ? 'Question unavailable' : 'Pitanje nije dostupno';
+    return _isEnglish(context)
+        ? 'Question unavailable'
+        : 'Pitanje nije dostupno';
   }
 
   Widget _buildPhotoGallery(List<String> urls) {
@@ -479,12 +481,8 @@ class HistoryDetailPage extends StatelessWidget {
           children: [
             for (final entry in urls.asMap().entries)
               GestureDetector(
-                onTap: () => _openPhotoViewer(
-                  context,
-                  urls,
-                  entry.key,
-                  headers,
-                ),
+                onTap: () =>
+                    _openPhotoViewer(context, urls, entry.key, headers),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: SizedBox(
@@ -682,8 +680,10 @@ class _PhotoViewerPageState extends State<_PhotoViewerPage> {
                 bottom: 0,
                 child: Center(
                   child: IconButton(
-                    icon:
-                        const Icon(Icons.chevron_right, color: Colors.white70),
+                    icon: const Icon(
+                      Icons.chevron_right,
+                      color: Colors.white70,
+                    ),
                     onPressed: () => _goTo(_currentIndex + 1),
                   ),
                 ),

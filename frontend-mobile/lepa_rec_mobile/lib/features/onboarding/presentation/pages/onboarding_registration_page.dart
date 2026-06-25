@@ -220,34 +220,6 @@ class _OnboardingRegistrationPageState extends State<OnboardingRegistrationPage>
         : 'Najbolje da ovo bude uz jutarnju kafu, kada si u autobusu ili pred kraj dana kada imaš vremena da izdvojiš 5 minuta za sebe.';
 
     return Scaffold(
-      bottomNavigationBar: SafeArea(
-        minimum: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, AppSpacing.lg),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (_error != null) ...[
-              Text(_error!, textAlign: TextAlign.center, style: const TextStyle(color: Colors.red)),
-              const SizedBox(height: AppSpacing.md),
-            ],
-            SizedBox(
-              height: 56,
-              child: ElevatedButton(
-                onPressed: _submitting ? null : _submit,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF6B9B6E),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-                ),
-                child: Text(
-                  _isEnglish ? 'Finish registration' : 'Završite registraciju',
-                  style: GoogleFonts.quicksand(fontSize: 18, fontWeight: FontWeight.w700),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
       body: Stack(
         children: [
           SafeArea(
@@ -256,7 +228,7 @@ class _OnboardingRegistrationPageState extends State<OnboardingRegistrationPage>
                 AppSpacing.lg,
                 AppSpacing.lg,
                 AppSpacing.lg,
-                AppSpacing.xl + AppSpacing.lg + MediaQuery.of(context).viewInsets.bottom,
+                AppSpacing.lg + MediaQuery.of(context).viewInsets.bottom,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -332,6 +304,26 @@ class _OnboardingRegistrationPageState extends State<OnboardingRegistrationPage>
                       style: GoogleFonts.quicksand(fontSize: 14, fontWeight: FontWeight.w500, color: const Color(0xFF6D806E), height: 1.4),
                     ),
                   ],
+                  if (_error != null) ...[
+                    const SizedBox(height: AppSpacing.md),
+                    Text(_error!, textAlign: TextAlign.center, style: const TextStyle(color: Colors.red)),
+                  ],
+                  const SizedBox(height: AppSpacing.md),
+                  SizedBox(
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: _submitting ? null : _submit,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF6B9B6E),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                      ),
+                      child: Text(
+                        _isEnglish ? 'Finish registration' : 'Završite registraciju',
+                        style: GoogleFonts.quicksand(fontSize: 18, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

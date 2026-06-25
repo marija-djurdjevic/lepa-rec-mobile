@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/localization/localization_extension.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../data/dtos/answer_perspective_scenario_question_dto.dart';
+import '../../data/dtos/answer_perspective_scenario_reveal_result_dto.dart';
 import '../../data/dtos/perspective_scenario_answer_dto.dart';
 import '../../data/dtos/perspective_scenario_exercise_dto.dart';
 import '../../data/dtos/perspective_scenario_prompt_dto.dart';
@@ -42,6 +46,10 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
   final Map<String, String> _answersByQuestionId = {};
   final Map<String, String> _revealsByQuestionId = {};
   final Map<int, String> _revealsByOrder = {};
+  final Map<String, String> _guideQuestionsByQuestionId = {};
+  final Map<String, String> _guideTypingTargetsByQuestionId = {};
+  final Map<String, String> _feedbackByQuestionId = {};
+  Timer? _guideTypingTimer;
 
   @override
   void initState() {
@@ -59,8 +67,9 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final currentLang =
-        Localizations.localeOf(context).languageCode == 'en' ? 'en' : 'sr';
+    final currentLang = Localizations.localeOf(context).languageCode == 'en'
+        ? 'en'
+        : 'sr';
     if (_activePracticeLang == currentLang) return;
     _activePracticeLang = currentLang;
     _startScenario();
@@ -71,6 +80,7 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
     for (final controller in _answerControllers) {
       controller.dispose();
     }
+    _guideTypingTimer?.cancel();
     _scrollController.dispose();
     super.dispose();
   }
@@ -83,6 +93,9 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
       _answersByQuestionId.clear();
       _revealsByQuestionId.clear();
       _revealsByOrder.clear();
+      _guideQuestionsByQuestionId.clear();
+      _guideTypingTargetsByQuestionId.clear();
+      _feedbackByQuestionId.clear();
     });
 
     try {
@@ -97,7 +110,7 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
         final questionDebug = _orderedQuestions
             .map(
               (q) =>
-                  '#${q.order}(id=${q.id}, hasReveal=${(q.reveal ?? '').trim().isNotEmpty})',
+                  '#${q.order}(id=${q.id}, text="${_logText(q.questionText)}", hasReveal=${(q.reveal ?? '').trim().isNotEmpty})',
             )
             .join(', ');
         debugPrint(
@@ -175,16 +188,34 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
 
     setState(() {
       _isSubmitting = true;
+      _showValidationErrors = false;
+      _guideQuestionsByQuestionId.remove(question.id);
+      _guideTypingTargetsByQuestionId.remove(question.id);
     });
 
     try {
-      final response = await _sessionRepository.answerPerspectiveScenarioAndReveal(
-        AnswerPerspectiveScenarioQuestionDto(
-          exerciseId: _exercise!.id,
-          questionId: question.id,
-          answerText: answerText,
-        ),
-        _activePracticeLang ?? 'sr',
+      final answerRequest = AnswerPerspectiveScenarioQuestionDto(
+        exerciseId: _exercise!.id,
+        questionId: question.id,
+        answerText: answerText,
+        idempotencyKey: _newIdempotencyKey(),
+      );
+
+      if (kDebugMode) {
+        debugPrint(
+          '[PerspectiveScenario][UI][Answer] '
+          'exerciseId=${_exercise!.id} '
+          'challengeId=${widget.prompt.id} '
+          'questionOrder=${question.order} '
+          'questionId=${question.id} '
+          'question="${_logText(question.questionText)}" '
+          'answer="${_logText(answerText)}"',
+        );
+      }
+
+      final response = await _submitAnswerWithGuidanceStream(
+        answerRequest,
+        questionId: question.id,
       );
 
       if (!mounted) return;
@@ -206,6 +237,9 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
       final revealText = response.reveal?.reveal.trim();
       final revealQuestionId = response.reveal?.questionId;
       final revealOrder = response.reveal?.order;
+      final guideText = response.guideQuestion?.question.trim();
+      final feedbackText = response.feedback?.trim();
+      final questionIsFinal = response.isFinalStatus;
 
       if (response.isExerciseCompleted) {
         try {
@@ -219,13 +253,30 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
       }
 
       setState(() {
-        if (revealText != null &&
+        if (response.needsGuidance) {
+          if (guideText != null && guideText.isNotEmpty) {
+            _queueGuideQuestionText(question.id, guideText);
+          }
+          _answerControllers[index].clear();
+        }
+        if (questionIsFinal) {
+          _guideQuestionsByQuestionId.remove(question.id);
+          _guideTypingTargetsByQuestionId.remove(question.id);
+        }
+        if (questionIsFinal &&
+            feedbackText != null &&
+            feedbackText.isNotEmpty) {
+          _feedbackByQuestionId[question.id] = feedbackText;
+        }
+        if (questionIsFinal &&
+            revealText != null &&
             revealText.isNotEmpty &&
             revealQuestionId != null &&
             revealQuestionId.isNotEmpty) {
           _revealsByQuestionId[revealQuestionId] = revealText;
         }
-        if (revealText != null &&
+        if (questionIsFinal &&
+            revealText != null &&
             revealText.isNotEmpty &&
             revealOrder != null &&
             revealOrder > 0) {
@@ -235,10 +286,17 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
         _isSubmitting = false;
       });
 
-      if ((revealText == null || revealText.isEmpty) && kDebugMode) {
+      if (response.needsGuidance && kDebugMode) {
+        debugPrint(
+          '[PerspectiveScenario][UI] answer needs guidance '
+          'questionId=${question.id} '
+          'guideIteration=${response.guideIterationCount} '
+          'guideQuestion="${_logText(guideText ?? '')}"',
+        );
+      } else if ((revealText == null || revealText.isEmpty) && kDebugMode) {
         debugPrint(
           '[PerspectiveScenario][UI] answer_and_reveal returned empty reveal '
-          'questionId=${question.id}',
+          'questionId=${question.id} status=${response.status}',
         );
       }
 
@@ -258,9 +316,7 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            context.l10n.errorSubmittingPerspectiveScenario(e.toString()),
-          ),
+          content: Text(context.l10n.perspectiveScenarioSubmitGenericError),
           backgroundColor: Colors.red[600],
         ),
       );
@@ -273,13 +329,92 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            context.l10n.errorSubmittingPerspectiveScenario(e.toString()),
-          ),
+          content: Text(context.l10n.perspectiveScenarioSubmitGenericError),
           backgroundColor: Colors.red[600],
         ),
       );
     }
+  }
+
+  Future<AnswerPerspectiveScenarioRevealResultDto>
+  _submitAnswerWithGuidanceStream(
+    AnswerPerspectiveScenarioQuestionDto answerRequest, {
+    required String questionId,
+  }) async {
+    try {
+      return await _sessionRepository.answerPerspectiveScenarioAndRevealStream(
+        answerRequest,
+        _activePracticeLang ?? 'sr',
+        onGuideTextChanged: (guideText) {
+          if (!mounted || guideText.trim().isEmpty) return;
+          _queueGuideQuestionText(questionId, guideText);
+          _scrollToBottom();
+        },
+      );
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404 || e.response?.statusCode == 405) {
+        return _sessionRepository.answerPerspectiveScenarioAndReveal(
+          answerRequest,
+          _activePracticeLang ?? 'sr',
+        );
+      }
+      rethrow;
+    }
+  }
+
+  void _queueGuideQuestionText(String questionId, String guideText) {
+    _guideTypingTargetsByQuestionId[questionId] = guideText;
+    _guideQuestionsByQuestionId.putIfAbsent(questionId, () => '');
+    _guideTypingTimer ??= Timer.periodic(
+      const Duration(milliseconds: 28),
+      (_) => _tickGuideQuestionTyping(),
+    );
+  }
+
+  void _tickGuideQuestionTyping() {
+    if (!mounted) {
+      _guideTypingTimer?.cancel();
+      _guideTypingTimer = null;
+      return;
+    }
+
+    String? activeQuestionId;
+    String? activeTarget;
+    for (final entry in _guideTypingTargetsByQuestionId.entries) {
+      final visibleText = _guideQuestionsByQuestionId[entry.key] ?? '';
+      if (visibleText.length < entry.value.length) {
+        activeQuestionId = entry.key;
+        activeTarget = entry.value;
+        break;
+      }
+    }
+
+    if (activeQuestionId == null || activeTarget == null) {
+      _guideTypingTimer?.cancel();
+      _guideTypingTimer = null;
+      return;
+    }
+
+    setState(() {
+      final visibleText = _guideQuestionsByQuestionId[activeQuestionId!] ?? '';
+      final nextLength = (visibleText.length + 1).clamp(
+        0,
+        activeTarget!.length,
+      );
+      _guideQuestionsByQuestionId[activeQuestionId] = activeTarget.substring(
+        0,
+        nextLength,
+      );
+    });
+  }
+
+  String _newIdempotencyKey() {
+    final random = Random.secure();
+    final randomPart = List.generate(
+      4,
+      (_) => random.nextInt(1 << 32).toRadixString(16).padLeft(8, '0'),
+    ).join();
+    return '${DateTime.now().microsecondsSinceEpoch}-$randomPart';
   }
 
   Future<void> _finishScenario() async {
@@ -382,7 +517,7 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
                 _loadingError!,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.quicksand(
-                  fontSize: 14,
+                  fontSize: 13,
                   color: Colors.red[600],
                 ),
               ),
@@ -455,10 +590,7 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
-                      _getLevelLabel(
-                        widget.prompt.challengeLevel,
-                        context,
-                      ),
+                      _getLevelLabel(widget.prompt.challengeLevel, context),
                       style: GoogleFonts.quicksand(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
@@ -514,11 +646,7 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
                           : Text(
                               _isFlowSubmitted && _isLastQuestion(i)
                                   ? context.l10n.conclude
-                                  : _hasRevealForQuestion(_orderedQuestions[i])
-                                  ? context.l10n.continueToNext
-                                  : _isLastQuestion(i)
-                                  ? context.l10n.wrapUp
-                                  : context.l10n.continueToNext,
+                                  : context.l10n.wrapUp,
                               style: GoogleFonts.quicksand(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
@@ -543,6 +671,8 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
     final isReadOnly =
         _isFlowSubmitted || _revealsByQuestionId.containsKey(question.id);
     final revealText = _findRevealForQuestion(question);
+    final guideText = _guideQuestionsByQuestionId[question.id];
+    final feedbackText = _feedbackByQuestionId[question.id];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -556,6 +686,10 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
             height: 1.4,
           ),
         ),
+        if (guideText != null && guideText.trim().isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.md),
+          _buildGuideCard(guideText),
+        ],
         const SizedBox(height: AppSpacing.sm),
         DecoratedBox(
           decoration: BoxDecoration(
@@ -583,7 +717,9 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
                 }
               },
               decoration: InputDecoration(
-                hintText: context.l10n.shareYourThoughts,
+                hintText: guideText != null && guideText.trim().isNotEmpty
+                    ? context.l10n.perspectiveGuidedAnswerHint
+                    : context.l10n.shareYourThoughts,
                 hintStyle: TextStyle(
                   color: Colors.grey[500],
                   fontSize: 14,
@@ -641,9 +777,81 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
           ),
         if (revealText != null && revealText.trim().isNotEmpty) ...[
           const SizedBox(height: AppSpacing.md),
+          if (feedbackText != null && feedbackText.trim().isNotEmpty) ...[
+            _buildFeedbackText(feedbackText),
+            const SizedBox(height: AppSpacing.md),
+          ],
           _buildRevealCard(revealText),
         ],
       ],
+    );
+  }
+
+  Widget _buildGuideCard(String guideQuestion) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFF6B9B6E).withValues(alpha: 0.45),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(
+                Icons.lightbulb_outline,
+                size: 22,
+                color: Color(0xFF6B9B6E),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text(
+                  context.l10n.perspectiveGuideTitle,
+                  style: GoogleFonts.quicksand(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF6B9B6E),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            context.l10n.perspectiveGuideIntro,
+            style: GoogleFonts.quicksand(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[600],
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            guideQuestion,
+            style: GoogleFonts.quicksand(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[600],
+              height: 1.4,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -738,6 +946,18 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
     return _revealsByOrder[question.order];
   }
 
+  Widget _buildFeedbackText(String feedbackText) {
+    return Text(
+      feedbackText,
+      style: GoogleFonts.quicksand(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        color: const Color(0xFF4E6752),
+        height: 1.45,
+      ),
+    );
+  }
+
   Widget _buildRevealCard(String reveal) {
     return Container(
       width: double.infinity,
@@ -745,10 +965,7 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
       decoration: BoxDecoration(
         color: const Color(0xFF6B9B6E).withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFF6B9B6E),
-          width: 1.2,
-        ),
+        border: Border.all(color: const Color(0xFF6B9B6E), width: 1.2),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -826,8 +1043,8 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
       case 'lako':
         return const Color(0xFF8BBF8F);
       case 'medium':
-        case 'umereno':
-          return const Color(0xFF5C9A6B);
+      case 'umereno':
+        return const Color(0xFF5C9A6B);
       case 'hard':
       case 'tesko':
         return const Color(0xFF3E7A52);
@@ -842,13 +1059,17 @@ class _PerspectiveScenarioPageState extends State<PerspectiveScenarioPage> {
       case 'lako':
         return context.l10n.levelEasy;
       case 'medium':
-        case 'umereno':
-          return context.l10n.levelMedium;
+      case 'umereno':
+        return context.l10n.levelMedium;
       case 'hard':
       case 'tesko':
         return context.l10n.levelHard;
       default:
         return level;
     }
+  }
+
+  String _logText(String value) {
+    return value.trim().replaceAll(RegExp(r'\s+'), ' ');
   }
 }

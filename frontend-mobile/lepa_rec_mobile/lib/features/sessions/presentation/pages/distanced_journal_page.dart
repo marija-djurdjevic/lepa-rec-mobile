@@ -10,6 +10,7 @@ import '../../../../core/constants/app_spacing.dart';
 import '../../data/dtos/distanced_journal_challenge_dto.dart';
 import '../../data/dtos/start_distanced_journal_exercise_dto.dart';
 import '../../data/dtos/submit_distanced_journal_answer_dto.dart';
+import '../../data/dtos/submit_generated_distanced_journal_reflection_dto.dart';
 import '../../data/repositories/session_repository.dart';
 import 'end_growth_message_page.dart';
 
@@ -30,6 +31,8 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
 
   late final TextEditingController _mainAnswerController;
   late final TextEditingController _followUpAnswerController;
+  late final TextEditingController _personaNameController;
+  late final TextEditingController _generatedReflectionAnswerController;
   late final SessionRepository _sessionRepository;
   late final ScrollController _scrollController;
   final ImagePicker _imagePicker = ImagePicker();
@@ -41,14 +44,25 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
   bool _showFollowUpQuestion = false;
   bool _mainHasText = false;
   bool _followUpHasText = false;
+  bool _isJournalSubmitted = false;
+  bool _showGeneratedReflectionQuestion = false;
+  bool _generatedReflectionHasAnswer = false;
+  bool _isSavingGeneratedReflection = false;
+  String? _submittedExerciseId;
+  String? _generatedReflectionQuestion;
 
   @override
   void initState() {
     super.initState();
     _mainAnswerController = TextEditingController();
     _followUpAnswerController = TextEditingController();
+    _personaNameController = TextEditingController();
+    _generatedReflectionAnswerController = TextEditingController();
     _mainAnswerController.addListener(_onMainAnswerChanged);
     _followUpAnswerController.addListener(_onFollowUpAnswerChanged);
+    _generatedReflectionAnswerController.addListener(
+      _onGeneratedReflectionAnswerChanged,
+    );
     _sessionRepository = SessionRepository();
     _scrollController = ScrollController();
   }
@@ -57,17 +71,20 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
   void dispose() {
     _mainAnswerController.removeListener(_onMainAnswerChanged);
     _followUpAnswerController.removeListener(_onFollowUpAnswerChanged);
+    _generatedReflectionAnswerController.removeListener(
+      _onGeneratedReflectionAnswerChanged,
+    );
     _mainAnswerController.dispose();
     _followUpAnswerController.dispose();
+    _personaNameController.dispose();
+    _generatedReflectionAnswerController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
 
-  bool get _hasTextInput =>
-      _mainHasText || _followUpHasText;
+  bool get _hasTextInput => _mainHasText || _followUpHasText;
 
-  bool get _isTextComplete =>
-      _mainHasText && _followUpHasText;
+  bool get _isTextComplete => _mainHasText && _followUpHasText;
 
   bool get _hasPhotos => _mainPhotos.isNotEmpty || _followUpPhotos.isNotEmpty;
 
@@ -90,6 +107,15 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
     if (!mounted) return;
     setState(() {
       _followUpHasText = hasText;
+    });
+  }
+
+  void _onGeneratedReflectionAnswerChanged() {
+    final hasText = _generatedReflectionAnswerController.text.trim().isNotEmpty;
+    if (hasText == _generatedReflectionHasAnswer) return;
+    if (!mounted) return;
+    setState(() {
+      _generatedReflectionHasAnswer = hasText;
     });
   }
 
@@ -235,10 +261,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
 
       debugPrint('[DistancedJournal] Starting exercise');
       final startedExercise = await _sessionRepository
-          .startDistancedJournalExercise(
-            startRequest,
-            _currentPracticeLang(),
-          );
+          .startDistancedJournalExercise(startRequest, _currentPracticeLang());
       debugPrint(
         '[DistancedJournal] Started exercise id=${startedExercise.id}',
       );
@@ -271,6 +294,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                 mainAnswer: _mainAnswerController.text.trim(),
                 followUpAnswer: _followUpAnswerController.text.trim(),
                 reflection: null,
+                language: _currentPracticeLang(),
               ),
               _currentPracticeLang(),
             );
@@ -292,33 +316,25 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
 
       if (!mounted) return;
 
-      final challengeSkillId = widget.challenge.skillId?.trim();
-      final developedSkillIds =
-          challengeSkillId != null && challengeSkillId.isNotEmpty
-          ? [challengeSkillId]
-          : const <String>[];
-
-      final messageCompleted = await Navigator.push<bool>(
-        context,
-        MaterialPageRoute(
-          builder: (context) =>
-              EndGrowthMessagePage(
-                onComplete: () => Navigator.pop(context, true),
-                developedSkillIds: developedSkillIds,
-              ),
-        ),
-      );
-
-      if (!mounted) return;
-
-      if (messageCompleted != true) {
-        debugPrint(
-          '[DistancedJournal] Growth message dismissed before completion, '
-          'returning success because journal is already submitted.',
-        );
+      final generatedQuestion = submitResult
+          .exercise
+          .generatedReflectionQuestion
+          ?.trim();
+      if (generatedQuestion != null && generatedQuestion.isNotEmpty) {
+        setState(() {
+          _isSubmitting = false;
+          _isJournalSubmitted = true;
+          _submittedExerciseId = completedExerciseId;
+          _generatedReflectionQuestion = generatedQuestion;
+          _showGeneratedReflectionQuestion = false;
+          _generatedReflectionAnswerController.clear();
+          _generatedReflectionHasAnswer = false;
+        });
+        _scrollToBottom();
+        return;
       }
 
-      Navigator.pop(context, true);
+      await _finishJournalFlow();
     } on DioException catch (e) {
       if (!mounted) return;
 
@@ -337,10 +353,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
           : context.l10n.errorSubmittingResponse(e.toString());
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(errorMessage),
-          backgroundColor: Colors.red[600],
-        ),
+        SnackBar(content: Text(errorMessage), backgroundColor: Colors.red[600]),
       );
     } catch (e) {
       if (!mounted) return;
@@ -385,171 +398,91 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             controller: _scrollController,
             child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.lg,
-              vertical: AppSpacing.lg,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.lg,
-                    vertical: AppSpacing.lg,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF6B9B6E).withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: const Color(0xFF6B9B6E).withValues(alpha: 0.35),
-                      width: 1.2,
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.lg,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.lg,
+                      vertical: AppSpacing.lg,
                     ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (_challengeContentText.isNotEmpty) ...[
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF6B9B6E).withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(
+                        color: const Color(0xFF6B9B6E).withValues(alpha: 0.35),
+                        width: 1.2,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (_challengeContentText.isNotEmpty) ...[
+                          Text(
+                            _challengeContentText,
+                            style: GoogleFonts.quicksand(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey[600],
+                              height: 1.4,
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                        ],
                         Text(
-                          _challengeContentText,
+                          _openingPromptText,
                           style: GoogleFonts.quicksand(
                             fontSize: 15,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                             color: Colors.grey[600],
                             height: 1.4,
                           ),
                         ),
                         const SizedBox(height: AppSpacing.sm),
-                      ],
-                      Text(
-                        _openingPromptText,
-                        style: GoogleFonts.quicksand(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey[600],
-                          height: 1.4,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      Text(
-                        context.l10n.distancedJournalHint,
-                        style: GoogleFonts.quicksand(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          fontStyle: FontStyle.italic,
-                          color: Colors.grey[600],
-                          height: 1.4,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _getLevelColor(
-                            widget.challenge.challengeLevel,
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          _getLevelLabel(
-                            widget.challenge.challengeLevel,
-                            context,
-                          ),
+                        Text(
+                          context.l10n.distancedJournalHint,
                           style: GoogleFonts.quicksand(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            fontStyle: FontStyle.italic,
+                            color: Colors.grey[600],
+                            height: 1.4,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.lg + AppSpacing.xs),
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(18),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: _buildTextInputField(
-                    controller: _mainAnswerController,
-                    hintText: context.l10n.shareYourThoughts,
-                    isError:
-                        _showValidationErrors &&
-                        _hasTextInput &&
-                        _mainAnswerController.text.trim().isEmpty,
-                    showPhotoPicker: true,
-                    photoThumbnails: _mainPhotos,
-                    minLines: 10,
-                    maxLines: null,
-                  ),
-                ),
-                if (_showValidationErrors && !_hasAnyResponse)
-                  Padding(
-                    padding: const EdgeInsets.only(top: AppSpacing.xs),
-                    child: const Text(
-                      'Add both text answers or at least one photo.',
-                      style: TextStyle(color: Colors.red, fontSize: 12),
-                    ),
-                  ),
-                if (_showValidationErrors &&
-                    _hasTextInput &&
-                    _mainAnswerController.text.trim().isEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: AppSpacing.xs),
-                    child: Text(
-                      context.l10n.answerRequired,
-                      style: const TextStyle(color: Colors.red, fontSize: 12),
-                    ),
-                  ),
-                if (!_showFollowUpQuestion &&
-                    (_mainAnswerController.text.trim().isNotEmpty ||
-                        _hasPhotos)) ...[
-                  const SizedBox(height: AppSpacing.md),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 52,
-                    child: ElevatedButton(
-                      onPressed: _isSubmitting ? null : _handleContinue,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF6B9B6E),
-                        disabledBackgroundColor: Colors.grey[300],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                        const SizedBox(height: AppSpacing.md),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _getLevelColor(
+                              widget.challenge.challengeLevel,
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            _getLevelLabel(
+                              widget.challenge.challengeLevel,
+                              context,
+                            ),
+                            style: GoogleFonts.quicksand(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
-                        elevation: 2,
-                      ),
-                      child: Text(
-                        context.l10n.wrapUp,
-                        style: GoogleFonts.quicksand(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
+                      ],
                     ),
                   ),
-                ],
-                if (_showFollowUpQuestion) ...[
+                  const SizedBox(height: AppSpacing.lg + AppSpacing.xs),
+                  _buildPersonaNameField(),
                   const SizedBox(height: AppSpacing.lg),
-                  Text(
-                    _followUpPromptText,
-                    style: GoogleFonts.quicksand(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[600],
-                      height: 1.4,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
                   DecoratedBox(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(18),
@@ -562,21 +495,29 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                       ],
                     ),
                     child: _buildTextInputField(
-                      controller: _followUpAnswerController,
+                      controller: _mainAnswerController,
                       hintText: context.l10n.shareYourThoughts,
                       isError:
                           _showValidationErrors &&
                           _hasTextInput &&
-                          _followUpAnswerController.text.trim().isEmpty,
+                          _mainAnswerController.text.trim().isEmpty,
                       showPhotoPicker: true,
-                      photoThumbnails: _followUpPhotos,
+                      photoThumbnails: _mainPhotos,
                       minLines: 10,
                       maxLines: null,
                     ),
                   ),
+                  if (_showValidationErrors && !_hasAnyResponse)
+                    Padding(
+                      padding: const EdgeInsets.only(top: AppSpacing.xs),
+                      child: const Text(
+                        'Add both text answers or at least one photo.',
+                        style: TextStyle(color: Colors.red, fontSize: 12),
+                      ),
+                    ),
                   if (_showValidationErrors &&
                       _hasTextInput &&
-                      _followUpAnswerController.text.trim().isEmpty)
+                      _mainAnswerController.text.trim().isEmpty)
                     Padding(
                       padding: const EdgeInsets.only(top: AppSpacing.xs),
                       child: Text(
@@ -584,50 +525,360 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                         style: const TextStyle(color: Colors.red, fontSize: 12),
                       ),
                     ),
-                  const SizedBox(height: AppSpacing.xl),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56,
-                    child: ElevatedButton(
-                      onPressed: _isSubmitting ? null : _handleSubmit,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF6B9B6E),
-                        disabledBackgroundColor: Colors.grey[300],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                  if (!_showFollowUpQuestion &&
+                      (_mainAnswerController.text.trim().isNotEmpty ||
+                          _hasPhotos)) ...[
+                    const SizedBox(height: AppSpacing.md),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 52,
+                      child: ElevatedButton(
+                        onPressed: _isSubmitting ? null : _handleContinue,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF6B9B6E),
+                          disabledBackgroundColor: Colors.grey[300],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 2,
                         ),
-                        elevation: 2,
+                        child: Text(
+                          context.l10n.wrapUp,
+                          style: GoogleFonts.quicksand(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
-                      child: _isSubmitting
-                          ? SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.grey[300]!,
-                                ),
-                              ),
-                            )
-                          : Text(
-                              context.l10n.conclude,
-                              style: GoogleFonts.quicksand(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
+                  ],
+                  if (_showFollowUpQuestion) ...[
+                    const SizedBox(height: AppSpacing.lg),
+                    Text(
+                      _followUpPromptText,
+                      style: GoogleFonts.quicksand(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey[600],
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(18),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: _buildTextInputField(
+                        controller: _followUpAnswerController,
+                        hintText: context.l10n.shareYourThoughts,
+                        isError:
+                            _showValidationErrors &&
+                            _hasTextInput &&
+                            _followUpAnswerController.text.trim().isEmpty,
+                        showPhotoPicker: true,
+                        photoThumbnails: _followUpPhotos,
+                        minLines: 10,
+                        maxLines: null,
+                      ),
+                    ),
+                    if (_showValidationErrors &&
+                        _hasTextInput &&
+                        _followUpAnswerController.text.trim().isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: AppSpacing.xs),
+                        child: Text(
+                          context.l10n.answerRequired,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    const SizedBox(height: AppSpacing.xl),
+                    if (!_isJournalSubmitted) ...[
+                      SizedBox(
+                        width: double.infinity,
+                        height: 56,
+                        child: ElevatedButton(
+                          onPressed: _isSubmitting ? null : _handleSubmit,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF6B9B6E),
+                            disabledBackgroundColor: Colors.grey[300],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 2,
+                          ),
+                          child: _isSubmitting
+                              ? SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.grey[300]!,
+                                    ),
+                                  ),
+                                )
+                              : Text(
+                                  context.l10n.conclude,
+                                  style: GoogleFonts.quicksand(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ] else ...[
+                      _buildGeneratedReflectionInline(context),
+                    ],
+                    const SizedBox(height: AppSpacing.lg),
+                  ],
                 ],
-              ],
-            ),
+              ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildGeneratedReflectionInline(BuildContext context) {
+    final question = _generatedReflectionQuestion?.trim();
+    if (question == null || question.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    if (!_showGeneratedReflectionQuestion) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            context.l10n.generatedReflectionOfferTitle,
+            style: GoogleFonts.quicksand(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: Colors.grey[700],
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: ElevatedButton(
+              onPressed: _isSavingGeneratedReflection
+                  ? null
+                  : _showGeneratedReflectionInline,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF6B9B6E),
+                disabledBackgroundColor: Colors.grey[300],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                context.l10n.generatedReflectionShowQuestion,
+                style: GoogleFonts.quicksand(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: OutlinedButton(
+              onPressed: _isSavingGeneratedReflection
+                  ? null
+                  : _finishJournalFlow,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: const Color(0xFF6B9B6E),
+                side: const BorderSide(color: Color(0xFF6B9B6E), width: 1.2),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                context.l10n.generatedReflectionSkip,
+                style: GoogleFonts.quicksand(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF6B9B6E),
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          question,
+          style: GoogleFonts.quicksand(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[600],
+            height: 1.4,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: _buildTextInputField(
+            controller: _generatedReflectionAnswerController,
+            hintText: context.l10n.generatedReflectionAnswerHint,
+            isError: false,
+            minLines: 8,
+            maxLines: null,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        SizedBox(
+          width: double.infinity,
+          height: 56,
+          child: ElevatedButton(
+            onPressed:
+                _isSavingGeneratedReflection || !_generatedReflectionHasAnswer
+                ? null
+                : _submitGeneratedReflectionAnswer,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF6B9B6E),
+              disabledBackgroundColor: Colors.grey[300],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 2,
+            ),
+            child: _isSavingGeneratedReflection
+                ? SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Colors.grey[300]!,
+                      ),
+                    ),
+                  )
+                : Text(
+                    context.l10n.conclude,
+                    style: GoogleFonts.quicksand(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showGeneratedReflectionInline() {
+    setState(() {
+      _showGeneratedReflectionQuestion = true;
+    });
+    _scrollToBottom();
+  }
+
+  Future<void> _submitGeneratedReflectionAnswer() async {
+    final exerciseId = _submittedExerciseId?.trim();
+    final answer = _generatedReflectionAnswerController.text.trim();
+    if (exerciseId == null ||
+        exerciseId.isEmpty ||
+        answer.isEmpty ||
+        _isSavingGeneratedReflection) {
+      return;
+    }
+
+    setState(() {
+      _isSavingGeneratedReflection = true;
+    });
+
+    try {
+      await _sessionRepository.submitGeneratedDistancedJournalReflection(
+        SubmitGeneratedDistancedJournalReflectionDto(
+          exerciseId: exerciseId,
+          answer: answer,
+        ),
+        _currentPracticeLang(),
+      );
+
+      if (!mounted) return;
+      setState(() {
+        _isSavingGeneratedReflection = false;
+      });
+      await _finishJournalFlow();
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isSavingGeneratedReflection = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(context.l10n.errorSubmittingReflection(e.toString())),
+          backgroundColor: Colors.red[600],
+        ),
+      );
+    }
+  }
+
+  Future<void> _finishJournalFlow() async {
+    if (_isSavingGeneratedReflection) {
+      return;
+    }
+
+    final challengeSkillId = widget.challenge.skillId?.trim();
+    final developedSkillIds =
+        challengeSkillId != null && challengeSkillId.isNotEmpty
+        ? [challengeSkillId]
+        : const <String>[];
+
+    final messageCompleted = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EndGrowthMessagePage(
+          onComplete: () => Navigator.pop(context, true),
+          developedSkillIds: developedSkillIds,
+        ),
+      ),
+    );
+
+    if (!mounted) return;
+
+    if (messageCompleted != true) {
+      debugPrint(
+        '[DistancedJournal] Growth message dismissed before completion, '
+        'returning success because journal is already submitted.',
+      );
+    }
+
+    Navigator.pop(context, true);
   }
 
   void _showExerciseNotFound() {
@@ -669,6 +920,77 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
       }
     }
     return total;
+  }
+
+  Widget _buildPersonaNameField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          context.l10n.distancedJournalPersonaLabel,
+          style: GoogleFonts.quicksand(
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF4E6650),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        TextField(
+          controller: _personaNameController,
+          enabled: !_isSubmitting,
+          textInputAction: TextInputAction.next,
+          decoration: InputDecoration(
+            hintText: context.l10n.distancedJournalPersonaHint,
+            hintStyle: TextStyle(
+              color: Colors.grey[500],
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: BorderSide(color: Colors.grey[300]!, width: 1.2),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: BorderSide(color: Colors.grey[300]!, width: 1.2),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(
+                color: Color(0xFF6B9B6E),
+                width: 1.6,
+              ),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: BorderSide(color: Colors.grey[200]!, width: 1.2),
+            ),
+            filled: true,
+            fillColor: const Color(0xFFFAFCF9),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.md,
+            ),
+          ),
+          cursorColor: const Color(0xFF6B9B6E),
+          style: GoogleFonts.quicksand(
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: const Color(0xFF2F3A2F),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          context.l10n.distancedJournalPersonaHelper,
+          style: GoogleFonts.quicksand(
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey[600],
+            height: 1.35,
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildTextInputField({
@@ -761,13 +1083,13 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
           Positioned(
             top: AppSpacing.sm,
             left: AppSpacing.sm,
-                child: IconButton(
-                  onPressed: _isSubmitting || _totalPhotoCount >= 3
-                      ? null
-                      : () => _showPhotoSourcePicker(_photoAnchorFor(controller)),
-                  icon: const Icon(Icons.add_a_photo_outlined),
-                  color: const Color(0xFF6B9B6E),
-                  tooltip: 'Add photo',
+            child: IconButton(
+              onPressed: _isSubmitting || _totalPhotoCount >= 3
+                  ? null
+                  : () => _showPhotoSourcePicker(_photoAnchorFor(controller)),
+              icon: const Icon(Icons.add_a_photo_outlined),
+              color: const Color(0xFF6B9B6E),
+              tooltip: 'Add photo',
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints.tightFor(
                 width: iconSize,
@@ -814,10 +1136,7 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
                 child: SizedBox(
                   width: size,
                   height: size,
-                  child: Image.file(
-                    File(photos[i].path),
-                    fit: BoxFit.cover,
-                  ),
+                  child: Image.file(File(photos[i].path), fit: BoxFit.cover),
                 ),
               ),
               Positioned(
@@ -851,8 +1170,8 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
       case 'lako':
         return const Color(0xFF8BBF8F);
       case 'medium':
-        case 'umereno':
-          return const Color(0xFF5C9A6B);
+      case 'umereno':
+        return const Color(0xFF5C9A6B);
       case 'hard':
       case 'tesko':
       case 'teško':
@@ -862,15 +1181,14 @@ class _DistancedJournalPageState extends State<DistancedJournalPage> {
     }
   }
 
-
   String _getLevelLabel(String level, BuildContext context) {
     switch (level.toLowerCase()) {
       case 'easy':
       case 'lako':
         return context.l10n.levelEasy;
       case 'medium':
-        case 'umereno':
-          return context.l10n.levelMedium;
+      case 'umereno':
+        return context.l10n.levelMedium;
       case 'hard':
       case 'tesko':
       case 'teško':
